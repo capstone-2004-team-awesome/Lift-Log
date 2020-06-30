@@ -1,3 +1,6 @@
+# Overview
+A web application where users can record themselves doing weightlifting exercises and it automatically log your exercises (what type of exercise, # of reps, and # of sets).
+
 # MVP
 Users should be able to:
 - log in
@@ -15,4 +18,5 @@ Users should be able to:
 - Compare exercise form with expert's form.
 
 # Technical Challenges
-- Learning about machine learning and Tensorflow.js
+- https://teachablemachine.withgoogle.com/ 
+- Learning about machine learning
