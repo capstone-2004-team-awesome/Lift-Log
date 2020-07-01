@@ -1,4 +1,6 @@
 import React from 'react'
+import * as tf from '@tensorflow/tfjs'
+import * as tmPose from '@teachablemachine/pose'
 
 const Camera = () => {
   // More API functions here:
@@ -38,7 +40,7 @@ const Camera = () => {
     }
   }
 
-  async function loop(timestamp) {
+  async function loop() {
     webcam.update() // update the webcam frame
     await predict()
     window.requestAnimationFrame(loop)
@@ -74,16 +76,38 @@ const Camera = () => {
     }
   }
 
+  const pause = async () => {
+    await webcam.pause()
+  }
+
+  const stop = async () => {
+    await webcam.stop()
+    // redirect to workout summary page
+  }
+
+  const play = async () => {
+    await webcam.play()
+  }
+
   return (
     <div>
       <div>Teachable Machine Pose Model</div>
-      <button type="button" onclick="init()">
+      <button type="button" onClick={() => init()}>
         Start
       </button>
+      <button type="button" onClick={() => play()}>
+        Play
+      </button>
+      <button type="button" onClick={() => pause()}>
+        Pause
+      </button>
+      <button type="button" onClick={() => stop()}>
+        Stop
+      </button>
       <div>
-        <canvas id="canvas"></canvas>
+        <canvas id="canvas" />
       </div>
-      <div id="label-container"></div>
+      <div id="label-container" />
     </div>
   )
 }
