@@ -9,7 +9,7 @@ router.put('/:exerciseId/:userId', async (req, res, next) => {
     // TODO: will need to add Date field later on
     const exerciseId = req.params.exerciseId
     const userId = req.params.userId
-    const set = await Set.findOrCreate({
+    const [set, created] = await Set.findOrCreate({
       where: {
         userId,
         exerciseId
@@ -17,11 +17,11 @@ router.put('/:exerciseId/:userId', async (req, res, next) => {
     })
     console.log('FIND OR CREATE SET', set)
     // if set is found - increment reps
-    if (!set[1]) {
-      await set[0].update({reps: set.reps + 1})
+    if (!created) {
+      await set.update({reps: set.reps + 1})
     }
-    res.json(set[0])
-    console.log('NEW SET OBJECT', set[0])
+    res.json(set)
+    console.log('NEW SET OBJECT', set)
     // if set was created (set[1]====true) then do nothing
     // user.addExercise(set[0])
   } catch (err) {
