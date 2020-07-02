@@ -1,6 +1,8 @@
+/* eslint-disable guard-for-in */
 import React from 'react'
 import * as tf from '@tensorflow/tfjs'
 import * as tmPose from '@teachablemachine/pose'
+import axios from 'axios'
 
 const Camera = () => {
   // More API functions here:
@@ -9,6 +11,14 @@ const Camera = () => {
   // the link to your model provided by Teachable Machine export panel
   const URL = 'https://teachablemachine.withgoogle.com/models/ID0AT-6cI/'
   let model, webcam, ctx, labelContainer, maxPredictions
+  let lastPrediction = {
+    'Bicep Curl - Up ': false,
+    Squat: false
+  }
+  let predictionTracker = {
+    'Bicep Curl - Up ': false,
+    Squat: false
+  }
 
   async function init() {
     const modelURL = URL + 'model.json'
@@ -52,15 +62,33 @@ const Camera = () => {
     const {pose, posenetOutput} = await model.estimatePose(webcam.canvas)
     // Prediction 2: run input through teachable machine classification model
     const prediction = await model.predict(posenetOutput)
+    //prediction = [{className: "Neutral - Standing", probability: 1.1368564933439103e-15},
+    //              {className: "Bicep Curl - Up ", probability: 1}]
 
     for (let i = 0; i < maxPredictions; i++) {
       const classPrediction =
         prediction[i].className + ': ' + prediction[i].probability.toFixed(2)
       labelContainer.childNodes[i].innerHTML = classPrediction
+      if (prediction[i].probability > 0.95) {
+        predictionTracker[prediction[i].className] = true
+      } else {
+        predictionTracker[prediction[i].className] = false
+      }
+    }
+
+    for (let exercise in predictionTracker) {
+      // *** if exercise boolean value has switched, make API call (exerciseId), to increase reps
+      if (lastPrediction[exercise] !== predictionTracker[exercise]) {
+        //TODO: update request with '/exercise/:exerciseId/:userId"
+        // const {data} = await axios.put('/exercise/1/1')
+        // console.log(data)
+        console.log('One rep of ', exercise)
+      }
     }
 
     // finally draw the poses
     drawPose(pose)
+    lastPrediction = {...predictionTracker}
   }
 
   // if process.env.NODE_ENV !== 'production' don't run drawPose()

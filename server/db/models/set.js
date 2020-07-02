@@ -6,7 +6,8 @@ const Set = db.define('set', {
     type: Sequelize.INTEGER
   },
   reps: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
+    defaultValue: 1
   }
 })
 
