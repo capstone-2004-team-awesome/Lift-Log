@@ -1,8 +1,7 @@
-/* eslint-disable guard-for-in */
 import React from 'react'
-import * as tf from '@tensorflow/tfjs'
 import * as tmPose from '@teachablemachine/pose'
 import axios from 'axios'
+import {Button, Card} from '@material-ui/core'
 
 const Camera = () => {
   // More API functions here:
@@ -31,7 +30,7 @@ const Camera = () => {
     maxPredictions = model.getTotalClasses()
 
     // Convenience function to setup a webcam
-    const size = 200
+    const size = 600
     const flip = true // whether to flip the webcam
     webcam = new tmPose.Webcam(size, size, flip) // width, height, flip
     await webcam.setup() // request access to the webcam
@@ -79,10 +78,8 @@ const Camera = () => {
     for (let exercise in predictionTracker) {
       // *** if exercise boolean value has switched, make API call (exerciseId), to increase reps
       if (lastPrediction[exercise] !== predictionTracker[exercise]) {
-        //TODO: update request with '/api/exercise/:exerciseId/:userId"
         const {data} = await axios.put('/api/exercise/1/1')
         console.log(data)
-        // console.log('One rep of ', data)
       }
     }
 
@@ -91,7 +88,7 @@ const Camera = () => {
     lastPrediction = {...predictionTracker}
   }
 
-  // if process.env.NODE_ENV !== 'production' don't run drawPose()
+  // TODO: if process.env.NODE_ENV !== 'production' don't run drawPose()
   function drawPose(pose) {
     if (webcam.canvas) {
       ctx.drawImage(webcam.canvas, 0, 0)
@@ -118,25 +115,24 @@ const Camera = () => {
   }
 
   return (
-    <div>
-      <div>Teachable Machine Pose Model</div>
-      <button type="button" onClick={() => init()}>
+    <Card>
+      <Button type="button" onClick={() => init()}>
         Start
-      </button>
-      <button type="button" onClick={() => play()}>
+      </Button>
+      <Button type="button" onClick={() => play()}>
         Play
-      </button>
-      <button type="button" onClick={() => pause()}>
+      </Button>
+      <Button type="button" onClick={() => pause()}>
         Pause
-      </button>
-      <button type="button" onClick={() => stop()}>
+      </Button>
+      <Button type="button" onClick={() => stop()}>
         Stop
-      </button>
+      </Button>
       <div>
-        <canvas id="canvas" />
+        <canvas id="canvas" style={{width: '50rem', height: '50rem'}} />
       </div>
       <div id="label-container" />
-    </div>
+    </Card>
   )
 }
 
