@@ -79,10 +79,10 @@ const Camera = () => {
     for (let exercise in predictionTracker) {
       // *** if exercise boolean value has switched, make API call (exerciseId), to increase reps
       if (lastPrediction[exercise] !== predictionTracker[exercise]) {
-        //TODO: update request with '/exercise/:exerciseId/:userId"
-        // const {data} = await axios.put('/exercise/1/1')
-        // console.log(data)
-        console.log('One rep of ', exercise)
+        //TODO: update request with '/api/exercise/:exerciseId/:userId"
+        const {data} = await axios.put('/api/exercise/1/1')
+        console.log(data)
+        // console.log('One rep of ', data)
       }
     }
 
