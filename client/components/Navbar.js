@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
@@ -23,6 +23,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import PersonAddIcon from '@material-ui/icons/PersonAdd'
+import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled'
 //#endregion
 
 const useStyles = makeStyles(theme => ({
@@ -40,11 +41,87 @@ const useStyles = makeStyles(theme => ({
 
 const Navbar = ({handleClick, isLoggedIn}) => {
   const classes = useStyles()
+  const [state, setState] = useState({
+    left: false
+  })
+
+  const toggleDrawer = (anchor, open) => event => {
+    if (
+      event.type === 'keydown' &&
+      (event.key === 'Tab' || event.key === 'Shift')
+    ) {
+      return
+    }
+
+    setState({...state, [anchor]: open})
+  }
+
+  const loggedInList = anchor => (
+    <div
+      className={classes.list}
+      role="presentation"
+      onClick={toggleDrawer(anchor, false)}
+      onKeyDown={toggleDrawer(anchor, false)}
+    >
+      <List>
+        <ListItem>
+          <Typography variant="overline">WORKOUTS</Typography>
+        </ListItem>
+
+        <ListItem button component={Link} to="/start">
+          <ListItemIcon>
+            <PlayCircleFilledIcon />
+          </ListItemIcon>
+          <ListItemText primary="Start Workout" />
+        </ListItem>
+      </List>
+
+      <Divider />
+
+      <List>
+        <ListItem>
+          <Typography variant="overline">ACCOUNT</Typography>
+        </ListItem>
+        <ListItem button component={Link} to="/profile">
+          <ListItemIcon>
+            <AccountCircleIcon />
+          </ListItemIcon>
+          <ListItemText primary="Profile" />
+        </ListItem>
+        <ListItem button onClick={handleClick}>
+          <ListItemIcon>
+            <ExitToAppIcon />
+          </ListItemIcon>
+          <ListItemText primary="Logout" />
+        </ListItem>
+      </List>
+    </div>
+  )
 
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
+          {isLoggedIn ? (
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="menu"
+              onClick={toggleDrawer('left', true)}
+            >
+              <MenuIcon />
+            </IconButton>
+          ) : null}
+
+          <Drawer
+            anchor="left"
+            open={state.left}
+            onClose={toggleDrawer('left', false)}
+          >
+            {isLoggedIn ? loggedInList('left') : null}
+          </Drawer>
+
           <Typography
             component={Link}
             to="/"
