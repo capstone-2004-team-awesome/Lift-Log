@@ -1,6 +1,7 @@
 import React from 'react'
 import * as tf from '@tensorflow/tfjs'
 import * as tmPose from '@teachablemachine/pose'
+import axios from 'axios'
 
 const Camera = () => {
   // More API functions here:
@@ -8,7 +9,7 @@ const Camera = () => {
 
   // the link to your model provided by Teachable Machine export panel
   const URL = 'https://teachablemachine.withgoogle.com/models/ID0AT-6cI/'
-  let model, webcam, ctx, labelContainer, maxPredictions
+  let model, webcam, ctx, labelContainer, maxPredictions, lastPrediction
 
   async function init() {
     const modelURL = URL + 'model.json'
@@ -52,6 +53,12 @@ const Camera = () => {
     const {pose, posenetOutput} = await model.estimatePose(webcam.canvas)
     // Prediction 2: run input through teachable machine classification model
     const prediction = await model.predict(posenetOutput)
+    //prediction = [{className: "Neutral - Standing", probability: 1.1368564933439103e-15},
+    //              {className: "Bicep Curl - Up ", probability: 1}]
+
+    // if(lastPrediction !== prediction) {
+
+    // }
 
     for (let i = 0; i < maxPredictions; i++) {
       const classPrediction =
@@ -61,6 +68,9 @@ const Camera = () => {
 
     // finally draw the poses
     drawPose(pose)
+    console.log('PREDICTION', prediction)
+    // return prediction
+    lastPrediction = prediction
   }
 
   // if process.env.NODE_ENV !== 'production' don't run drawPose()
