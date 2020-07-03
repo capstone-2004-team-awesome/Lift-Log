@@ -1,6 +1,6 @@
 import React from 'react'
 import {Navbar} from './components'
-import Routes from './routes'
+// import Routes from './routes'
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles'
 import themeObj from './theme'
 
@@ -10,7 +10,7 @@ const App = () => {
     <div>
       <MuiThemeProvider theme={themeConfig}>
         <Navbar />
-        <Routes />
+        {/* <Routes /> */}
       </MuiThemeProvider>
     </div>
   )
