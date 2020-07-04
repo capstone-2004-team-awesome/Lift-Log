@@ -3,16 +3,22 @@ import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import {logout} from '../store'
+import Routes from '../routes'
 
-//#region
-import {makeStyles} from '@material-ui/core/styles'
+//#region   MATERIAL UI - Imports
+import {makeStyles, useTheme} from '@material-ui/core/styles'
+import clsx from 'clsx'
+
+// *** APPBAR Styling ***
+import CssBaseline from '@material-ui/core/CssBaseline'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
-import MenuIcon from '@material-ui/icons/Menu'
 
+// *** DRAWER Styling ***
+import Hidden from '@material-ui/core/Hidden'
 import Drawer from '@material-ui/core/Drawer'
 import List from '@material-ui/core/List'
 import Divider from '@material-ui/core/Divider'
@@ -20,49 +26,74 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 
+// *** ICONS ***
+import MenuIcon from '@material-ui/icons/Menu'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
-import PersonAddIcon from '@material-ui/icons/PersonAdd'
+// import PersonAddIcon from '@material-ui/icons/PersonAdd'
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled'
 //#endregion
 
+const drawerWidth = 240
+
 const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: 1
+    display: 'flex'
   },
   menuButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      display: 'none'
+    }
   },
   title: {
     flexGrow: 1,
     color: 'white'
+  },
+  drawer: {
+    [theme.breakpoints.up('sm')]: {
+      width: drawerWidth,
+      flexShrink: 0
+    }
+  },
+  // *** necessary for content to be below app bar
+  toolbar: theme.mixins.toolbar,
+  drawerPaper: {
+    width: drawerWidth
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen
+    }),
+    marginLeft: -drawerWidth
+  },
+  contentShift: {
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen
+    }),
+    marginLeft: 0
   }
 }))
 
-const Navbar = ({handleClick, isLoggedIn}) => {
+const Navbar = ({handleClick, isLoggedIn}, props) => {
+  const {window} = props
   const classes = useStyles()
-  const [state, setState] = useState({
-    left: false
-  })
+  const theme = useTheme()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
-  const toggleDrawer = (anchor, open) => event => {
-    if (
-      event.type === 'keydown' &&
-      (event.key === 'Tab' || event.key === 'Shift')
-    ) {
-      return
-    }
-
-    setState({...state, [anchor]: open})
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen)
   }
 
-  const loggedInList = anchor => (
-    <div
-      className={classes.list}
-      role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
-    >
+  //#region   DRAWER = loggedInList
+  const loggedInList = (
+    <div>
+      <div className={classes.toolbar} />
+      <Divider />
       <List>
         <ListItem>
           <Typography variant="overline">WORKOUTS</Typography>
@@ -77,7 +108,6 @@ const Navbar = ({handleClick, isLoggedIn}) => {
       </List>
 
       <Divider />
-
       <List>
         <ListItem>
           <Typography variant="overline">ACCOUNT</Typography>
@@ -97,35 +127,32 @@ const Navbar = ({handleClick, isLoggedIn}) => {
       </List>
     </div>
   )
+  //#endregion
+
+  const container =
+    window !== undefined ? () => window().document.body : undefined
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
+      <CssBaseline />
+      <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           {isLoggedIn ? (
             <IconButton
-              edge="start"
-              className={classes.menuButton}
               color="inherit"
-              aria-label="menu"
-              onClick={toggleDrawer('left', true)}
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              className={classes.menuButton}
             >
               <MenuIcon />
             </IconButton>
           ) : null}
-
-          <Drawer
-            anchor="left"
-            open={state.left}
-            onClose={toggleDrawer('left', false)}
-          >
-            {isLoggedIn ? loggedInList('left') : null}
-          </Drawer>
-
           <Typography
             component={Link}
             to="/"
             variant="h6"
+            noWrap
             className={classes.title}
           >
             Lift Log
@@ -142,6 +169,45 @@ const Navbar = ({handleClick, isLoggedIn}) => {
           )}
         </Toolbar>
       </AppBar>
+      <nav className={classes.drawer} aria-label="workouts account">
+        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        <Hidden smUp implementation="css">
+          <Drawer
+            container={container}
+            variant="temporary"
+            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            classes={{
+              paper: classes.drawerPaper
+            }}
+            ModalProps={{
+              keepMounted: true // Better open performance on mobile.
+            }}
+          >
+            {isLoggedIn ? loggedInList : null}
+          </Drawer>
+        </Hidden>
+        <Hidden xsDown implementation="css">
+          <Drawer
+            classes={{
+              paper: classes.drawerPaper
+            }}
+            variant="persistent"
+            open={isLoggedIn}
+          >
+            {isLoggedIn ? loggedInList : null}
+          </Drawer>
+        </Hidden>
+      </nav>
+      <main
+        className={clsx(classes.content, {
+          [classes.contentShift]: isLoggedIn
+        })}
+      >
+        <div className={classes.toolbar} />
+        <Routes />
+      </main>
     </div>
   )
 }
