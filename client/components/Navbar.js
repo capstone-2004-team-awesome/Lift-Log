@@ -5,15 +5,20 @@ import {Link} from 'react-router-dom'
 import {logout} from '../store'
 import Routes from '../routes'
 
-//#region
+//#region   MATERIAL UI - Imports
 import {makeStyles, useTheme} from '@material-ui/core/styles'
+import clsx from 'clsx'
+
+// *** APPBAR Styling ***
+import CssBaseline from '@material-ui/core/CssBaseline'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
-import MenuIcon from '@material-ui/icons/Menu'
 
+// *** DRAWER Styling ***
+import Hidden from '@material-ui/core/Hidden'
 import Drawer from '@material-ui/core/Drawer'
 import List from '@material-ui/core/List'
 import Divider from '@material-ui/core/Divider'
@@ -21,16 +26,13 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 
+// *** ICONS ***
+import MenuIcon from '@material-ui/icons/Menu'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 // import PersonAddIcon from '@material-ui/icons/PersonAdd'
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled'
 //#endregion
-
-import CssBaseline from '@material-ui/core/CssBaseline'
-import Hidden from '@material-ui/core/Hidden'
-import InboxIcon from '@material-ui/icons/MoveToInbox'
-import MailIcon from '@material-ui/icons/Mail'
 
 const drawerWidth = 240
 
@@ -61,7 +63,19 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen
+    }),
+    marginLeft: -drawerWidth
+  },
+  contentShift: {
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen
+    }),
+    marginLeft: 0
   }
 }))
 
@@ -69,7 +83,7 @@ const Navbar = ({handleClick, isLoggedIn}, props) => {
   const {window} = props
   const classes = useStyles()
   const theme = useTheme()
-  const [mobileOpen, setMobileOpen] = React.useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
@@ -179,14 +193,18 @@ const Navbar = ({handleClick, isLoggedIn}, props) => {
             classes={{
               paper: classes.drawerPaper
             }}
-            variant="permanent"
-            open
+            variant="persistent"
+            open={isLoggedIn}
           >
             {isLoggedIn ? loggedInList : null}
           </Drawer>
         </Hidden>
       </nav>
-      <main className={classes.content}>
+      <main
+        className={clsx(classes.content, {
+          [classes.contentShift]: isLoggedIn
+        })}
+      >
         <div className={classes.toolbar} />
         <Routes />
       </main>
