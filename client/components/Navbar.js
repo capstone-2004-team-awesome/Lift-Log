@@ -76,6 +76,9 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen
     }),
     marginLeft: 0
+  },
+  removeShadow: {
+    boxShadow: '0px 0px'
   }
 }))
 
@@ -159,10 +162,18 @@ const Navbar = ({handleClick, isLoggedIn}, props) => {
           </Typography>
           {isLoggedIn ? null : (
             <div>
-              <Button component={Link} to="/login" color="inherit">
+              <Button
+                component={Link}
+                to="/login"
+                className={classes.removeShadow}
+              >
                 Login
               </Button>
-              <Button component={Link} to="/signup" color="inherit">
+              <Button
+                component={Link}
+                to="/signup"
+                className={classes.removeShadow}
+              >
                 Signup
               </Button>
             </div>
