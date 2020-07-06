@@ -1,10 +1,11 @@
-const db = require('../db')
 const User = require('./user')
 const Exercise = require('./exercise')
 const Set = require('./set')
 
-User.belongsToMany(Exercise, {through: Set})
-Exercise.belongsToMany(User, {through: Set})
+Set.belongsTo(Exercise)
+Exercise.hasMany(Set)
+User.hasMany(Set)
+Set.belongsTo(User)
 
 module.exports = {
   User,

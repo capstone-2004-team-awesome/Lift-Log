@@ -8,6 +8,10 @@ const Set = db.define('set', {
   reps: {
     type: Sequelize.INTEGER,
     defaultValue: 1
+  },
+  completed: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
 })
 
