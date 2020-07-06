@@ -7,10 +7,10 @@ const StartWorkout = () => {
   return (
     <div>
       <Grid container spacing={4}>
-        <Grid item lg={3} sm={6} xl={3} xs={12}>
+        <Grid item sm={6}>
           <Camera />
         </Grid>
-        <Grid item lg={3} sm={6} xl={3} xs={12}>
+        <Grid item sm={6}>
           <ExerciseLog />
         </Grid>
       </Grid>

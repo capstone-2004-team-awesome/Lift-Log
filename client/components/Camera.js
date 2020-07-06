@@ -115,7 +115,7 @@ const Camera = () => {
   }
 
   return (
-    <Card>
+    <Card style={{width: '100%'}}>
       <Button type="button" onClick={() => init()}>
         Start
       </Button>
@@ -129,7 +129,7 @@ const Camera = () => {
         Stop
       </Button>
       <div>
-        <canvas id="canvas" style={{width: '50rem', height: '50rem'}} />
+        <canvas id="canvas" style={{width: '600px', height: '600px'}} />
       </div>
       <div id="label-container" />
     </Card>
