@@ -21,20 +21,14 @@ const rows = [createData('Squat', 10, 20), createData('Bicep Curl', 20, 10)]
 const ExerciseLog = () => {
   return (
     <Grid container spacing={4}>
-      <Grid item>
+      <Grid item xs={12}>
         <Card>
           <CardContent>
-            <Grid container>
-              <Grid item>
-                <Typography variant="h5">
-                  Current Exercise: Bicep Curl
-                </Typography>
-              </Grid>
-            </Grid>
+            <Typography variant="h5">Current Exercise: Bicep Curl</Typography>
           </CardContent>
         </Card>
       </Grid>
-      <Grid item>
+      <Grid item xs={12}>
         <Card>
           <CardContent>
             <Typography variant="h5">Exercise Log</Typography>
