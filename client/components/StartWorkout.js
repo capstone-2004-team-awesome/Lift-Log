@@ -6,7 +6,7 @@ import * as tmPose from '@teachablemachine/pose'
 import axios from 'axios'
 
 const StartWorkout = () => {
-  const [set, setSet] = useState({
+  const [currentSet, setCurrentSet] = useState({
     exerciseName: '',
     exerciseId: '',
     reps: '',
@@ -94,11 +94,13 @@ const StartWorkout = () => {
           predictionTracker[exercise] === true
         ) {
           // TODO: create exercise object on state with id's so we only need one db call here.
-          const {data} = await axios.put('/api/exercise/1/1')
+          const {data} = await axios.put('/api/exercise/update/1/1')
           console.log(data)
           //data: {weight: null, reps: 41, createdAt: "2020-07-06T16:18:59.059Z", updatedAt: "2020-07-06T16:42:03.394Z", userId: 1, exerciseId: 1}
-          // use data to change state
-          setSet({
+          // compare set.time to Date.now()
+          // if 30 seconds has passed, this is a new set.
+          // reset state
+          setCurrentSet({
             exerciseName: exercise,
             exerciseId: data.exerciseId,
             reps: data.reps,
@@ -147,7 +149,7 @@ const StartWorkout = () => {
           <Camera init={init} pause={pause} stop={stop} play={play} />
         </Grid>
         <Grid item sm={6}>
-          <ExerciseLog set={set} />
+          <ExerciseLog currentSet={currentSet} />
         </Grid>
       </Grid>
     </div>

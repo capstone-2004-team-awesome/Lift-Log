@@ -19,9 +19,10 @@ import {
 // const rows = [createData('Squat', 10, 20), createData('Bicep Curl', 20, 10)]
 
 const ExerciseLog = props => {
-  const {exerciseName, exerciseId, reps, weight, time} = props.set
+  const {exerciseName, exerciseId, reps, weight, time} = props.currentSet
 
-  // const [log, setLog] = useState([])
+  // all sets
+  const [log, setLog] = useState([])
 
   return (
     <Grid container spacing={4}>

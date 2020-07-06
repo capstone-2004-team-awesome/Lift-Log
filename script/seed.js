@@ -1,7 +1,7 @@
 'use strict'
 
 const db = require('../server/db')
-const {User, Exercise} = require('../server/db/models')
+const {User, Exercise, Set} = require('../server/db/models')
 
 async function seed() {
   await db.sync({force: true})
@@ -16,7 +16,15 @@ async function seed() {
     })
   ])
 
-  await Exercise.create({name: 'Bicep Curl - Up'})
+  const bicepCurls = await Exercise.create({name: 'Bicep Curl - Up'})
+  await Exercise.create({name: 'Squat'})
+
+  await Set.create({weight: 20, reps: 5})
+
+  const user = await User.findByPk(1)
+  user.addSet(1)
+
+  await bicepCurls.addSet(1) //bicep curl
 
   console.log(`seeded ${users.length} users`)
   console.log(`seeded successfully`)
