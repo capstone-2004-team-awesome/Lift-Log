@@ -12,19 +12,25 @@ import {
   TableCell
 } from '@material-ui/core'
 
-function createData(exercise, reps, weight) {
-  return {exercise, reps, weight}
-}
+// function createData(exercise, reps, weight) {
+//   return {exercise, reps, weight}
+// }
 
-const rows = [createData('Squat', 10, 20), createData('Bicep Curl', 20, 10)]
+// const rows = [createData('Squat', 10, 20), createData('Bicep Curl', 20, 10)]
 
-const ExerciseLog = () => {
+const ExerciseLog = props => {
+  const {exerciseName, exerciseId, reps, weight, time} = props.set
+
+  // const [log, setLog] = useState([])
+
   return (
     <Grid container spacing={4}>
       <Grid item xs={12}>
         <Card>
           <CardContent>
-            <Typography variant="h5">Current Exercise: Bicep Curl</Typography>
+            <Typography variant="h5">
+              Current Exercise: {exerciseName}
+            </Typography>
           </CardContent>
         </Card>
       </Grid>
@@ -42,7 +48,12 @@ const ExerciseLog = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map(row => {
+                  <TableRow>
+                    <TableCell>{exerciseName}</TableCell>
+                    <TableCell align="right">{reps}</TableCell>
+                    <TableCell align="right">{weight}</TableCell>
+                  </TableRow>
+                  {/* {rows.map(row => {
                     return (
                       <TableRow key={row.exercise}>
                         <TableCell>{row.exercise}</TableCell>
@@ -50,7 +61,7 @@ const ExerciseLog = () => {
                         <TableCell align="right">{row.weight}</TableCell>
                       </TableRow>
                     )
-                  })}
+                  })} */}
                 </TableBody>
               </Table>
             </TableContainer>
