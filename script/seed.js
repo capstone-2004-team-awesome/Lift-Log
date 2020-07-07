@@ -48,7 +48,7 @@ async function seed() {
     Set.create({weight: 80, reps: 8, completed: true}),
     Set.create({weight: 75, reps: 9, completed: true})
   ])
-
+  
   // *** User #1 ASSOCIATIONS
   await user1.addSet([set1, set2])
   await bicepCurls.addSet(set1)
@@ -63,7 +63,6 @@ async function seed() {
   await bicepCurls.addSet(set4)
   await squats.addSet([set5, set6])
 
-  // console.log(`seeded ${userss.length} users`)
   console.log(`seeded successfully`)
 }
 
