@@ -135,7 +135,7 @@ const StartWorkout = () => {
 
   const stop = async () => {
     await webcam.stop()
-    // redirect to workout summary page
+    // TODO: redirect to workout summary page
   }
 
   const play = async () => {

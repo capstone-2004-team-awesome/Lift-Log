@@ -22,7 +22,7 @@ const ExerciseLog = props => {
   const {exerciseName, exerciseId, reps, weight, time} = props.currentSet
 
   // all sets
-  const [log, setLog] = useState([])
+  // const [log, setLog] = useState([])
 
   return (
     <Grid container spacing={4}>
