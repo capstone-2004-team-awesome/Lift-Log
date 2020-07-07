@@ -7,26 +7,63 @@ async function seed() {
   await db.sync({force: true})
   console.log('db synced!')
 
-  const users = await Promise.all([
-    User.create({firstName: 'Cody', email: 'cody@email.com', password: '123'}),
+  const [user1, user2, user3] = await Promise.all([
     User.create({
       firstName: 'Cody',
+      email: 'cody@email.com',
+      password: '123',
+      sex: 'male',
+      weight: 25,
+      height: 16
+    }),
+    User.create({
+      firstName: 'Murphy',
       email: 'murphy@email.com',
-      password: '123'
+      password: '123',
+      sex: 'female',
+      weight: 135,
+      height: 66
+    }),
+    User.create({
+      firstName: 'Bright',
+      lastName: 'Future',
+      email: 'bright_future@email.com',
+      password: 'bright',
+      sex: 'other',
+      weight: 35,
+      height: 38
     })
   ])
 
-  const bicepCurls = await Exercise.create({name: 'Bicep Curl - Up'})
-  await Exercise.create({name: 'Squat'})
+  const [bicepCurls, squats] = await Promise.all([
+    Exercise.create({name: 'Bicep Curl - Up'}),
+    Exercise.create({name: 'Squat'})
+  ])
 
-  await Set.create({weight: 20, reps: 5})
+  const [set1, set2, set3, set4, set5, set6] = await Promise.all([
+    Set.create({weight: 20, reps: 5, completed: true}),
+    Set.create({weight: 5, reps: 12, completed: true}),
+    Set.create({weight: 65, reps: 15, completed: true}),
+    Set.create({weight: 40, reps: 6, completed: true}),
+    Set.create({weight: 80, reps: 8, completed: true}),
+    Set.create({weight: 75, reps: 9, completed: true})
+  ])
 
-  const user = await User.findByPk(1)
-  user.addSet(1)
+  // *** User #1 ASSOCIATIONS
+  await user1.addSet([set1, set2])
+  await bicepCurls.addSet(set1)
+  await squats.addSet(set2)
 
-  await bicepCurls.addSet(1) //bicep curl
+  // *** User #2 ASSOCIATIONS
+  await user2.addSet(set3)
+  await squats.addSet(set3)
 
-  console.log(`seeded ${users.length} users`)
+  // *** User #3 ASSOCIATIONS
+  await user3.addSet([set4, set5, set6])
+  await bicepCurls.addSet(set4)
+  await squats.addSet([set5, set6])
+
+  // console.log(`seeded ${userss.length} users`)
   console.log(`seeded successfully`)
 }
 
