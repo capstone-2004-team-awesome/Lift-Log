@@ -5,7 +5,7 @@ import ExerciseLog from './ExerciseLog'
 import * as tmPose from '@teachablemachine/pose'
 import axios from 'axios'
 
-const StartWorkout = () => {
+const StartWorkout = props => {
   const [currentSet, setCurrentSet] = useState({
     exerciseName: '',
     exerciseId: '',
@@ -17,7 +17,7 @@ const StartWorkout = () => {
   // More API functions here:
   // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/pose
 
-  // the link to your model provided by Teachable Machine export panel
+  // the link to Teachable Machine model
   const URL = 'https://teachablemachine.withgoogle.com/models/ByPivKL7e/'
   let model, webcam, ctx, labelContainer, maxPredictions
   let lastPrediction = {
@@ -135,7 +135,9 @@ const StartWorkout = () => {
 
   const stop = async () => {
     await webcam.stop()
+    console.log('redirect')
     // redirect to workout summary page
+    props.history.push('/summary')
   }
 
   const play = async () => {

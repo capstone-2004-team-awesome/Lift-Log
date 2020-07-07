@@ -10,21 +10,38 @@ async function seed() {
   const users = await Promise.all([
     User.create({firstName: 'Cody', email: 'cody@email.com', password: '123'}),
     User.create({
-      firstName: 'Cody',
+      firstName: 'Murphy',
       email: 'murphy@email.com',
       password: '123'
     })
   ])
 
   const bicepCurls = await Exercise.create({name: 'Bicep Curl - Up'})
-  await Exercise.create({name: 'Squat'})
+  const squats = await Exercise.create({name: 'Squat'})
 
   await Set.create({weight: 20, reps: 5})
 
   const user = await User.findByPk(1)
-  user.addSet(1)
+  await user.addSet(1)
 
   await bicepCurls.addSet(1) //bicep curl
+
+  //create 5 sets that Cody did
+  let setsArr = []
+  for (let i = 0; i < 5; i++) {
+    const weight = Math.floor(Math.random() * 50 + 1) * 5
+    const reps = Math.floor(Math.random() * 20 + 1)
+    setsArr.push({weight, reps, completed: true})
+  }
+
+  const sets = await Promise.all(
+    setsArr.map(set => {
+      return Set.create(set)
+    })
+  )
+
+  await user.addSets(sets)
+  await squats.addSets(sets)
 
   console.log(`seeded ${users.length} users`)
   console.log(`seeded successfully`)

@@ -2,6 +2,8 @@ const router = require('express').Router()
 const {Set, User, Exercise} = require('../db/models')
 module.exports = router
 
+// TODO: change api route to api/set instead of exercise??
+
 // update set (increment reps)
 // exercise/update/:exerciseId/:userId
 router.put('/update/:exerciseId/:userId', async (req, res, next) => {
@@ -9,7 +11,7 @@ router.put('/update/:exerciseId/:userId', async (req, res, next) => {
     // TODO: will need to add Date field later on
     const exerciseId = req.params.exerciseId
     const userId = req.params.userId
-    //
+
     const [set, created] = await Set.findOrCreate({
       where: {
         userId,
