@@ -20,7 +20,7 @@ import {
 
 const ExerciseLog = props => {
   const {exerciseName, exerciseId, reps, weight, time} = props.currentSet
-
+  console.log('current set in Ecercise log', props.currentSet)
   // all sets
   // const [log, setLog] = useState([])
 
