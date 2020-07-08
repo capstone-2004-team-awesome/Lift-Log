@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import Camera from './Camera'
 import {Grid} from '@material-ui/core'
 import ExerciseLog from './ExerciseLog'
@@ -13,13 +13,27 @@ const StartWorkout = props => {
     weight: '',
     time: ''
   })
+  const [webcam, setWebcam] = useState({})
+
+  // the link to Teachable Machine model
+  const URL = 'https://teachablemachine.withgoogle.com/models/ByPivKL7e/'
+  const modelURL = URL + 'model.json'
+  const metadataURL = URL + 'metadata.json'
+  const size = 600
+  let model, ctx, labelContainer, maxPredictions
+
+  useEffect(() => {
+    const defineWebcam = () => {
+      const flip = true // whether to flip the webcam
+      // Convenience function to setup a webcam
+      setWebcam(new tmPose.Webcam(size, size, flip)) // width, height, flip
+    }
+    defineWebcam()
+  }, [])
 
   // More API functions here:
   // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/pose
 
-  // the link to Teachable Machine model
-  const URL = 'https://teachablemachine.withgoogle.com/models/ByPivKL7e/'
-  let model, webcam, ctx, labelContainer, maxPredictions
   let lastPrediction = {
     'Bicep Curl - Up ': false,
     Squat: false
@@ -30,19 +44,13 @@ const StartWorkout = props => {
   }
 
   async function init() {
-    const modelURL = URL + 'model.json'
-    const metadataURL = URL + 'metadata.json'
-
     // load the model and metadata
     // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
     // Note: the pose library adds a tmPose object to your window (window.tmPose)
     model = await tmPose.load(modelURL, metadataURL)
     maxPredictions = model.getTotalClasses()
 
-    // Convenience function to setup a webcam
-    const size = 600
-    const flip = true // whether to flip the webcam
-    webcam = new tmPose.Webcam(size, size, flip) // width, height, flip
+    console.log('webcam', webcam)
     await webcam.setup() // request access to the webcam
     await webcam.play()
     window.requestAnimationFrame(loop)
@@ -94,12 +102,14 @@ const StartWorkout = props => {
           predictionTracker[exercise] === true
         ) {
           // TODO: create exercise object on state with id's so we only need one db call here.
+          // check current time compared to the last set
+          // if 30 seconds has passed, this is a new set. (axios.post)
+          // else axios.put
+
           const {data} = await axios.put('/api/exercise/update/1/1')
-          console.log(data)
+
           //data: {weight: null, reps: 41, createdAt: "2020-07-06T16:18:59.059Z", updatedAt: "2020-07-06T16:42:03.394Z", userId: 1, exerciseId: 1}
-          // compare set.time to Date.now()
-          // if 30 seconds has passed, this is a new set.
-          // reset state
+
           setCurrentSet({
             exerciseName: exercise,
             exerciseId: data.exerciseId,
@@ -110,7 +120,6 @@ const StartWorkout = props => {
         }
       }
     }
-
     // finally draw the poses
     drawPose(pose)
     lastPrediction = {...predictionTracker}
