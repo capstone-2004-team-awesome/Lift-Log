@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import Camera from './Camera'
 import {Grid} from '@material-ui/core'
 import ExerciseLog from './ExerciseLog'
@@ -13,13 +13,14 @@ const StartWorkout = props => {
     weight: '',
     time: ''
   })
-
-  // More API functions here:
-  // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/pose
+  const [webcam, setWebcam] = useState({})
 
   // the link to Teachable Machine model
   const URL = 'https://teachablemachine.withgoogle.com/models/ByPivKL7e/'
-  let model, webcam, ctx, labelContainer, maxPredictions
+  const modelURL = URL + 'model.json'
+  const metadataURL = URL + 'metadata.json'
+  const size = 600
+  let model, ctx, labelContainer, maxPredictions
   let lastPrediction = {
     'Bicep Curl - Up ': false,
     Squat: false
@@ -29,20 +30,25 @@ const StartWorkout = props => {
     Squat: false
   }
 
-  async function init() {
-    const modelURL = URL + 'model.json'
-    const metadataURL = URL + 'metadata.json'
+  useEffect(() => {
+    const defineWebcam = () => {
+      const flip = true // whether to flip the webcam
+      // Convenience function to setup a webcam
+      setWebcam(new tmPose.Webcam(size, size, flip)) // width, height, flip
+    }
+    defineWebcam()
+  }, [])
 
+  // More API functions here:
+  // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/pose
+
+  async function init() {
     // load the model and metadata
     // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
     // Note: the pose library adds a tmPose object to your window (window.tmPose)
     model = await tmPose.load(modelURL, metadataURL)
     maxPredictions = model.getTotalClasses()
 
-    // Convenience function to setup a webcam
-    const size = 600
-    const flip = true // whether to flip the webcam
-    webcam = new tmPose.Webcam(size, size, flip) // width, height, flip
     await webcam.setup() // request access to the webcam
     await webcam.play()
     window.requestAnimationFrame(loop)
@@ -75,6 +81,7 @@ const StartWorkout = props => {
     // prediction = [{className: "Neutral - Standing", probability: 1.1368564933439103e-15},
     //              {className: "Bicep Curl - Up ", probability: 1}]
 
+    // this section appends the probability of a pose to the DOM
     for (let i = 0; i < maxPredictions; i++) {
       const classPrediction =
         prediction[i].className + ': ' + prediction[i].probability.toFixed(2)
@@ -89,17 +96,32 @@ const StartWorkout = props => {
     for (let exercise in predictionTracker) {
       // *** if exercise boolean value has switched, make API call (exerciseId), to increase reps
       if (exercise !== 'Neutral - Standing') {
+        // we don't want to include neutral position in our log
         if (
+          // only records a rep if user is going from neutral position to bicep curl
           lastPrediction[exercise] === false &&
           predictionTracker[exercise] === true
         ) {
           // TODO: create exercise object on state with id's so we only need one db call here.
+          // check current time compared to the last set
+          // if 30 seconds has passed, this is a new set. (axios.post)
+          // else axios.put
+          // 30 seconds = 30000ms
+
+          // if (Date.now() - currentSet.time.getTime() >= 5000) {
+          //   const {data} = await axios.post('/api/exercise/create/1/1')
+          //   setCurrentSet({
+          //     exerciseName: exercise,
+          //     exerciseId: data.exerciseId,
+          //     reps: data.reps,
+          //     weight: data.weight,
+          //     time: data.updatedAt,
+          //   })
+          // } else {
+          //TODO: need to pass in exerciseID and userId to route instead of hardcode
+          // increment reps by 1
           const {data} = await axios.put('/api/exercise/update/1/1')
-          console.log(data)
-          //data: {weight: null, reps: 41, createdAt: "2020-07-06T16:18:59.059Z", updatedAt: "2020-07-06T16:42:03.394Z", userId: 1, exerciseId: 1}
-          // compare set.time to Date.now()
-          // if 30 seconds has passed, this is a new set.
-          // reset state
+
           setCurrentSet({
             exerciseName: exercise,
             exerciseId: data.exerciseId,
@@ -107,10 +129,15 @@ const StartWorkout = props => {
             weight: data.weight,
             time: data.updatedAt
           })
+
+          console.log('DATA', data)
+          // }
+          console.log('CURRENTSET', currentSet)
+
+          //data: {weight: null, reps: 41, createdAt: "2020-07-06T16:18:59.059Z", updatedAt: "2020-07-06T16:42:03.394Z", userId: 1, exerciseId: 1}
         }
       }
     }
-
     // finally draw the poses
     drawPose(pose)
     lastPrediction = {...predictionTracker}
