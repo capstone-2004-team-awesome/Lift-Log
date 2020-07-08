@@ -9,7 +9,8 @@ import {
   TableRow,
   TableBody,
   Table,
-  TableCell
+  TableCell,
+  TextField
 } from '@material-ui/core'
 import axios from 'axios'
 
@@ -18,6 +19,7 @@ const WorkoutSummary = () => {
   // date is a string in YYYY-MM-DD format
   // default date is today's date (will need to change this based on calendar selection)
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
+  const [updateMsg, setUpdateMsg] = useState('')
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -31,10 +33,28 @@ const WorkoutSummary = () => {
     fetchProjects()
   }, [])
 
+  const handleChange = async (event, setId) => {
+    const updatedSets = sets.map(set => {
+      if (setId === set.id) {
+        return {...set, [event.target.name]: event.target.value}
+      } else return set
+    })
+    setSets(updatedSets)
+    await axios.put(`/api/set/${setId}`, {
+      [event.target.name]: event.target.value
+    })
+    setUpdateMsg(`Updated ${event.target.name}!`)
+  }
+
   return (
     <div>
       <Typography variant="h2">Workout Summary</Typography>
       <Typography variant="h4">{date}</Typography>
+      <Typography variant="body1">
+        {updateMsg
+          ? updateMsg
+          : 'If exercise information was not recorded correctly, use input fields to modify.'}
+      </Typography>
       <Grid item xs={12}>
         <Card>
           <CardContent>
@@ -54,8 +74,22 @@ const WorkoutSummary = () => {
                         return (
                           <TableRow key={set.id}>
                             <TableCell>{set.exercise.name}</TableCell>
-                            <TableCell align="right">{set.reps}</TableCell>
-                            <TableCell align="right">{set.weight}</TableCell>
+                            <TableCell align="right">
+                              <TextField
+                                type="number"
+                                name="reps"
+                                value={set.reps}
+                                onChange={() => handleChange(event, set.id)}
+                              />
+                            </TableCell>
+                            <TableCell align="right">
+                              <TextField
+                                type="number"
+                                name="weight"
+                                value={set.weight}
+                                onChange={() => handleChange(event, set.id)}
+                              />
+                            </TableCell>
                           </TableRow>
                         )
                       })

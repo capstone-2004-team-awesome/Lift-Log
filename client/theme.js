@@ -1,6 +1,5 @@
 import zIndex from '@material-ui/core/styles/zIndex'
 
-// TODO: fix button props because this messes up the display in the menu bar
 const themeObj = {
   // can override the box shadow here and remove it so appbar buttons don't have it
   // right now removing box-shadow is done in Navbar makeStyles
@@ -15,6 +14,9 @@ const themeObj = {
     MuiButton: {
       variant: 'contained',
       color: 'primary'
+    },
+    MuiTextField: {
+      variant: 'outlined'
     }
   },
   zIndex: {

@@ -27,8 +27,29 @@ router.get('/:date', async (req, res, next) => {
         },
         include: [{model: Exercise}]
       })
-      if (!sets.length) res.send('No workouts found on that date.')
-      else res.json(sets)
+      if (!sets.length) res.status(400).send('No workouts found on that date.')
+      else res.status(200).json(sets)
+    } else {
+      res.sendStatus(404)
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.put('/:setId', async (req, res, next) => {
+  try {
+    if (req.user) {
+      const setId = req.params.setId
+      // const {weight, reps} = req.body
+      // req.body = {weight: XX, reps: XX}
+      const set = await Set.update(req.body, {
+        where: {id: setId},
+        returning: true,
+        plain: true
+      })
+      if (!set.length) res.status(304).send('There were no sets updated.')
+      else res.status(202).json(set)
     } else {
       res.sendStatus(404)
     }
