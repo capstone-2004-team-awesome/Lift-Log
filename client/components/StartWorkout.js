@@ -135,7 +135,6 @@ const StartWorkout = props => {
 
   const stop = async () => {
     await webcam.stop()
-    console.log('redirect')
     // redirect to workout summary page
     props.history.push('/summary')
   }

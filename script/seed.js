@@ -7,43 +7,62 @@ async function seed() {
   await db.sync({force: true})
   console.log('db synced!')
 
-  const users = await Promise.all([
-    User.create({firstName: 'Cody', email: 'cody@email.com', password: '123'}),
+  const [user1, user2, user3] = await Promise.all([
+    User.create({
+      firstName: 'Cody',
+      email: 'cody@email.com',
+      password: '123',
+      sex: 'male',
+      weight: 25,
+      height: 16
+    }),
     User.create({
       firstName: 'Murphy',
       email: 'murphy@email.com',
-      password: '123'
+      password: '123',
+      sex: 'female',
+      weight: 135,
+      height: 66
+    }),
+    User.create({
+      firstName: 'Bright',
+      lastName: 'Future',
+      email: 'bright_future@email.com',
+      password: 'bright',
+      sex: 'other',
+      weight: 35,
+      height: 38
     })
   ])
 
-  const bicepCurls = await Exercise.create({name: 'Bicep Curl - Up'})
-  const squats = await Exercise.create({name: 'Squat'})
+  const [bicepCurls, squats] = await Promise.all([
+    Exercise.create({name: 'Bicep Curl - Up'}),
+    Exercise.create({name: 'Squat'})
+  ])
 
-  await Set.create({weight: 20, reps: 5})
+  const [set1, set2, set3, set4, set5, set6] = await Promise.all([
+    Set.create({weight: 20, reps: 5, completed: true}),
+    Set.create({weight: 5, reps: 12, completed: true}),
+    Set.create({weight: 65, reps: 15, completed: true}),
+    Set.create({weight: 40, reps: 6, completed: true}),
+    Set.create({weight: 80, reps: 8, completed: true}),
+    Set.create({weight: 75, reps: 9, completed: true})
+  ])
+  
+  // *** User #1 ASSOCIATIONS
+  await user1.addSet([set1, set2])
+  await bicepCurls.addSet(set1)
+  await squats.addSet(set2)
 
-  const user = await User.findByPk(1)
-  await user.addSet(1)
+  // *** User #2 ASSOCIATIONS
+  await user2.addSet(set3)
+  await squats.addSet(set3)
 
-  await bicepCurls.addSet(1) //bicep curl
+  // *** User #3 ASSOCIATIONS
+  await user3.addSet([set4, set5, set6])
+  await bicepCurls.addSet(set4)
+  await squats.addSet([set5, set6])
 
-  //create 5 sets that Cody did
-  let setsArr = []
-  for (let i = 0; i < 5; i++) {
-    const weight = Math.floor(Math.random() * 50 + 1) * 5
-    const reps = Math.floor(Math.random() * 20 + 1)
-    setsArr.push({weight, reps, completed: true})
-  }
-
-  const sets = await Promise.all(
-    setsArr.map(set => {
-      return Set.create(set)
-    })
-  )
-
-  await user.addSets(sets)
-  await squats.addSets(sets)
-
-  console.log(`seeded ${users.length} users`)
   console.log(`seeded successfully`)
 }
 

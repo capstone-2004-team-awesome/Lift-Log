@@ -32,6 +32,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 // import PersonAddIcon from '@material-ui/icons/PersonAdd'
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled'
+import HomeIcon from '@material-ui/icons/Home'
 //#endregion
 
 const drawerWidth = 240
@@ -101,7 +102,12 @@ const Navbar = ({handleClick, isLoggedIn}, props) => {
         <ListItem>
           <Typography variant="overline">WORKOUTS</Typography>
         </ListItem>
-
+        <ListItem button component={Link} to="/home">
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="Home" />
+        </ListItem>
         <ListItem button component={Link} to="/start">
           <ListItemIcon>
             <PlayCircleFilledIcon />
