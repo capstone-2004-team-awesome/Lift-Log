@@ -27,8 +27,44 @@ router.get('/:date', async (req, res, next) => {
         },
         include: [{model: Exercise}]
       })
-      if (!sets.length) res.send('No workouts found on that date.')
-      else res.json(sets)
+      if (!sets.length) res.status(400).send('No workouts found on that date.')
+      else res.status(200).json(sets)
+    } else {
+      res.sendStatus(404)
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.put('/:setId', async (req, res, next) => {
+  try {
+    if (req.user) {
+      const setId = req.params.setId
+      const set = await Set.update(req.body, {
+        where: {id: setId},
+        returning: true,
+        plain: true
+      })
+      if (!set.length) res.status(304).send('There were no sets updated.')
+      else res.status(202).json(set)
+    } else {
+      res.sendStatus(404)
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.delete('/:setId', async (req, res, next) => {
+  try {
+    if (req.user) {
+      const setId = req.params.setId
+      const set = await Set.destroy({
+        where: {id: setId}
+      })
+      if (!set) res.status(400).send('Set not found. Nothing to delete.')
+      else res.status(204).json(set)
     } else {
       res.sendStatus(404)
     }
