@@ -31,6 +31,9 @@ const User = db.define('user', {
   height: {
     type: Sequelize.INTEGER
   },
+  goal: {
+    type: Sequelize.INTEGER
+  },
   salt: {
     type: Sequelize.STRING,
     // Making `.salt` act like a function hides it when serializing to JSON.
