@@ -10,9 +10,13 @@ import {
   TableBody,
   Table,
   TableCell,
-  TextField
+  TextField,
+  IconButton,
+  Snackbar
 } from '@material-ui/core'
 import axios from 'axios'
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
+import MuiAlert from '@material-ui/lab/Alert'
 
 const WorkoutSummary = () => {
   const [sets, setSets] = useState([])
@@ -20,6 +24,7 @@ const WorkoutSummary = () => {
   // default date is today's date (will need to change this based on calendar selection)
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
   const [updateMsg, setUpdateMsg] = useState('')
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -44,6 +49,20 @@ const WorkoutSummary = () => {
       [event.target.name]: event.target.value
     })
     setUpdateMsg(`Updated ${event.target.name}!`)
+    setOpen(true)
+  }
+
+  const handleDelete = async setId => {
+    const updatedSets = sets.filter(set => set.id !== setId)
+    setSets(updatedSets)
+    await axios.delete(`/api/set/${setId}`)
+  }
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setOpen(false)
   }
 
   return (
@@ -51,9 +70,8 @@ const WorkoutSummary = () => {
       <Typography variant="h2">Workout Summary</Typography>
       <Typography variant="h4">{date}</Typography>
       <Typography variant="body1">
-        {updateMsg
-          ? updateMsg
-          : 'If exercise information was not recorded correctly, use input fields to modify.'}
+        If exercise information was not recorded correctly, use input fields to
+        modify.
       </Typography>
       <Grid item xs={12}>
         <Card>
@@ -66,6 +84,7 @@ const WorkoutSummary = () => {
                     <TableCell>Exercise</TableCell>
                     <TableCell align="right"># Of Reps</TableCell>
                     <TableCell align="right">Weight (lbs)</TableCell>
+                    <TableCell align="right" />
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -89,6 +108,31 @@ const WorkoutSummary = () => {
                                 value={set.weight}
                                 onChange={() => handleChange(event, set.id)}
                               />
+                            </TableCell>
+                            <TableCell>
+                              <IconButton
+                                aria-label="delete"
+                                onClick={() => handleDelete(set.id)}
+                              >
+                                <DeleteForeverIcon />
+                              </IconButton>
+                              <Snackbar
+                                anchorOrigin={{
+                                  vertical: 'top',
+                                  horizontal: 'right'
+                                }}
+                                open={open}
+                                autoHideDuration={6000}
+                                onClose={handleClose}
+                              >
+                                <MuiAlert
+                                  onClose={handleClose}
+                                  severity="success"
+                                  variant="filled"
+                                >
+                                  {updateMsg}
+                                </MuiAlert>
+                              </Snackbar>
                             </TableCell>
                           </TableRow>
                         )
