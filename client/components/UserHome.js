@@ -1,8 +1,9 @@
-import React from 'react'
+import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-
 import Calendar from 'react-calendar'
+import WorkoutSummary from './WorkoutSummary'
+import {Redirect} from 'react-router-dom'
 // ^ onChange	Function called when the user clicks an item (day on month view, month on year view and so on) on the most detailed view available.	n/a	(value, event) => alert('New date is: ', value)
 // ^ onViewChange	Function called when the user navigates from one view to another using drill up button or by clicking a tile.	n/a	({ activeStartDate, view }) => alert('New view is: ', view)
 // ^ onClickDay	Function called when the user clicks a day.	n/a	(value, event) => alert('Clicked day: ', value)
@@ -18,11 +19,22 @@ import Calendar from 'react-calendar'
  */
 export const UserHome = props => {
   const {firstName} = props
+  const [date, setDate] = useState(null)
 
-  return (
+  const handleChange = selectedDate => {
+    try {
+      setDate(selectedDate)
+    } catch (error) {
+      console.log('error getting date!')
+    }
+  }
+
+  return date ? (
+    <Redirect to={{pathname: '/summary', state: {date}}} />
+  ) : (
     <div>
       <h2>Welcome, {firstName}!</h2>
-      <Calendar calendarType="US" />
+      <Calendar calendarType="US" onChange={handleChange} />
       <h5>You've logged 3 workouts this week, that's awesome!</h5>
       <br />
       <h3>Your Progress: </h3>
