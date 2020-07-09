@@ -8,7 +8,6 @@ module.exports = router
 // exercise/update/:exerciseId/:userId
 router.put('/update/:exerciseId/:userId', async (req, res, next) => {
   try {
-    // TODO: will need to add Date field later on
     const exerciseId = req.params.exerciseId
     const userId = req.params.userId
 
@@ -17,7 +16,13 @@ router.put('/update/:exerciseId/:userId', async (req, res, next) => {
         userId,
         exerciseId,
         completed: false
-      }
+      },
+      include: [
+        {
+          model: Exercise,
+          attributes: ['name']
+        }
+      ]
     })
     // if set is found - increment reps
     if (!created) {
@@ -29,9 +34,9 @@ router.put('/update/:exerciseId/:userId', async (req, res, next) => {
   }
 })
 
-// create a new set
-// exercise/create/:exerciseId/:userId
-router.post('/create/:exerciseId/:userId', async (req, res, next) => {
+// set = completed
+// exercise/complete/:exerciseId/:userId
+router.put('/complete/:exerciseId/:userId', async (req, res, next) => {
   try {
     const exerciseId = req.params.exerciseId
     const userId = req.params.userId
@@ -47,16 +52,33 @@ router.post('/create/:exerciseId/:userId', async (req, res, next) => {
     if (prevSet) {
       await prevSet.update({completed: true})
     }
+    res.sendStatus(202)
+  } catch (error) {
+    next(error)
+  }
+})
+
+// create a new set
+// exercise/create/:exerciseId/:userId
+router.post('/create/:exerciseName/:userId', async (req, res, next) => {
+  try {
+    const exerciseName = req.params.exerciseName
+    const userId = req.params.userId
 
     // TODO: get weight from previous set here?
 
-    const exercise = await Exercise.findByPk(exerciseId)
+    const exercise = await Exercise.findOne({
+      where: {
+        name: exerciseName
+      }
+    })
     const user = await User.findByPk(userId)
 
     const set = await user.createSet()
 
-    const updatedSet = await exercise.addSet(set)
+    await exercise.addSet(set)
 
+    const updatedSet = [exercise, set]
     res.json(updatedSet)
   } catch (err) {
     next(err)

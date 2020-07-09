@@ -36,7 +36,7 @@ async function seed() {
   ])
 
   const [bicepCurls, squats] = await Promise.all([
-    Exercise.create({name: 'Bicep Curl - Up'}),
+    Exercise.create({name: 'Bicep Curl'}),
     Exercise.create({name: 'Squat'})
   ])
 
@@ -48,7 +48,7 @@ async function seed() {
     Set.create({weight: 80, reps: 8, completed: true}),
     Set.create({weight: 75, reps: 9, completed: true})
   ])
-  
+
   // *** User #1 ASSOCIATIONS
   await user1.addSet([set1, set2])
   await bicepCurls.addSet(set1)

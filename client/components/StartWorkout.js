@@ -1,18 +1,13 @@
+/* eslint-disable complexity */
 import React, {useState, useEffect} from 'react'
 import Camera from './Camera'
 import {Grid} from '@material-ui/core'
 import ExerciseLog from './ExerciseLog'
 import * as tmPose from '@teachablemachine/pose'
-import axios from 'axios'
+import {connect} from 'react-redux'
+import {createSet, incrementReps, completeSet} from '../store/set'
 
 const StartWorkout = props => {
-  const [currentSet, setCurrentSet] = useState({
-    exerciseName: '',
-    exerciseId: '',
-    reps: '',
-    weight: '',
-    time: ''
-  })
   const [webcam, setWebcam] = useState({})
 
   // the link to Teachable Machine model
@@ -22,11 +17,11 @@ const StartWorkout = props => {
   const size = 600
   let model, ctx, labelContainer, maxPredictions
   let lastPrediction = {
-    'Bicep Curl - Up ': false,
+    'Bicep Curl': false,
     Squat: false
   }
   let predictionTracker = {
-    'Bicep Curl - Up ': false,
+    'Bicep Curl': false,
     Squat: false
   }
 
@@ -102,39 +97,20 @@ const StartWorkout = props => {
           lastPrediction[exercise] === false &&
           predictionTracker[exercise] === true
         ) {
-          // TODO: create exercise object on state with id's so we only need one db call here.
-          // check current time compared to the last set
-          // if 30 seconds has passed, this is a new set. (axios.post)
-          // else axios.put
-          // 30 seconds = 30000ms
-
-          // if (Date.now() - currentSet.time.getTime() >= 5000) {
-          //   const {data} = await axios.post('/api/exercise/create/1/1')
-          //   setCurrentSet({
-          //     exerciseName: exercise,
-          //     exerciseId: data.exerciseId,
-          //     reps: data.reps,
-          //     weight: data.weight,
-          //     time: data.updatedAt,
-          //   })
-          // } else {
-          //TODO: need to pass in exerciseID and userId to route instead of hardcode
-          // increment reps by 1
-          const {data} = await axios.put('/api/exercise/update/1/1')
-
-          setCurrentSet({
-            exerciseName: exercise,
-            exerciseId: data.exerciseId,
-            reps: data.reps,
-            weight: data.weight,
-            time: data.updatedAt
-          })
-
-          console.log('DATA', data)
-          // }
-          console.log('CURRENTSET', currentSet)
-
-          //data: {weight: null, reps: 41, createdAt: "2020-07-06T16:18:59.059Z", updatedAt: "2020-07-06T16:42:03.394Z", userId: 1, exerciseId: 1}
+          if (!props.set.exerciseId) {
+            props.createSet(exercise, props.userId)
+          } else if (exercise === props.set.exerciseName) {
+            //TODO: Evaluate time between reps to determine if a new set should be created.
+            // check current time compared to the last set
+            // if 30 seconds (30000ms) has passed, this is a new set. (createSet())
+            // else {incrementReps()}
+            // if (Date.now() - props.set.updatedAt.getTime() >= 5000) {}
+            props.incrementReps(props.exerciseId, props.userId)
+          } else {
+            // complete set & start new set
+            props.completeSet(props.exerciseId, props.userId)
+            props.createSet(exercise, props.userId)
+          }
         }
       }
     }
@@ -177,11 +153,31 @@ const StartWorkout = props => {
           <Camera init={init} pause={pause} stop={stop} play={play} />
         </Grid>
         <Grid item sm={6}>
-          <ExerciseLog currentSet={currentSet} />
+          <ExerciseLog currentSet={props.set} />
         </Grid>
       </Grid>
     </div>
   )
 }
 
-export default StartWorkout
+const mapState = state => {
+  console.log('Mapping State to Props:', state)
+  return {
+    set: state.set,
+    userId: state.user.id
+  }
+}
+
+const mapDispatch = dispatch => {
+  console.log('Mapping dispatch to props')
+  return {
+    createSet: (exerciseName, userId) =>
+      dispatch(createSet(exerciseName, userId)),
+    incrementReps: (exerciseId, userId) =>
+      dispatch(incrementReps(exerciseId, userId)),
+    completeSet: (exerciseId, userId) =>
+      dispatch(completeSet(exerciseId, userId))
+  }
+}
+
+export default connect(mapState, mapDispatch)(StartWorkout)
