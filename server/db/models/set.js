@@ -3,7 +3,8 @@ const db = require('../db')
 
 const Set = db.define('set', {
   weight: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
+    defaultValue: 0
   },
   reps: {
     type: Sequelize.INTEGER,
