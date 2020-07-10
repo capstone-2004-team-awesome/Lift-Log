@@ -48,15 +48,15 @@ const StartWorkout = props => {
     defineWebcam()
   }, [])
 
-  useEffect(
-    () => {
-      return async () => {
-        console.log('STOP WEBCAM')
-        if (webcam) await webcam.stop() // stop webcam when component unmounts
-      }
-    },
-    [webcam]
-  )
+  // useEffect(
+  //   () => {
+  //     return async () => {
+  //       console.log('STOP WEBCAM')
+  //       if (webcam) await webcam.stop() // stop webcam when component unmounts
+  //     }
+  //   },
+  //   [webcam]
+  // )
 
   // the link to Teachable Machine model
   let ctx, labelContainer, maxPredictions
