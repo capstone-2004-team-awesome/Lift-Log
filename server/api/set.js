@@ -3,10 +3,10 @@ const {Set, Exercise} = require('../db/models')
 const {Op} = require('sequelize')
 module.exports = router
 
-// get all sets for a user
+// get all sets for a user on a specific date
 // /api/set/:date
+// :date is in YYYY-MM-DD format
 router.get('/:date', async (req, res, next) => {
-  // :date is in YYYY-MM-DD format
   try {
     if (req.user) {
       const userId = req.user.id
@@ -27,8 +27,7 @@ router.get('/:date', async (req, res, next) => {
         },
         include: [{model: Exercise}]
       })
-      if (!sets.length) res.status(400).send('No workouts found on that date.')
-      else res.status(200).json(sets)
+      res.status(200).json(sets)
     } else {
       res.sendStatus(404)
     }
