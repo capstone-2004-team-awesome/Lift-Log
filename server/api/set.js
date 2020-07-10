@@ -20,7 +20,7 @@ router.get('/:date', async (req, res, next) => {
       const sets = await Set.findAll({
         where: {
           userId,
-          createdAt: {
+          date: {
             [Op.lt]: new Date(dateInMs + 60 * 60 * 24 * 1000), // plus one day
             [Op.gte]: new Date(dateInMs)
           }
