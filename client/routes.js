@@ -40,7 +40,7 @@ class Routes extends Component {
           </Switch>
         )}
         {/* Displays our Login component as a fallback */}
-        <Route component={StartWorkout} />
+        {/* <Route component={StartWorkout} /> */}
       </Switch>
     )
   }
