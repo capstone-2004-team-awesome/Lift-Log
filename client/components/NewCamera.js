@@ -1,14 +1,16 @@
-/* eslint-disable complexity */
-import React, {useState, useEffect} from 'react'
-import Camera from './Camera'
-import {Grid} from '@material-ui/core'
-import ExerciseLog from './ExerciseLog'
+import React, {useState, useEffect, useContext} from 'react'
+import {Button, Card} from '@material-ui/core'
 import * as tmPose from '@teachablemachine/pose'
-import {connect} from 'react-redux'
-import {createSet, incrementReps, completeSet} from '../store/set'
 
-const StartWorkout = props => {
+import {StoreContext} from '../context/StoreContext'
+import {types} from '../context/reducers'
+
+const NewCamera = props => {
   const [webcam, setWebcam] = useState({})
+
+  const {state, dispatch} = useContext(StoreContext)
+  let predictionTracker = props.predictionTracker
+  console.log('Camera Props: ', predictionTracker)
 
   // the link to Teachable Machine model
   const URL = 'https://teachablemachine.withgoogle.com/models/ByPivKL7e/'
@@ -16,14 +18,6 @@ const StartWorkout = props => {
   const metadataURL = URL + 'metadata.json'
   const size = 600
   let model, ctx, labelContainer, maxPredictions
-  let lastPrediction = {
-    'Bicep Curl': false,
-    Squat: false
-  }
-  let predictionTracker = {
-    'Bicep Curl': false,
-    Squat: false
-  }
 
   useEffect(() => {
     const defineWebcam = () => {
@@ -37,7 +31,6 @@ const StartWorkout = props => {
   // More API functions here:
   // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/pose
 
-  // *** should be in a useEffect hook, so the model & webcam setup are preserved between renders?
   async function init() {
     // load the model and metadata
     // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
@@ -50,22 +43,31 @@ const StartWorkout = props => {
     window.requestAnimationFrame(loop)
 
     // append/get elements to the DOM
+    // TODO: remove from DEPLOYED / FINAL version
     const canvas = document.getElementById('canvas')
     canvas.width = size
     canvas.height = size
     ctx = canvas.getContext('2d')
     labelContainer = document.getElementById('label-container')
+
     for (let i = 0; i < maxPredictions; i++) {
       // and class labels
       labelContainer.appendChild(document.createElement('div'))
     }
   }
 
-  // *** loop relies upon predictionTracker state?
   async function loop() {
     webcam.update() // update the webcam frame
-    await predict()
-    window.requestAnimationFrame(loop)
+
+    // *** conditional to STOP infinite loop!
+    // console.log("LOOP....", state.globalValues.isWorkoutOver)
+    if (
+      !state.globalValues.isWorkoutOver &&
+      !state.globalValues.isWorkoutPaused
+    ) {
+      await predict()
+      window.requestAnimationFrame(loop)
+    }
   }
 
   async function predict() {
@@ -75,50 +77,36 @@ const StartWorkout = props => {
     // Prediction 2: run input through teachable machine classification model
     const prediction = await model.predict(posenetOutput)
     // *** prediction object sample:
-    // prediction = [{className: "Neutral - Standing", probability: 1.1368564933439103e-15},
+    // prediction = [{className: "Neutral - Standing", probability: 1.136856439103e-15},
     //              {className: "Bicep Curl - Up ", probability: 1}]
+
+    let newPrediction = {
+      'Bicep Curl': null,
+      Squat: null
+    }
 
     // this section appends the probability of a pose to the DOM
     for (let i = 0; i < maxPredictions; i++) {
       const classPrediction =
         prediction[i].className + ': ' + prediction[i].probability.toFixed(2)
       labelContainer.childNodes[i].innerHTML = classPrediction
-      if (prediction[i].probability > 0.95) {
-        predictionTracker[prediction[i].className] = true
-      } else {
-        predictionTracker[prediction[i].className] = false
-      }
-    }
 
-    for (let exercise in predictionTracker) {
-      // *** if exercise boolean value has switched, make API call (exerciseId), to increase reps
-      if (exercise !== 'Neutral - Standing') {
-        // we don't want to include neutral position in our log
-        if (
-          // only records a rep if user is going from neutral position to bicep curl
-          lastPrediction[exercise] === false &&
-          predictionTracker[exercise] === true
-        ) {
-          if (!props.set.exerciseId) {
-            props.createSet(exercise, props.userId)
-          } else if (exercise === props.set.exerciseName) {
-            //TODO: Evaluate time between reps to determine if a new set should be created.
-            // check current time compared to the last set
-            // if 30 seconds (30000ms) has passed, this is a new set. (createSet())
-            // else {incrementReps()}
-            // if (Date.now() - props.set.updatedAt.getTime() >= 5000) {}
-            props.incrementReps(props.exerciseId, props.userId)
-          } else {
-            // complete set & start new set
-            props.completeSet(props.exerciseId, props.userId)
-            props.createSet(exercise, props.userId)
-          }
+      // *** CREATE predictionTracker
+      if (prediction[i].className !== 'Neutral - Standing') {
+        if (prediction[i].probability > 0.95) {
+          newPrediction[prediction[i].className] = true
+        } else {
+          newPrediction[prediction[i].className] = false
         }
       }
     }
     // finally draw the poses
     drawPose(pose)
-    lastPrediction = {...predictionTracker}
+
+    // console.log("predictionTracker in predict(): ", predictionTracker)
+    await props.evaluatePrediction(predictionTracker, newPrediction)
+
+    predictionTracker = {...newPrediction}
   }
 
   // TODO: if process.env.NODE_ENV !== 'production' don't run drawPose()
@@ -136,50 +124,42 @@ const StartWorkout = props => {
 
   const pause = async () => {
     await webcam.pause()
+    dispatch({type: types.UPDATE_WORKOUT_PAUSE})
   }
 
   const stop = async () => {
     await webcam.stop()
+    dispatch({type: types.UPDATE_WORKOUT_STATUS, newStatus: true})
     // redirect to workout summary page
     props.history.push('/summary')
   }
 
   const play = async () => {
     await webcam.play()
+    // TODO: toggle pause works for predict() loop... but not for camera
+    // dispatch({type: types.UPDATE_WORKOUT_PAUSE})
   }
 
   return (
-    <div>
-      <Grid container spacing={4}>
-        <Grid item sm={6}>
-          <Camera init={init} pause={pause} stop={stop} play={play} />
-        </Grid>
-        <Grid item sm={6}>
-          <ExerciseLog currentSet={props.set} />
-        </Grid>
-      </Grid>
-    </div>
+    <Card style={{width: '100%'}}>
+      <Button type="button" onClick={() => init()}>
+        Start
+      </Button>
+      <Button type="button" onClick={() => play()}>
+        Play
+      </Button>
+      <Button type="button" onClick={() => pause()}>
+        Pause
+      </Button>
+      <Button type="button" onClick={() => stop()}>
+        Stop
+      </Button>
+      <div>
+        <canvas id="canvas" style={{width: '600px', height: '600px'}} />
+      </div>
+      <div id="label-container" />
+    </Card>
   )
 }
 
-const mapState = state => {
-  console.log('Mapping State to Props:', state)
-  return {
-    set: state.set,
-    userId: state.user.id
-  }
-}
-
-const mapDispatch = dispatch => {
-  console.log('Mapping dispatch to props')
-  return {
-    createSet: (exerciseName, userId) =>
-      dispatch(createSet(exerciseName, userId)),
-    incrementReps: (exerciseId, userId) =>
-      dispatch(incrementReps(exerciseId, userId)),
-    completeSet: (exerciseId, userId) =>
-      dispatch(completeSet(exerciseId, userId))
-  }
-}
-
-export default connect(mapState, mapDispatch)(StartWorkout)
+export default NewCamera

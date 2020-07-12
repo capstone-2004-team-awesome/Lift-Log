@@ -9,11 +9,16 @@ import App from './app'
 // establishes socket connection
 import './socket'
 
+// *** React Hooks Store
+import {StoreProvider} from './context/StoreContext'
+
 ReactDOM.render(
-  <Provider store={store}>
-    <Router history={history}>
-      <App />
-    </Router>
-  </Provider>,
+  <StoreProvider>
+    <Provider store={store}>
+      <Router history={history}>
+        <App />
+      </Router>
+    </Provider>
+  </StoreProvider>,
   document.getElementById('app')
 )

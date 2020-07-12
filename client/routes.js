@@ -9,6 +9,8 @@ import {
   UserProfile,
   UserHome,
   StartWorkout,
+  TheWorkout,
+  NewWorkout,
   WorkoutSummary
 } from './components'
 import {me} from './store'
@@ -35,7 +37,15 @@ class Routes extends Component {
             {/* Routes placed here are only available after logging in */}
             <Route path="/profile" component={UserProfile} />
             <Route path="/home" component={UserHome} />
-            <Route path="/start" component={StartWorkout} />
+            {/* <Route path="/start" component={StartWorkout} /> */}
+            {/* <Route path="/start" component={TheWorkout} /> */}
+            <Route path="/start" component={NewWorkout} />
+            {/* <Route
+              path='/start'
+              render={(props) => (
+                <TheWorkout {...props} theUser={this.props.id} />
+              )}
+            /> */}
             <Route path="/summary" component={WorkoutSummary} />
           </Switch>
         )}
@@ -53,7 +63,8 @@ const mapState = state => {
   return {
     // Being 'logged in' for our purposes will be defined has having a state.user that has a truthy id.
     // Otherwise, state.user will be an empty object, and state.user.id will be falsey
-    isLoggedIn: !!state.user.id
+    isLoggedIn: !!state.user.id,
+    id: state.user.id
   }
 }
 

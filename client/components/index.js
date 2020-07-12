@@ -10,3 +10,6 @@ export {default as UserHome} from './UserHome'
 export {default as Camera} from './Camera'
 export {default as StartWorkout} from './StartWorkout'
 export {default as WorkoutSummary} from './WorkoutSummary'
+
+export {default as TheWorkout} from './TheWorkout'
+export {default as NewWorkout} from './NewWorkout'
