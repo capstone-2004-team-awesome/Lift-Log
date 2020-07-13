@@ -4,6 +4,7 @@ import {connect} from 'react-redux'
 import Calendar from 'react-calendar'
 import WorkoutSummary from './WorkoutSummary'
 import {Redirect} from 'react-router-dom'
+import ProgressBar from './ProgressBar'
 // ^ onChange	Function called when the user clicks an item (day on month view, month on year view and so on) on the most detailed view available.	n/a	(value, event) => alert('New date is: ', value)
 // ^ onViewChange	Function called when the user navigates from one view to another using drill up button or by clicking a tile.	n/a	({ activeStartDate, view }) => alert('New view is: ', view)
 // ^ onClickDay	Function called when the user clicks a day.	n/a	(value, event) => alert('Clicked day: ', value)
@@ -39,6 +40,7 @@ export const UserHome = props => {
       <br />
       <h3>Your Progress: </h3>
       <p>Progress Bar (eventually)</p>
+      <ProgressBar />
     </div>
   )
 }
