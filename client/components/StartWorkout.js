@@ -134,13 +134,13 @@ const StartWorkout = props => {
             const {data} = await axios.post(
               `/api/exercise/create/${exercise}/${props.userId}`
             )
-            const [exerciseInfo, set] = data
+            const [exerciseInfo, setInfo] = data
             setLogger = {
               exerciseName: exerciseInfo.name,
               exerciseId: exerciseInfo.id,
-              reps: set.reps,
-              weight: set.weight,
-              updatedAt: set.updatedAt
+              reps: setInfo.reps,
+              weight: setInfo.weight,
+              updatedAt: setInfo.updatedAt
             }
 
             console.log('AFTER CREATING NEW SET => ', setLogger)
@@ -151,19 +151,17 @@ const StartWorkout = props => {
             setLogger = {...setLogger, reps: data.reps}
             console.log('AFTER INCREMENTING => ', setLogger)
           } else {
-            await axios.put(
-              `/api/exercise/complete/${setLogger.exerciseId}/${props.userId}`
-            )
+            await axios.put(`/api/exercise/complete/${props.userId}`)
             const {data} = await axios.post(
               `/api/exercise/create/${exercise}/${props.userId}`
             )
-            const [exerciseInfo, set] = data
+            const [exerciseInfo, setInfo] = data
             setLogger = {
               exerciseName: exerciseInfo.name,
               exerciseId: exerciseInfo.id,
-              reps: set.reps,
-              weight: set.weight,
-              updatedAt: set.updatedAt
+              reps: setInfo.reps,
+              weight: setInfo.weight,
+              updatedAt: setInfo.updatedAt
             }
           }
 
@@ -205,6 +203,13 @@ const StartWorkout = props => {
   }
 
   const stop = async () => {
+    console.log(
+      'STOP CAMERA AND MARK COMPLETE',
+      setLogger,
+      'user id',
+      props.userId
+    )
+    await axios.put(`/api/exercise/complete/${props.userId}`)
     await webcam.stop()
     // redirect to workout summary page
     props.history.push('/summary')

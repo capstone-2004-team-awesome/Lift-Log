@@ -35,16 +35,14 @@ router.put('/update/:exerciseId/:userId', async (req, res, next) => {
 })
 
 // set = completed
-// exercise/complete/:exerciseId/:userId
-router.put('/complete/:exerciseId/:userId', async (req, res, next) => {
+// exercise/complete/:userId
+router.put('/complete/:userId', async (req, res, next) => {
   try {
-    const exerciseId = req.params.exerciseId
     const userId = req.params.userId
 
     const prevSet = await Set.findOne({
       where: {
         userId,
-        exerciseId,
         completed: false
       }
     })

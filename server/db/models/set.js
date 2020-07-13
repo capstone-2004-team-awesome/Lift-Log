@@ -13,6 +13,10 @@ const Set = db.define('set', {
   completed: {
     type: Sequelize.BOOLEAN,
     defaultValue: false
+  },
+  date: {
+    type: Sequelize.DATE,
+    defaultValue: new Date()
   }
 })
 
