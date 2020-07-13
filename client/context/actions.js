@@ -5,121 +5,89 @@ import {
   //   createNewSet,
   evaluatePrediction
 } from '../utilities/workout'
+import axios from 'axios'
+// import { nextFrame } from '@tensorflow/tfjs'
 
 // const keys = {
 //   CURL: 1,
 //   SQUAT: 2
 // }
+// function createdSet(set) {
+//   return({
+//     type: types.CREATED_SET,
+//     set
+//   })
+// }
+// function incrementedReps(reps) {
+//   return ({
+//     type: types.INCREMENTED_REPS,
+//     reps
+//   })
+// }
 
 export const useActions = (state, dispatch) => {
-  //#region    updateSnakePosition    OLD TEMP CODE
-  // function updateSnakePosition(event) {
-  // 	const { globalValues, players } = state
-  // 	const { unit } = globalValues
-  // 	const {
-  // 		LEFT,
-  // 		UP,
-  // 		RIGHT,
-  // 		DOWN,
-  // 		arrowUp,
-  // 		arrowRight,
-  // 		arrowDown,
-  // 		arrowLeft
-  // 	} = keys
-
-  // 	const keyCode = event
-  // 		? event.keyCode
-  // 			? event.keyCode
-  // 			: event.predictType
-  // 		: null
-
-  // 	switch(keyCode) {
-  // 		case LEFT:
-  // 		case arrowLeft:
-  // 			dispatch({
-  // 				type: types.MOVE_SNAKE,
-  // 				payload: {
-  // 					isBackWrapping: checkDirection(directions.LEFT, players[0].trails),
-  // 					playerId: 0,
-  // 					xVelocity: -1 * unit,
-  // 					yVelocity: 0
-  // 				}
-  // 			})
-  // 			return
-  // 		case UP:
-  // 		case arrowUp:
-  // 			dispatch({
-  // 				type: types.MOVE_SNAKE,
-  // 				payload: {
-  // 					isBackWrapping: checkDirection(directions.UP, players[0].trails),
-  // 					playerId: 0,
-  // 					xVelocity: 0,
-  // 					yVelocity: -1 * unit,
-  // 				}
-  // 			})
-  // 			return
-  // 		case RIGHT:
-  // 		case arrowRight:
-  // 			dispatch({
-  // 				type: types.MOVE_SNAKE,
-  // 				payload: {
-  // 					isBackWrapping: checkDirection(directions.RIGHT, players[0].trails),
-  // 					playerId: 0,
-  // 					xVelocity: 1 * unit,
-  // 					yVelocity: 0
-  // 				}
-  // 			})
-  // 			return
-  // 		case DOWN:
-  // 		case arrowDown:
-  // 			dispatch({
-  // 				type: types.MOVE_SNAKE,
-  // 				payload: {
-  // 					isBackWrapping: checkDirection(directions.DOWN, players[0].trails),
-  // 					playerId: 0,
-  // 					xVelocity: 0,
-  // 					yVelocity: 1 * unit,
-  // 				}
-  // 			})
-  // 			return
-  // 		default:
-  // 			dispatch({
-  // 				type: types.MOVE_SNAKE,
-  // 				payload: {
-  // 					playerId: 0,
-  // 					keepMoving: true
-  // 				}
-  // 			})
-  // 			return
-  // 	}
-  // }
-  //#endregion
-
-  function updatePredictionTracker(newPrediction) {
+  function updatePredictionTracker(newPrediction, exercise) {
     console.log('in ACTION =>', newPrediction)
     const {globalValues, sets, currentSet, predictionTracker} = state
-    const howToUpdate = evaluatePrediction(
-      currentSet,
-      predictionTracker,
-      newPrediction
-    )
-    console.log('ACTION TYPE for updating Set: ', howToUpdate)
+    // const howToUpdate = evaluatePrediction(
+    //   currentSet,
+    //   predictionTracker,
+    //   newPrediction
+    // )
+    // console.log('ACTION TYPE for updating Set: ', howToUpdate)
 
     dispatch({
       type: types.UPDATE_PREDICTION_TRACKER,
-      payload: {
-        howToUpdate,
-        predictionTracker: newPrediction
-      }
+      newPrediction,
+      exercise
     })
   }
-  // *** updateSET (based on newest prediction)    by reviewing "trails" = "prediction_tracker"
-  // function updateSet(newPrediction) {
-  // 	const {globalValues, sets, currentSet, predictionTracker} = state
+
+  function createdSet(set) {
+    dispatch({
+      type: types.CREATED_SET,
+      set
+    })
+  }
+
+  function incrementedReps(reps) {
+    dispatch({
+      type: types.INCREMENTED_REPS,
+      reps
+    })
+  }
+
+  // *** THUNKS
+
+  // const incrementReps = (exerciseId, userId) => async dispatch => {
+  //   const {data} = await axios.put(
+  //     `/api/exercise/update/${exerciseId}/${userId}`
+  //   )
+  //   console.log('IN THUNK incrementReps=>', data)
+  //   incrementedReps(data.reps)
   // }
 
+  function incrementReps(exerciseId, userId) {
+    // const { actions } = useContext(StoreContext)
+    console.log('IN THE THUNK')
+    return async function(dispatch) {
+      try {
+        const {data} = await axios.put(
+          `/api/exercise/update/${exerciseId}/${userId}`
+        )
+        console.log('IN THUNK incrementReps=>', data)
+        dispatch(incrementedReps(data.reps))
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  }
+
   return {
-    updatePredictionTracker
-    // updateSet
+    updatePredictionTracker,
+    createdSet,
+    incrementedReps,
+    // updateSet,
+    incrementReps
   }
 }

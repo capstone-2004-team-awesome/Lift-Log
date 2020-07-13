@@ -39,13 +39,13 @@ class Routes extends Component {
             <Route path="/home" component={UserHome} />
             {/* <Route path="/start" component={StartWorkout} /> */}
             {/* <Route path="/start" component={TheWorkout} /> */}
-            <Route path="/start" component={NewWorkout} />
-            {/* <Route
-              path='/start'
-              render={(props) => (
-                <TheWorkout {...props} theUser={this.props.id} />
+            {/* <Route path="/start" component={NewWorkout} /> */}
+            <Route
+              path="/start"
+              render={props => (
+                <NewWorkout {...props} theUser={this.props.id} />
               )}
-            /> */}
+            />
             <Route path="/summary" component={WorkoutSummary} />
           </Switch>
         )}

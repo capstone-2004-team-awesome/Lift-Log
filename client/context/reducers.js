@@ -1,5 +1,3 @@
-// import {generateWorkoutLog} from '../utilities/workout'
-
 const initialState = {
   globalValues: {
     ctx: '',
@@ -24,7 +22,7 @@ const initialState = {
 }
 
 const types = {
-  // UPDATE_PREDICTION_TRACKER: 'UPDATE_PREDICTION_TRACKER',
+  UPDATE_PREDICTION_TRACKER: 'UPDATE_PREDICTION_TRACKER',
   UPDATED_SET: 'UPDATED_SET',
   CREATED_SET: 'CREATED_SET',
   COMPLETED_SET: 'COMPLETED_SET',
@@ -42,72 +40,63 @@ const types = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    // case types.UPDATE_PREDICTION_TRACKER: {
-    //   console.log("In REDUCER => ", action.payload.howToUpdate)
-    //   state.predictionTracker = {...action.payload}
+    case types.UPDATE_PREDICTION_TRACKER: {
+      console.log('In REDUCER => ', action.newPrediction)
+      // state.predictionTracker = {...action.newPrediction}
+      state = {
+        ...state,
+        predictionTracker: action.newPrediction,
+        currentSet: {...state.currentSet, exerciseName: action.exercise}
+      }
 
-    //   return { ...state }
-    // }
+      return {...state}
+    }
     case types.CREATED_SET: {
-      // const { set , setId } =  action.payload
-      const set = action.updatedSet
-      console.log('Reducer ACTION createdSet: ', set)
-      state.currentSet = {...set}
-      console.log('Reducer ACTION createdSet 2: ', state.currentSet)
+      console.log('Reducer INCOMING set: ', action.set)
+
+      if (!state.currentSet.exerciseId) {
+        state.currentSet = {...action.set}
+        console.log('Reducer, 1st UPDATED set: ', state.currentSet)
+      } else {
+        // state.sets = [...state.sets, {...state.currentSet, completed: true}]
+        // state.currentSet = {...set}
+        state = {
+          ...state,
+          sets: [...state.sets, {...state.currentSet, completed: true}],
+          currentSet: {...action.set}
+        }
+      }
+      console.log('Reducer UPDATED set (on state): ', state.currentSet)
       return {...state}
     }
     case types.INCREMENTED_REPS: {
+      // console.log('Reducer ACTION incrementedReps', state.currentSet.reps)
+      // state.currentSet = {...state.currentSet, reps: state.currentSet.reps + 1}
+      state.currentSet = {...state.currentSet, reps: action.reps}
       console.log('Reducer ACTION incrementedReps', state.currentSet.reps)
-      // state.currentSet = {...state.currentSet, reps}
-      state.currentSet = {...state.currentSet, reps: state.currentSet.reps + 1}
 
       return {...state}
     }
-    // *** UPDATED_SET   (keep set up-to-date)
-    // case types.UPDATED_SET: {
-    //   const {somethingChanged} = action.payload
+
+    // ? COMPLETED_SET ===> basically handled by CREATED_SET
+    // case types.COMPLETED_SET: {
+    //   state.sets = [...state.sets, {...state.currentSet, completed: true}]
+    //   state.currentSet = {...action.latestSet}
+
+    //   return {...state}
     // }
-    //#region    OLD code
-    // case types.MOVE_SNAKE: {
-    // 	const { playerId, xVelocity: newXVelocity, yVelocity: newYVelocity, keepMoving, isBackWrapping } = action.payload
-    // 	const updatePlayer = state.players[playerId]
-
-    // 	if (!keepMoving && !isBackWrapping) {
-    // 		updatePlayer.xVelocity = newXVelocity
-    // 		updatePlayer.yVelocity = newYVelocity
-    // 	}
-
-    // 	const newTrails = generateSnakePosition({
-    // 		currentLength: updatePlayer.length,
-    // 		currentTrails: updatePlayer.trails,
-    // 		currentXYVelocity: {
-    // 			xVelocity: updatePlayer.xVelocity,
-    // 			yVelocity: updatePlayer.yVelocity
-    // 		}
-    // 	})
-
-    // 	state.players[playerId] = {
-    // 		...updatePlayer,
-    // 		trails: newTrails
-    // 	}
-
-    // 	return { ...state }
-    // }
-    //#endregion
-
-    // *** UPDATE_NEW_SET ==> CREATE_SET
-    case types.COMPLETED_SET: {
-      state.sets = [...state.sets, {...state.currentSet, completed: true}]
-      state.currentSet = {...action.latestSet}
-
-      return {...state}
-    }
     // *** UPDATE_WORKOUT_START
     case types.UPDATE_WORKOUT_START: {
       //TODO: structure state update so there is a single re-render
       // state.globalValues.isWorkoutStarted = true
       // state.globalValues.isWorkoutPaused = false
-      state.globalValues.isWorkoutOver = false
+      // state.globalValues.isWorkoutOver = false
+      state.globalValues = {
+        ...state.globalValues,
+        isWorkoutStarted: true,
+        isWorkoutPaused: false,
+        isWorkoutOver: false
+      }
 
       return {...state}
     }
@@ -123,10 +112,8 @@ const reducer = (state = initialState, action) => {
         'Time to update workout status==>',
         state.globalValues.isWorkoutOver
       )
-      // state.globalValues.isWorkoutOver = !state.globalValues.isWorkoutOver
       state.globalValues.isWorkoutOver = action.newStatus
       console.log('Awesome Workout!!', state.globalValues.isWorkoutOver)
-      // alert('AWESOME WORKOUT!')
 
       return {...state}
     }

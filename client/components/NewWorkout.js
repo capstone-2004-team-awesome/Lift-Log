@@ -6,11 +6,12 @@ import WorkoutLog from './NewWorkoutLog'
 
 import {StoreContext} from '../context/StoreContext'
 import {types} from '../context/reducers'
+import {createSet, incrementReps, completeSet} from '../context/thunks'
 
 const NewWorkout = props => {
   const [updatedExercise, setUpdatedExercise] = useState('')
 
-  const {state, dispatch} = useContext(StoreContext)
+  const {state, dispatch, actions} = useContext(StoreContext)
   if (state.globalValues.isWorkoutOver) {
     dispatch({type: types.UPDATE_WORKOUT_START})
   }
@@ -26,11 +27,6 @@ const NewWorkout = props => {
 
     //#region      the FOR LOOP
     for (let exercise in newPrediction) {
-      console.log(`FOR LOOP
-                the state should be FALSE=> ${oldPrediction[exercise]}
-                the current prediction should be TRUE => ${
-                  newPrediction[exercise]
-                }`)
       if (
         oldPrediction[exercise] === false &&
         newPrediction[exercise] === true
@@ -42,9 +38,16 @@ const NewWorkout = props => {
                     EXERCISE just completed: ${exercise}`)
 
         // *** if there is no currentSet on state, create new set
-        if (!state.currentSet.exerciseId) {
-          // props.createSet(exercise, props.userId)
-          const updatedSet = {
+        if (!state.currentSet.exerciseName) {
+          // dispatch(createSet(exercise, props.theUser))
+          // actions.updatePredictionTracker(newPrediction, exercise)
+          // dispatch({
+          //   type: types.UPDATE_PREDICTION_TRACKER,
+          //   newPrediction,
+          //   exercise
+          // })
+
+          const set = {
             exerciseName: exercise,
             exerciseId: 2,
             reps: 1,
@@ -52,13 +55,11 @@ const NewWorkout = props => {
             updatedAt: Date.now(),
             completed: false
           }
-          console.log('The NewWorkout... createSet!', updatedSet)
+          console.log('The NewWorkout... createSet!', set)
 
           // TODO: thunk dispatch  (need Version for Hooks)
-          dispatch({type: types.CREATED_SET, updatedSet})
-          // const {data} = await axios.post(
-          //     `/api/exercise/create/${exerciseName}/${userId}`
-          //   )
+          dispatch({type: types.CREATED_SET, set})
+
           setUpdatedExercise(exercise)
         } else if (exercise === state.currentSet.exerciseName) {
           // TODO: Evaluate time between reps to determine if a new set should be created.
@@ -70,16 +71,20 @@ const NewWorkout = props => {
           // dispatch({type: types.INCREMENTED_REPS, reps: state.currentSet.reps + 1})
           console.log('The NewWorkout... state REPS: ', state.currentSet.reps)
 
-          // TODO: thunk dispatch
-          dispatch({type: types.INCREMENTED_REPS})
+          dispatch(incrementReps(state.currentSet.exerciseId, props.theUser))
+
           setUpdatedExercise(exercise)
         } else {
           // complete set & start new set
           console.log('Time to complete SET & start a new one!')
           // props.completeSet(props.exerciseId, props.userId)
           // props.createSet(exercise, props.userId)
-          // TODO: thunk dispatch
-          // setUpdatedExercise(exercise)
+
+          // *** completeSet updates DB, while createSet manages both DB & state update
+          completeSet(state.currentSet.exerciseId, props.theUser)
+          dispatch(createSet(exercise, props.theUser))
+
+          setUpdatedExercise(exercise)
         }
 
         // TODO: create exercise object on state with id's so we only need one db call here?

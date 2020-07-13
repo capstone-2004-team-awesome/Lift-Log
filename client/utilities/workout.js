@@ -1,11 +1,11 @@
 // import {initialState, exercises} from '../context/reducers'
 
-import axios from 'axios'
+// import axios from 'axios'
 
 // *** Is the exercise something other than Neutral Position? (i.e. do we even care or need to do anything?) Noooope!
 // TODO: if our prediction_tracker set off a (dispatch?)
 // export let isNotNeutral = false
-export let isNeutral = true
+// export let isNeutral = true
 
 // *** prediction tracker?
 // const workoutStore = {
