@@ -87,7 +87,6 @@ const WorkoutSummary = props => {
               <Typography variant="h5">{noWorkoutMsg}</Typography>
             ) : (
               <TableContainer>
-                <Typography variant="h5">Exercise Log</Typography>
                 <Typography variant="body1">
                   If exercise information was not recorded correctly, use input
                   fields to modify.
