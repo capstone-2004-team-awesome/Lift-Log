@@ -1,14 +1,9 @@
 import React, {useState, useEffect, handleSubmit} from 'react'
-import PropTypes from 'prop-types'
-import {connect, useSelector} from 'react-redux'
 import {makeStyles} from '@material-ui/core/styles'
-import {Button} from '@material-ui/core'
-import FilledInput from '@material-ui/core/FilledInput'
+import {Button, Select, FormHelperText} from '@material-ui/core'
 import FormControl from '@material-ui/core/FormControl'
-import FormHelperText from '@material-ui/core/FormHelperText'
 import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
-import OutlinedInput from '@material-ui/core/OutlinedInput'
 import TextField from '@material-ui/core/TextField'
 import axios from 'axios'
 
@@ -21,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export default function UserProfile() {
-  const [user, setUser] = React.useState({
+  const [user, setUser] = useState({
     id: '',
     firstName: '',
     lastName: '',
@@ -31,10 +26,48 @@ export default function UserProfile() {
     email: '',
     goal: ''
   })
+  const [goalHasError, setGoalError] = useState(false)
+  const [fNameHasError, setNameError] = useState(false)
+  const [weightHasError, setWeightError] = useState(false)
+  const [emailHasError, setEmailError] = useState(false)
 
   const classes = useStyles()
 
+  //console.log('ERROR', hasError)
+
   const handleChange = event => {
+    if (event.target.id === 'goal') {
+      if (isNaN(event.target.value)) {
+        setGoalError(true)
+      } else {
+        setGoalError(false)
+      }
+      console.log('EVENT', event.target.id, event.target.value)
+    }
+    if (event.target.id === 'firstName') {
+      if (!event.target.value) {
+        setNameError(true)
+      } else {
+        setNameError(false)
+      }
+    }
+
+    if (event.target.id === 'weight') {
+      if (isNaN(event.target.value)) {
+        setWeightError(true)
+      } else {
+        setWeightError(false)
+      }
+    }
+    if (event.target.id === 'email') {
+      if (
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(event.target.value)
+      ) {
+        setEmailError(false)
+      } else {
+        setEmailError(true)
+      }
+    }
     setUser({...user, [event.target.id]: event.target.value})
   }
 
@@ -60,29 +93,65 @@ export default function UserProfile() {
       autoComplete="off"
     >
       <h3>PROFILE</h3>
-      <FormControl>
+      <FormControl error={fNameHasError}>
         <InputLabel htmlFor="component-simple">First Name</InputLabel>
         <Input id="firstName" value={user.firstName} onChange={handleChange} />
+        {fNameHasError ? (
+          <FormHelperText id="component-error-text">
+            Field cannot be empty
+          </FormHelperText>
+        ) : null}
       </FormControl>
       <FormControl>
         <InputLabel htmlFor="component-simple">Last Name</InputLabel>
         <Input id="lastName" value={user.lastName} onChange={handleChange} />
       </FormControl>
-      <FormControl>
+      <FormControl error={weightHasError}>
         <InputLabel htmlFor="component-simple">Weight(lb)</InputLabel>
         <Input id="weight" value={user.weight} onChange={handleChange} />
+        {weightHasError ? (
+          <FormHelperText id="component-error-text">
+            Enter a number
+          </FormHelperText>
+        ) : null}
       </FormControl>
       <FormControl>
-        <InputLabel htmlFor="component-simple">Height(ft, in)</InputLabel>
+        <InputLabel htmlFor="component-simple">Height</InputLabel>
         <Input id="height" value={user.height} onChange={handleChange} />
+        {/* <small>Height</small>
+        <TextField
+          id="height"
+          label="Feet"
+          type="number"
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <TextField
+          id="standard-number"
+          label="Inches"
+          type="number"
+          InputLabelProps={{
+            shrink: true,
+          }}
+        /> */}
       </FormControl>
-      <FormControl>
-        <InputLabel htmlFor="component-simple">Sex</InputLabel>
-        <Input id="sex" value={user.sex} onChange={handleChange} />
+      <FormControl className={classes.formControl}>
+        <InputLabel htmlFor="sex">Sex</InputLabel>
+        <Select native value={user.sex} onChange={handleChange} id="sex">
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="other">Other</option>
+        </Select>
       </FormControl>
-      <FormControl>
+      <FormControl error={emailHasError}>
         <InputLabel htmlFor="component-simple">E-mail</InputLabel>
         <Input id="email" value={user.email} onChange={handleChange} />
+        {emailHasError ? (
+          <FormHelperText id="component-error-text">
+            Enter a valid e-mail
+          </FormHelperText>
+        ) : null}
       </FormControl>
       <TextField
         id="standard-password-input"
@@ -90,12 +159,29 @@ export default function UserProfile() {
         type="password"
         autoComplete="current-password"
       />
-      <FormControl>
-        <InputLabel htmlFor="component-simple">Goal (X per week)</InputLabel>
-        <Input id="goal" value={user.goal} onChange={handleChange} />
+      <FormControl error={goalHasError}>
+        <InputLabel htmlFor="goal">Goal (X per week)</InputLabel>
+        <Input
+          id="goal"
+          value={user.goal}
+          aria-describedby="component-error-text"
+          onChange={handleChange}
+        />
+        {goalHasError ? (
+          <FormHelperText id="component-error-text">
+            Enter a number
+          </FormHelperText>
+        ) : null}
       </FormControl>
 
-      <Button variant="contained" color="primary" type="submit">
+      <Button
+        variant="contained"
+        color="primary"
+        type="submit"
+        disabled={
+          goalHasError || fNameHasError || weightHasError || emailHasError
+        }
+      >
         Submit
       </Button>
     </form>
