@@ -12,7 +12,8 @@ import {
   TableCell,
   TextField,
   IconButton,
-  Snackbar
+  Snackbar,
+  Button
 } from '@material-ui/core'
 import axios from 'axios'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
@@ -20,6 +21,10 @@ import MuiAlert from '@material-ui/lab/Alert'
 
 const WorkoutSummary = props => {
   const [summary, setSummary] = useState([])
+  const [updateMsg, setUpdateMsg] = useState('')
+  const [open, setOpen] = useState(false)
+  const [noWorkoutMsg, setNoWorkoutMsg] = useState('')
+  const [addExercise, setAddExercise] = useState(false)
 
   // checking to see if there is a state in props.location
   // this is how the UserHome component passes in date from the calendar selection
@@ -29,9 +34,6 @@ const WorkoutSummary = props => {
   // date is a string in YYYY-MM-DD format
   // default date is today's date (will need to change this based on calendar selection)
   const [date] = useState(selectedDate)
-  const [updateMsg, setUpdateMsg] = useState('')
-  const [open, setOpen] = useState(false)
-  const [noWorkoutMsg, setNoWorkoutMsg] = useState('')
 
   useEffect(
     () => {
@@ -89,8 +91,11 @@ const WorkoutSummary = props => {
               <TableContainer>
                 <Typography variant="h5">Exercise Log</Typography>
                 <Typography variant="body1">
-                  If exercise information was not recorded correctly, use input
+                  If exercise information was not logged correctly, use input
                   fields to modify.
+                </Typography>
+                <Typography variant="body1">
+                  You can also add an exercise with the button below.
                 </Typography>
                 <Table>
                   <TableHead>
@@ -156,6 +161,9 @@ const WorkoutSummary = props => {
                 </Table>
               </TableContainer>
             )}
+            <div style={{paddingTop: '1rem'}}>
+              <Button onClick={() => setAddExercise(true)}>Add Exercise</Button>
+            </div>
           </CardContent>
         </Card>
       </Grid>
