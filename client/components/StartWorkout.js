@@ -124,7 +124,7 @@ const StartWorkout = props => {
 
     for (let exercise in predictionTracker) {
       // *** if exercise boolean value has switched, make API call (exerciseId), to increase reps
-      if (exercise !== 'Neutral - Standing') {
+      if (!exercise.includes('Neutral')) {
         if (
           lastPrediction[exercise] === false &&
           predictionTracker[exercise] === true
