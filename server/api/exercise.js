@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const {Set, User, Exercise} = require('../db/models')
+const {Op} = require('sequelize')
 module.exports = router
 
 // TODO: change api route to api/set instead of exercise??

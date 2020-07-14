@@ -13,8 +13,11 @@ const StartWorkout = props => {
     exerciseId: '',
     reps: '',
     weight: '',
-    time: ''
+    time: '',
+    setId: ''
   })
+
+  const [completedExercise, setCompletedExercise] = useState({})
 
   let setLogger = {}
   const [webcam, setWebcam] = useState(null)
@@ -28,6 +31,9 @@ const StartWorkout = props => {
     async function loadModel() {
       console.log('LOADING MODEL')
 
+      // load the model and metadata
+      // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
+      // Note: the pose library adds a tmPose object to your window (window.tmPose)
       const URL = 'https://teachablemachine.withgoogle.com/models/ByPivKL7e/'
       const modelURL = URL + 'model.json'
       const metadataURL = URL + 'metadata.json'
@@ -70,10 +76,6 @@ const StartWorkout = props => {
   }
 
   async function init() {
-    // load the model and metadata
-    // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
-    // Note: the pose library adds a tmPose object to your window (window.tmPose)
-
     maxPredictions = model.getTotalClasses()
 
     // Convenience function to setup a webcam
@@ -122,15 +124,13 @@ const StartWorkout = props => {
 
     for (let exercise in predictionTracker) {
       // *** if exercise boolean value has switched, make API call (exerciseId), to increase reps
-      if (exercise !== 'Neutral - Standing') {
+      if (!exercise.includes('Neutral')) {
         if (
           lastPrediction[exercise] === false &&
           predictionTracker[exercise] === true
         ) {
-          console.log('AT BEGINNING OF IF STATEMENT', setLogger)
-          console.log('USER ID', props.userId)
-          // TODO: create exercise object on state with id's so we only need one db call here.
           if (!setLogger.exerciseId) {
+            // CREATE NEW SET
             const {data} = await axios.post(
               `/api/exercise/create/${exercise}/${props.userId}`
             )
@@ -140,18 +140,21 @@ const StartWorkout = props => {
               exerciseId: exerciseInfo.id,
               reps: setInfo.reps,
               weight: setInfo.weight,
-              updatedAt: setInfo.updatedAt
+              updatedAt: setInfo.updatedAt,
+              setId: setInfo.id
             }
-
             console.log('AFTER CREATING NEW SET => ', setLogger)
           } else if (exercise === setLogger.exerciseName) {
+            // INCREMENT REPS IF SAME EXERCISE IS REPEATED
             const {data} = await axios.put(
               `/api/exercise/update/${setLogger.exerciseId}/${props.userId}`
             )
             setLogger = {...setLogger, reps: data.reps}
             console.log('AFTER INCREMENTING => ', setLogger)
           } else {
+            // MARK PREVIOUS SET AS COMPLETE AND CREATE NEW SET IF NEW EXERCISE IS BEING DONE
             await axios.put(`/api/exercise/complete/${props.userId}`)
+            setCompletedExercise(setLogger)
             const {data} = await axios.post(
               `/api/exercise/create/${exercise}/${props.userId}`
             )
@@ -161,7 +164,8 @@ const StartWorkout = props => {
               exerciseId: exerciseInfo.id,
               reps: setInfo.reps,
               weight: setInfo.weight,
-              updatedAt: setInfo.updatedAt
+              updatedAt: setInfo.updatedAt,
+              setId: setInfo.id
             }
           }
 
@@ -174,7 +178,8 @@ const StartWorkout = props => {
             exerciseId: setLogger.exerciseId,
             reps: setLogger.reps,
             weight: setLogger.weight,
-            time: setLogger.updatedAt
+            time: setLogger.updatedAt,
+            setId: setLogger.setId
           })
         }
       }
@@ -203,12 +208,7 @@ const StartWorkout = props => {
   }
 
   const stop = async () => {
-    console.log(
-      'STOP CAMERA AND MARK COMPLETE',
-      setLogger,
-      'user id',
-      props.userId
-    )
+    // STOP CAMERA AND MARK THE LAST SET DONE AS COMPLETE
     await axios.put(`/api/exercise/complete/${props.userId}`)
     await webcam.stop()
     // redirect to workout summary page
@@ -226,7 +226,10 @@ const StartWorkout = props => {
           <Camera init={init} pause={pause} stop={stop} play={play} />
         </Grid>
         <Grid item sm={6}>
-          <ExerciseLog currentSet={currentSet} />
+          <ExerciseLog
+            currentSet={currentSet}
+            completedExercise={completedExercise}
+          />
         </Grid>
       </Grid>
     </div>
