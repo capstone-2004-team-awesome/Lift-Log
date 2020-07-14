@@ -18,10 +18,19 @@ const StartWorkout = props => {
   })
 
   const [completedExercise, setCompletedExercise] = useState({})
-
-  let setLogger = {}
   const [webcam, setWebcam] = useState(null)
   const [model, setModel] = useState(null)
+  let setLogger = {}
+
+  let ctx, labelContainer, maxPredictions
+  let lastPrediction = {
+    'Bicep Curl': false,
+    Squat: false
+  }
+  let predictionTracker = {
+    'Bicep Curl': false,
+    Squat: false
+  }
 
   // Teachable Machine API Functions:
   // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/pose
@@ -48,29 +57,8 @@ const StartWorkout = props => {
     defineWebcam()
   }, [])
 
-  // useEffect(
-  //   () => {
-  //     return async () => {
-  //       console.log('STOP WEBCAM')
-  //       if (webcam) await webcam.stop() // stop webcam when component unmounts
-  //     }
-  //   },
-  //   [webcam]
-  // )
-
-  let ctx, labelContainer, maxPredictions
-  let lastPrediction = {
-    'Bicep Curl': false,
-    Squat: false
-  }
-  let predictionTracker = {
-    'Bicep Curl': false,
-    Squat: false
-  }
-
   async function init() {
     maxPredictions = model.getTotalClasses()
-
     // Convenience function to setup a webcam
     await webcam.setup() // request access to the webcam from user
     await webcam.play()
@@ -90,7 +78,6 @@ const StartWorkout = props => {
 
   async function loop() {
     webcam.update() // update the webcam frame
-    // if isWorkoutOver = true, then continue. else don't continue
     await predict()
     window.requestAnimationFrame(loop)
   }
@@ -137,14 +124,12 @@ const StartWorkout = props => {
               updatedAt: setInfo.updatedAt,
               setId: setInfo.id
             }
-            console.log('AFTER CREATING NEW SET => ', setLogger)
           } else if (exercise === setLogger.exerciseName) {
             // INCREMENT REPS IF SAME EXERCISE IS REPEATED
             const {data} = await axios.put(
               `/api/exercise/update/${setLogger.exerciseId}/${props.userId}`
             )
             setLogger = {...setLogger, reps: data.reps}
-            console.log('AFTER INCREMENTING => ', setLogger)
           } else {
             // MARK PREVIOUS SET AS COMPLETE AND CREATE NEW SET IF NEW EXERCISE IS BEING DONE
             await axios.put(`/api/exercise/complete/${props.userId}`)

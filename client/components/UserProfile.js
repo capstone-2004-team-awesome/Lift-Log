@@ -95,7 +95,7 @@ export default function UserProfile() {
         <Input id="goal" value={user.goal} onChange={handleChange} />
       </FormControl>
 
-      <Button variant="contained" color="primary" type="submit">
+      <Button variant="contained" type="submit">
         Submit
       </Button>
     </form>

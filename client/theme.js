@@ -3,7 +3,7 @@ import zIndex from '@material-ui/core/styles/zIndex'
 const themeObj = {
   palette: {
     primary: {
-      main: '#D66853'
+      main: '#00b5ad'
     }
   },
   zIndex: {
