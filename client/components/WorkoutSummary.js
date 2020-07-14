@@ -86,7 +86,7 @@ const WorkoutSummary = props => {
   const handleFormSubmit = async e => {
     e.preventDefault()
     try {
-      await axios.post(`/api/set`, newSet)
+      await axios.post(`/api/set`, {...newSet, date})
     } catch (error) {
       console.log('Error adding new set:', error)
     }

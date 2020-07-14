@@ -77,7 +77,7 @@ router.post('/', async (req, res, next) => {
     if (req.user) {
       const userId = req.user.id
 
-      const {exerciseName, reps, weight} = req.body
+      const {exerciseName, reps, weight, date} = req.body
 
       if (exerciseName && reps && weight) {
         const exercise = await Exercise.findOne({
@@ -91,7 +91,13 @@ router.post('/', async (req, res, next) => {
 
         await exercise.addSet(set)
 
-        set = await set.update({exerciseName, reps, weight})
+        set = await set.update({
+          exerciseName,
+          reps,
+          weight,
+          date,
+          completed: true
+        })
         res.json(set)
       }
     } else {
