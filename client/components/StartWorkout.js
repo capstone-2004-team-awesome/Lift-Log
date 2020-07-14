@@ -175,10 +175,13 @@ const StartWorkout = props => {
       }
     }
   }
+  // const play = async () => {
+  //   await webcam.play()
+  // }
 
-  const pause = async () => {
-    await webcam.pause()
-  }
+  // const pause = async () => {
+  //   await webcam.pause()
+  // }
 
   const stop = async () => {
     // STOP CAMERA AND MARK THE LAST SET DONE AS COMPLETE
@@ -188,15 +191,18 @@ const StartWorkout = props => {
     props.history.push('/summary')
   }
 
-  const play = async () => {
-    await webcam.play()
-  }
-
   return (
     <div>
       <Grid container spacing={4}>
         <Grid item xs={12} sm={12} md={6} lg={6}>
-          <Camera init={init} pause={pause} stop={stop} play={play} />
+          <Camera
+            init={init}
+            // pause={pause}
+            stop={stop}
+            // play={play}
+            model={model}
+            webcam={webcam}
+          />
         </Grid>
         <Grid item xs={12} sm={12} md={6} lg={6}>
           <ExerciseLog
