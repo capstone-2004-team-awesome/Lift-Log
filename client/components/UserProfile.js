@@ -1,6 +1,6 @@
 import React, {useState, useEffect, handleSubmit} from 'react'
 import {makeStyles} from '@material-ui/core/styles'
-import {Button, Select, FormHelperText} from '@material-ui/core'
+import {Button, Select, FormHelperText, Box} from '@material-ui/core'
 import FormControl from '@material-ui/core/FormControl'
 import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
@@ -30,10 +30,7 @@ export default function UserProfile() {
   const [fNameHasError, setNameError] = useState(false)
   const [weightHasError, setWeightError] = useState(false)
   const [emailHasError, setEmailError] = useState(false)
-
   const classes = useStyles()
-
-  //console.log('ERROR', hasError)
 
   const handleChange = event => {
     if (event.target.id === 'goal') {
@@ -42,7 +39,6 @@ export default function UserProfile() {
       } else {
         setGoalError(false)
       }
-      console.log('EVENT', event.target.id, event.target.value)
     }
     if (event.target.id === 'firstName') {
       if (!event.target.value) {
@@ -72,7 +68,7 @@ export default function UserProfile() {
   }
 
   const onSubmit = async user => {
-    const {data} = await axios.put(`/api/users/${user.id}`, user)
+    const {data} = await axios.put(`/auth/${user.id}`, user)
     setUser(data)
   }
 
@@ -92,7 +88,7 @@ export default function UserProfile() {
       noValidate
       autoComplete="off"
     >
-      <h3>PROFILE</h3>
+      {user ? <h3>PROFILE</h3> : <h3>SIGN UP</h3>}
       <FormControl error={fNameHasError}>
         <InputLabel htmlFor="component-simple">First Name</InputLabel>
         <Input id="firstName" value={user.firstName} onChange={handleChange} />
@@ -159,6 +155,7 @@ export default function UserProfile() {
         type="password"
         autoComplete="current-password"
       />
+
       <FormControl error={goalHasError}>
         <InputLabel htmlFor="goal">Goal (X per week)</InputLabel>
         <Input
