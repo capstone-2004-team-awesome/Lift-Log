@@ -12,15 +12,23 @@ import {
   TableCell,
   TextField,
   IconButton,
-  Snackbar,
-  Button
+  Snackbar
 } from '@material-ui/core'
 import axios from 'axios'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import MuiAlert from '@material-ui/lab/Alert'
 import AddExercise from './AddExercise'
+import {makeStyles} from '@material-ui/core/styles'
+
+const useStyles = makeStyles(() => ({
+  root: {
+    width: 100
+  }
+}))
 
 const WorkoutSummary = props => {
+  const classes = useStyles()
+
   const [summary, setSummary] = useState([])
   const [updateMsg, setUpdateMsg] = useState('')
   const [open, setOpen] = useState(false)
@@ -113,6 +121,7 @@ const WorkoutSummary = props => {
             <CardContent>
               <Typography variant="h2">Workout Summary</Typography>
               <Typography variant="h4">{date}</Typography>
+              <hr />
               <TableContainer>
                 <Typography variant="body1">
                   If exercise information was not logged correctly, use input
@@ -141,16 +150,20 @@ const WorkoutSummary = props => {
                               <TextField
                                 type="number"
                                 name="reps"
+                                size="small"
                                 value={set.reps}
                                 onChange={() => handleChange(event, set.id)}
+                                className={classes.root}
                               />
                             </TableCell>
                             <TableCell align="right">
                               <TextField
                                 type="number"
                                 name="weight"
+                                size="small"
                                 value={set.weight}
                                 onChange={() => handleChange(event, set.id)}
+                                className={classes.root}
                               />
                             </TableCell>
                             <TableCell>

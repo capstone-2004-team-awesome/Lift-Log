@@ -22,18 +22,15 @@ const StartWorkout = props => {
   let setLogger = {}
   const [webcam, setWebcam] = useState(null)
   const [model, setModel] = useState(null)
-  const size = 600
 
-  // More API functions here:
+  // Teachable Machine API Functions:
   // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/pose
 
   useEffect(() => {
     async function loadModel() {
-      console.log('LOADING MODEL')
-
       // load the model and metadata
-      // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
       // Note: the pose library adds a tmPose object to your window (window.tmPose)
+      // the link to our Teachable Machine model
       const URL = 'https://teachablemachine.withgoogle.com/models/ByPivKL7e/'
       const modelURL = URL + 'model.json'
       const metadataURL = URL + 'metadata.json'
@@ -45,11 +42,8 @@ const StartWorkout = props => {
 
   useEffect(() => {
     const defineWebcam = () => {
-      console.log('DEFINING WEBCAM')
-
-      const flip = true // whether to flip the webcam
       // setup a webcam
-      setWebcam(new tmPose.Webcam(size, size, flip)) // width, height, flip
+      setWebcam(new tmPose.Webcam(300, 300, true)) // width, height, flip
     }
     defineWebcam()
   }, [])
@@ -64,7 +58,6 @@ const StartWorkout = props => {
   //   [webcam]
   // )
 
-  // the link to Teachable Machine model
   let ctx, labelContainer, maxPredictions
   let lastPrediction = {
     'Bicep Curl': false,
@@ -79,14 +72,14 @@ const StartWorkout = props => {
     maxPredictions = model.getTotalClasses()
 
     // Convenience function to setup a webcam
-    await webcam.setup() // request access to the webcam
+    await webcam.setup() // request access to the webcam from user
     await webcam.play()
     window.requestAnimationFrame(loop)
 
     // append/get elements to the DOM
     const canvas = document.getElementById('canvas')
-    canvas.width = size
-    canvas.height = size
+    // canvas.width = size
+    canvas.height = canvas.width
     ctx = canvas.getContext('2d')
     labelContainer = document.getElementById('label-container')
     for (let i = 0; i < maxPredictions; i++) {
@@ -97,6 +90,7 @@ const StartWorkout = props => {
 
   async function loop() {
     webcam.update() // update the webcam frame
+    // if isWorkoutOver = true, then continue. else don't continue
     await predict()
     window.requestAnimationFrame(loop)
   }
@@ -168,11 +162,6 @@ const StartWorkout = props => {
               setId: setInfo.id
             }
           }
-
-          //data: {weight: null, reps: 41, createdAt: "2020-07-06T16:18:59.059Z", updatedAt: "2020-07-06T16:42:03.394Z", userId: 1, exerciseId: 1}
-          // compare set.time to Date.now()
-          // if 30 seconds has passed, this is a new set.
-          // reset state
           setCurrentSet({
             exerciseName: exercise,
             exerciseId: setLogger.exerciseId,
@@ -190,7 +179,6 @@ const StartWorkout = props => {
     lastPrediction = {...predictionTracker}
   }
 
-  // TODO: if process.env.NODE_ENV !== 'production' don't run drawPose()
   function drawPose(pose) {
     if (webcam.canvas) {
       ctx.drawImage(webcam.canvas, 0, 0)
@@ -222,10 +210,10 @@ const StartWorkout = props => {
   return (
     <div>
       <Grid container spacing={4}>
-        <Grid item sm={6}>
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <Camera init={init} pause={pause} stop={stop} play={play} />
         </Grid>
-        <Grid item sm={6}>
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <ExerciseLog
             currentSet={currentSet}
             completedExercise={completedExercise}
