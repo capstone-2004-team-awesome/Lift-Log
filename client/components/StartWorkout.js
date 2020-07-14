@@ -67,11 +67,11 @@ const StartWorkout = props => {
   // the link to Teachable Machine model
   let ctx, labelContainer, maxPredictions
   let lastPrediction = {
-    'Bicep Curl - Up ': false,
+    'Bicep Curl': false,
     Squat: false
   }
   let predictionTracker = {
-    'Bicep Curl - Up ': false,
+    'Bicep Curl': false,
     Squat: false
   }
 
