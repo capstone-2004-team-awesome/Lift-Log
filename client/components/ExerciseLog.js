@@ -36,16 +36,30 @@ const ExerciseLog = props => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Exercise</TableCell>
-                    <TableCell align="right"># Of Reps</TableCell>
-                    <TableCell align="right">Weight (lbs)</TableCell>
+                    <TableCell>
+                      <Typography variant="h6">Exercise</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6"># Of Reps</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">Weight (lbs)</Typography>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   <TableRow>
-                    <TableCell>{currentSet.exerciseName}</TableCell>
-                    <TableCell align="right">{currentSet.reps}</TableCell>
-                    <TableCell align="right">{currentSet.weight}</TableCell>
+                    <TableCell>
+                      <Typography variant="h6">
+                        {currentSet.exerciseName}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">{currentSet.reps}</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">{currentSet.weight}</Typography>
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -61,18 +75,32 @@ const ExerciseLog = props => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Exercise</TableCell>
-                    <TableCell align="right"># Of Reps</TableCell>
-                    <TableCell align="right">Weight (lbs)</TableCell>
+                    <TableCell>
+                      <Typography variant="h6">Exercise</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6"># Of Reps</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">Weight (lbs)</Typography>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {log.map(elem => {
                     return (
                       <TableRow key={elem.setId}>
-                        <TableCell>{elem.exerciseName}</TableCell>
-                        <TableCell align="right">{elem.reps}</TableCell>
-                        <TableCell align="right">{elem.weight}</TableCell>
+                        <TableCell>
+                          <Typography variant="h6">
+                            {elem.exerciseName}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="right">
+                          <Typography variant="h6">{elem.reps}</Typography>
+                        </TableCell>
+                        <TableCell align="right">
+                          <Typography variant="h6">{elem.weight}</Typography>
+                        </TableCell>
                       </TableRow>
                     )
                   })}
