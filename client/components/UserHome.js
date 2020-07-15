@@ -2,20 +2,10 @@ import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import Calendar from 'react-calendar'
-import WorkoutSummary from './WorkoutSummary'
 import {Redirect} from 'react-router-dom'
 import ProgressBar from './ProgressBar'
 import axios from 'axios'
 import moment from 'moment'
-// ^ onChange	Function called when the user clicks an item (day on month view, month on year view and so on) on the most detailed view available.	n/a	(value, event) => alert('New date is: ', value)
-// ^ onViewChange	Function called when the user navigates from one view to another using drill up button or by clicking a tile.	n/a	({ activeStartDate, view }) => alert('New view is: ', view)
-// ^ onClickDay	Function called when the user clicks a day.	n/a	(value, event) => alert('Clicked day: ', value)
-
-// ^ tileClassName	Class name(s) that will be applied to a given calendar item (day on month view, month on year view and so on).	n/a
-// String: "class1 class2"
-// Array of strings: ["class1", "class2 class3"]
-// Function: ({ activeStartDate, date, view }) => view === 'month' && date.getDay() === 3 ? 'wednesday' : null
-// ^tileContent	Allows to render custom content within a given calendar item (day on month view, month on year view and so on).
 
 /**
  //* COMPONENT
@@ -24,8 +14,6 @@ export const UserHome = props => {
   const {firstName} = props
   const [selectedDate, setSelectedDate] = useState(null)
 
-  const [date, setDate] = useState(new Date())
-  const [day, setDay] = useState('')
   const [workoutCalendar, setWorkoutCalendar] = useState([])
   const [workoutsThisWeek, setWorkoutsThisWeek] = useState(0)
 
@@ -89,26 +77,11 @@ export const UserHome = props => {
     color: 'teal' // red, orange, yellow, olive, green, teal, blue, violet, purple, pink, brown, grey, black
   }
 
-  // function ChangeDate(dataValue){
-  //   setDate(dataValue)
-  //   // setModalOpen(true)
-  //   setDay(""+(dataValue))
-  // }
-
-  // function getTileContent({ date, view }) {
-  //   if (view !== 'month') {
-  //     return null
-  //   }
-  // }
-
   // *** append className to calendar tiles for days with workouts logged
   const tileClassName = ({date, view}) => {
     if (workoutCalendar.length !== 0) {
       let getDate = moment(date).format('D')
-      // TODO: remarkably inefficient LOOP, better way to process DB data before setting state?
       for (let i = 0; i < workoutCalendar.length; i++) {
-        console.log(workoutCalendar[i], getDate)
-        console.log(workoutCalendar.includes(getDate))
         if (getDate === `${workoutCalendar[i].day}`) {
           return 'workout'
         }
@@ -125,10 +98,7 @@ export const UserHome = props => {
       <Calendar
         calendarType="US"
         onChange={handleChange}
-        value={date}
-        // onClickDay={(value) => ChangeDate(value)}
         tileClassName={tileClassName}
-        // tileContent={(date,value)=>getTileContent(date,value)}
       />
       <h5>
         You've logged {progressBarData.value} workouts this week, that's
