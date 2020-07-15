@@ -23,11 +23,11 @@ const StartWorkout = props => {
   let setLogger = {}
 
   let ctx, labelContainer, maxPredictions
-  let lastPrediction = {
+  let prevPrediction = {
     'Bicep Curl': false,
     Squat: false
   }
-  let predictionTracker = {
+  let currPrediction = {
     'Bicep Curl': false,
     Squat: false
   }
@@ -57,6 +57,26 @@ const StartWorkout = props => {
     defineWebcam()
   }, [])
 
+  const createNewSet = async exercise => {
+    const {data} = await axios.post(
+      `/api/exercise/create/${exercise}/${props.userId}`
+    )
+    const [exerciseInfo, setInfo] = data
+    setLogger = {
+      exerciseName: exerciseInfo.name,
+      exerciseId: exerciseInfo.id,
+      reps: setInfo.reps,
+      weight: setInfo.weight,
+      updatedAt: setInfo.updatedAt,
+      setId: setInfo.id
+    }
+  }
+
+  const markSetComplete = async () => {
+    await axios.put(`/api/exercise/complete/${props.userId}`)
+    setCompletedExercise(setLogger)
+  }
+
   async function init() {
     maxPredictions = model.getTotalClasses()
     // Convenience function to setup a webcam
@@ -66,7 +86,6 @@ const StartWorkout = props => {
 
     // append/get elements to the DOM
     const canvas = document.getElementById('canvas')
-    // canvas.width = size
     canvas.height = canvas.width
     ctx = canvas.getContext('2d')
     labelContainer = document.getElementById('label-container')
@@ -88,7 +107,7 @@ const StartWorkout = props => {
     const {pose, posenetOutput} = await model.estimatePose(webcam.canvas)
     // Prediction 2: run input through teachable machine classification model
     const prediction = await model.predict(posenetOutput)
-    // *** prediction object sample:
+    // *** prediction object example:
     // prediction = [{className: "Neutral - Standing", probability: 1.1368564933439103e-15},
     //              {className: "Bicep Curl - Up ", probability: 1}]
 
@@ -97,55 +116,43 @@ const StartWorkout = props => {
         prediction[i].className + ': ' + prediction[i].probability.toFixed(2)
       labelContainer.childNodes[i].innerHTML = classPrediction
       if (prediction[i].probability > 0.95) {
-        predictionTracker[prediction[i].className] = true
+        currPrediction[prediction[i].className] = true
       } else {
-        predictionTracker[prediction[i].className] = false
+        currPrediction[prediction[i].className] = false
       }
     }
 
-    for (let exercise in predictionTracker) {
-      // *** if exercise boolean value has switched, make API call (exerciseId), to increase reps
+    for (let exercise in currPrediction) {
       if (!exercise.includes('Neutral')) {
+        // *** if exercise boolean value has switched, make API call (exerciseId), to increase reps
         if (
-          lastPrediction[exercise] === false &&
-          predictionTracker[exercise] === true
+          prevPrediction[exercise] === false &&
+          currPrediction[exercise] === true
         ) {
           if (!setLogger.exerciseId) {
-            // CREATE NEW SET
-            const {data} = await axios.post(
-              `/api/exercise/create/${exercise}/${props.userId}`
-            )
-            const [exerciseInfo, setInfo] = data
-            setLogger = {
-              exerciseName: exerciseInfo.name,
-              exerciseId: exerciseInfo.id,
-              reps: setInfo.reps,
-              weight: setInfo.weight,
-              updatedAt: setInfo.updatedAt,
-              setId: setInfo.id
-            }
+            await createNewSet(exercise)
           } else if (exercise === setLogger.exerciseName) {
-            // INCREMENT REPS IF SAME EXERCISE IS REPEATED
-            const {data} = await axios.put(
-              `/api/exercise/update/${setLogger.exerciseId}/${props.userId}`
-            )
-            setLogger = {...setLogger, reps: data.reps}
-          } else {
-            // MARK PREVIOUS SET AS COMPLETE AND CREATE NEW SET IF NEW EXERCISE IS BEING DONE
-            await axios.put(`/api/exercise/complete/${props.userId}`)
-            setCompletedExercise(setLogger)
-            const {data} = await axios.post(
-              `/api/exercise/create/${exercise}/${props.userId}`
-            )
-            const [exerciseInfo, setInfo] = data
-            setLogger = {
-              exerciseName: exerciseInfo.name,
-              exerciseId: exerciseInfo.id,
-              reps: setInfo.reps,
-              weight: setInfo.weight,
-              updatedAt: setInfo.updatedAt,
-              setId: setInfo.id
+            // IF CURRENT DATE IS GREATER THAN PREVIOUS REP BY MORE THAN THE BREAK TIME
+            // MARK PREVIOUS SET COMPLETE AND CREATE A NEW SET
+            const breakTime = 30000 // 3Os
+            if (Date.now() - new Date(setLogger.updatedAt) >= breakTime) {
+              await markSetComplete()
+              await createNewSet(exercise)
+            } else {
+              // INCREMENT REPS IF SAME EXERCISE IS REPEATED BEFORE BREAK TIME
+              const {data} = await axios.put(
+                `/api/exercise/update/${setLogger.exerciseId}/${props.userId}`
+              )
+              setLogger = {
+                ...setLogger,
+                reps: data.reps,
+                updatedAt: data.updatedAt
+              }
             }
+          } else {
+            // IF NEW EXERCISE IS BEING DONE, MARK PREVIOUS SET AS COMPLETE AND CREATE A NEW SET
+            await markSetComplete()
+            await createNewSet(exercise)
           }
           setCurrentSet({
             exerciseName: exercise,
@@ -161,7 +168,7 @@ const StartWorkout = props => {
 
     // finally draw the poses
     drawPose(pose)
-    lastPrediction = {...predictionTracker}
+    prevPrediction = {...currPrediction}
   }
 
   function drawPose(pose) {
