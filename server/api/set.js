@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {Set, Exercise} = require('../db/models')
+const {Set, Exercise, User} = require('../db/models')
 const {Op} = require('sequelize')
 module.exports = router
 
@@ -69,5 +69,41 @@ router.delete('/:setId', async (req, res, next) => {
     }
   } catch (error) {
     next(error)
+  }
+})
+
+router.post('/', async (req, res, next) => {
+  try {
+    if (req.user) {
+      const userId = req.user.id
+
+      const {exerciseName, reps, weight, date} = req.body
+
+      if (exerciseName && reps && weight) {
+        const exercise = await Exercise.findOne({
+          where: {
+            name: exerciseName
+          }
+        })
+        const user = await User.findByPk(userId)
+
+        let set = await user.createSet()
+
+        await exercise.addSet(set)
+
+        set = await set.update({
+          exerciseName,
+          reps,
+          weight,
+          date,
+          completed: true
+        })
+        res.json(set)
+      }
+    } else {
+      res.sendStatus(400)
+    }
+  } catch (err) {
+    next(err)
   }
 })

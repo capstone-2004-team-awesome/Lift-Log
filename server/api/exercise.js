@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const {Set, User, Exercise} = require('../db/models')
+const {Op} = require('sequelize')
 module.exports = router
 
 // TODO: change api route to api/set instead of exercise??
@@ -57,7 +58,7 @@ router.put('/complete/:userId', async (req, res, next) => {
 })
 
 // create a new set
-// /api/exercise/create/:exerciseId/:userId
+// /api/exercise/create/:exerciseName/:userId
 router.post('/create/:exerciseName/:userId', async (req, res, next) => {
   try {
     const exerciseName = req.params.exerciseName
