@@ -61,7 +61,7 @@ const StartWorkout = props => {
     maxPredictions = model.getTotalClasses()
     // Convenience function to setup a webcam
     await webcam.setup() // request access to the webcam from user
-    await webcam.play()
+    webcam.play()
     window.requestAnimationFrame(loop)
 
     // append/get elements to the DOM

@@ -54,6 +54,7 @@ export default function UserProfile() {
 
   return (
     <form
+      id="user-profile"
       onSubmit={() => onSubmit(user)}
       className={classes.root}
       noValidate
