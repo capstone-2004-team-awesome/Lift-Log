@@ -110,6 +110,12 @@ const ExerciseLog = props => {
           </CardContent>
         </Card>
       </Grid>
+      <Grid item>
+        <Typography variant="body1">
+          For squats and glute bridges, please make sure your whole body is in
+          the camera view.
+        </Typography>
+      </Grid>
     </Grid>
   )
 }
