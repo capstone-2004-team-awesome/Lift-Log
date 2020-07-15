@@ -42,7 +42,7 @@ const WorkoutSummary = props => {
   // checking to see if there is a state in props.location
   // this is how the UserHome component passes in date from the calendar selection
   const selectedDate = props.location.state
-    ? props.location.state.date.toISOString().slice(0, 10)
+    ? props.location.state.selectedDate.toISOString().slice(0, 10)
     : new Date().toISOString().slice(0, 10)
   // date is a string in YYYY-MM-DD format
   // default date is today's date (will need to change this based on calendar selection)
