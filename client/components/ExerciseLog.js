@@ -112,8 +112,8 @@ const ExerciseLog = props => {
       </Grid>
       <Grid item>
         <Typography variant="body1">
-          For squats and glute bridges, please make sure your whole body is in
-          the camera view.
+          When doing squats, please make sure your whole body is in the camera
+          view.
         </Typography>
       </Grid>
     </Grid>
