@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const {Set, Exercise} = require('../db/models')
 const Sequelize = require('sequelize')
+const moment = require('moment')
 module.exports = router
 
 //#region   date calculation utility funcs
@@ -11,11 +12,12 @@ const yearNum = date => {
   return Number(date.slice(0, 4))
 }
 const monthNum = date => {
-  return Number(date.slice(5, 7))
+  return Number(date.slice(5, 7)) - 1 // month is from 0 - 11
 }
 const dayNum = date => {
   return Number(date.slice(8))
 }
+const dayInMs = 60 * 60 * 24 * 1000
 
 //#endregion
 
@@ -26,13 +28,12 @@ router.get('/month/:date', async (req, res, next) => {
   try {
     if (req.user) {
       const userId = req.user.id
-      // const userId = 3
 
-      // const thisMonth = req.params.date.slice(0, 7)
       const thisMonth = extractYearMonth(req.params.date)
+      console.log(moment(req.params.date).format(moment.HTML5_FMT.MONTH))
       const nextMonth = `${yearNum(req.params.date)}-${monthNum(
         req.params.date
-      ) + 1}`
+      ) + 2}` // month is from 0 - 11
 
       const workouts = await Set.findAll({
         where: {
@@ -43,13 +44,10 @@ router.get('/month/:date', async (req, res, next) => {
           }
         },
         attributes: [
-          // 'date',
           [Sequelize.literal(`extract(day from date)`), 'day'],
           [Sequelize.literal(`COUNT(*)`), 'setCount']
-          // [Sequelize.literal(`extract(week from date)`), 'week'],
         ],
         group: [Sequelize.literal(`extract(day from date)`)]
-        // group: [Sequelize.literal(`extract(day from date)`), 'day']
       })
 
       res.status(200).json(workouts)
@@ -66,53 +64,39 @@ router.get('/month/:date', async (req, res, next) => {
 // :date is in YYYY-MM-DD format
 router.get('/week/:date', async (req, res, next) => {
   try {
-    // if (req.user) {
-    //     const userId = req.user.id
-    const userId = 3
+    if (req.user) {
+      const userId = req.user.id
 
-    const searchDate = req.params.date
-    // const searchDate = new Date(today)
-    const dateInMs = Date.UTC(
-      yearNum(searchDate),
-      monthNum(searchDate),
-      dayNum(searchDate)
-    )
-    const newDate = new Date(dateInMs).getDay
-    // const theDay = newDate.getDay()  // Sunday - Saturday : 0 - 6
-    // *** find start of the week (day 0) & end of the week (day 6)
+      const searchDate = req.params.date
+      const dateInMs = Date.UTC(
+        yearNum(searchDate),
+        monthNum(searchDate),
+        dayNum(searchDate)
+      )
+      const dayOfWeek = new Date(dateInMs).getDay() // Sunday - Saturday : 0 - 6
+      const startOfWeek = Date.UTC(
+        yearNum(searchDate),
+        monthNum(searchDate),
+        dayNum(searchDate) - dayOfWeek
+      )
+      // *** find start of the week (day 0) & end of the week (day 6)
 
-    const thisMonth = extractYearMonth(searchDate)
-    const nextMonth = `${yearNum(req.params.date)}-${monthNum(req.params.date) +
-      1}`
+      const workouts = await Set.findAll({
+        where: {
+          userId,
+          date: {
+            [Sequelize.Op.gte]: new Date(startOfWeek),
+            [Sequelize.Op.lt]: new Date(startOfWeek + 7 * dayInMs) // + 7 days
+          }
+        },
+        attributes: [[Sequelize.literal(`extract(day from date)`), 'day']],
+        group: [Sequelize.literal(`extract(day from date)`)]
+      })
 
-    const workouts = await Set.findAll({
-      where: {
-        userId,
-        date: {
-          [Sequelize.Op.gte]: new Date(thisMonth),
-          [Sequelize.Op.lt]: new Date(nextMonth)
-        }
-        // date: [Sequelize.literal(`extract(week from ${searchDate})`)]
-        // date: {
-        //     [Sequelize.Op.eq]: [Sequelize.literal(`extract(week from ${searchDate})`)]
-        // }
-      },
-      attributes: [
-        // [Sequelize.literal(`extract(day from date)`), 'day'],
-        // [Sequelize.literal(`extract(ISODOW from date)`), 'dayOfWeek'],
-        [Sequelize.literal(`extract(week from date)`), 'week'],
-        [Sequelize.literal(`COUNT(*)`), 'setCount']
-      ],
-      // group: [Sequelize.literal(`extract(day from date)`)],
-      // group: [Sequelize.literal(`extract(ISODOW from date)`)]
-      group: [Sequelize.literal(`extract(week from date)`)]
-    })
-
-    res.status(200).json(workouts)
-    // }
-    // else {
-    //     res.sendStatus(404)
-    // }
+      res.status(200).json(workouts)
+    } else {
+      res.sendStatus(404)
+    }
   } catch (error) {
     next(error)
   }

@@ -134,6 +134,20 @@ form div {
   background: none;
 }
 
+.react-calendar__tile.workout {
+  background: #00b5ad;
+  color: #fff;
+  width: 55%;
+  border-radius: 500rem;
+  min-width: 2em;
+  min-height: 2em;
+  /* padding: .5em!important; */
+  padding: 0.75em 1.1em !important;
+  line-height: 1em;
+  text-align: center;
+  border-radius: 500rem;
+}
+
 .react-calendar__tile:disabled {
   background-color: #f0f0f0;
 }
