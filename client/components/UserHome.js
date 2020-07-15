@@ -18,7 +18,7 @@ import moment from 'moment'
 // ^tileContent	Allows to render custom content within a given calendar item (day on month view, month on year view and so on).
 
 /**
- * COMPONENT
+ //* COMPONENT
  */
 export const UserHome = props => {
   const {firstName} = props
@@ -27,8 +27,9 @@ export const UserHome = props => {
   const [date, setDate] = useState(new Date())
   const [day, setDay] = useState('')
   const [workoutCalendar, setWorkoutCalendar] = useState([])
-  const [calendarMessage, setCalendarMessage] = useState('')
+  const [workoutsThisWeek, setWorkoutsThisWeek] = useState(0)
 
+  // *** Handle user selection of a calendar date to view workout summary
   const handleChange = selection => {
     try {
       setSelectedDate(selection)
@@ -37,62 +38,51 @@ export const UserHome = props => {
     }
   }
 
+  // *** Fetch all workout dates for the current month
+  useEffect(() => {
+    const fetchWorkoutByMonth = async () => {
+      try {
+        const today = moment().format(moment.HTML5_FMT.DATE)
+
+        const {data} = await axios.get(`/api/workouts/month/${today}`)
+        if (data.length) setWorkoutCalendar(data)
+      } catch (error) {
+        console.log('error fetching sets on front end!', error)
+      }
+    }
+    fetchWorkoutByMonth()
+  }, [])
+
+  // *** Calculate the # of workouts this week for ProgressBar
   useEffect(
     () => {
-      const fetchWorkoutByMonth = async () => {
-        try {
-          const today = moment().format(moment.HTML5_FMT.DATE)
-          const yearMM = moment().format('YYYY-MM')
-          const thisWeek = moment().format('w')
+      const yearMM = moment().format('YYYY-MM')
+      const thisWeek = moment().format('w')
 
-          const {data} = await axios.get(`/api/workouts/month/${today}`)
-          console.log(`Fetching workouts for ${yearMM}`, data)
-          // const theDay = moment(`${yearMM}-${data[0].day}`)
-          // console.log("Week of workout: ", theDay.format('w'))
-
-          // let workoutsThisWeek = 0
-          // for (let i = 0; i < workoutCalendar.length; i++) {
-          //   let dayToDate = moment(`${yearMM}-${workoutCalendar[i].day}`)
-          //   if (week === `${dayToDate.format('w')}`) {
-          //     workoutsThisWeek = workoutsThisWeek + 1
-          //   }
-          // }
-
-          if (!data.length) setCalendarMessage('No workouts this month!')
-          else setWorkoutCalendar(data)
-        } catch (error) {
-          console.log('error fetching sets on front end!', error)
+      const workoutsPerWeek = (workouts, week) => {
+        let workoutCount = 0
+        for (let i = 0; i < workouts.length; i++) {
+          let workoutDate = moment(
+            `${yearMM}-${workouts[i].day}`,
+            'YYYY-MM-D'
+          ).format('YYYY-MM-DD')
+          let workoutWeek = moment(workoutDate).format('w')
+          if (week === workoutWeek) {
+            workoutCount = workoutCount + 1
+          }
         }
+        return workoutCount
       }
-      fetchWorkoutByMonth()
+
+      setWorkoutsThisWeek(workoutsPerWeek(workoutCalendar, thisWeek))
     },
     [workoutCalendar]
   )
 
-  // function workoutsPerWeek(workouts, week) {
-  //   let workoutsThisWeek = 0
-  //   for (let i = 0; i < workouts.length; i++) {
-  //     let dayToDate = moment(`${yearMM}-${workouts[i].day}`)
-  //     if (week === `${dayToDate.format('w')}`) {
-  //       workoutsThisWeek = workoutsThisWeek + 1
-  //     }
-  //   }
-  //   return workoutsThisWeek
-  // }
-
-  // useEffect(
-  //   () => {
-
-  //     setProgressBarData({...progressBarData, value: workoutsThisWeek})
-  //   },
-  //   [progressBarData]
-  // )
-
   // *** Progress Bar: DATA & STYLING
   const progressBarData = {
     total: props.goal,
-    // value: workoutsPerWeek(workoutCalendar, thisWeek),
-    value: 2,
+    value: workoutsThisWeek,
     progress: 'ratio', // ratio, percent
     labelContent: 'Workouts Per Week',
     size: 'medium', // tiny, small, medium, large, big
@@ -111,23 +101,14 @@ export const UserHome = props => {
   //   }
   // }
 
-  //#region
-  //   const tileClassName = ({date}) => {
-  //     // console.log(date)
-  //     date = date.toString()
-  //     console.log("open dates", this.state.openDates[0])
-  //     console.log('date', date);
-  //     if(this.state.openDates.includes(date)){
-  //         return "available"
-  //     }
-  //     else return "not"
-  // }
-  //#endregion
-
+  // *** append className to calendar tiles for days with workouts logged
   const tileClassName = ({date, view}) => {
     if (workoutCalendar.length !== 0) {
       let getDate = moment(date).format('D')
+      // TODO: remarkably inefficient LOOP, better way to process DB data before setting state?
       for (let i = 0; i < workoutCalendar.length; i++) {
+        console.log(workoutCalendar[i], getDate)
+        console.log(workoutCalendar.includes(getDate))
         if (getDate === `${workoutCalendar[i].day}`) {
           return 'workout'
         }
@@ -163,7 +144,7 @@ export const UserHome = props => {
 }
 
 /**
- * CONTAINER
+ //* CONTAINER
  */
 const mapState = state => {
   console.log('Mapping State to Props', state)
@@ -177,7 +158,7 @@ const mapState = state => {
 export default connect(mapState)(UserHome)
 
 /**
- * PROP TYPES
+ //* PROP TYPES
  */
 UserHome.propTypes = {
   firstName: PropTypes.string
