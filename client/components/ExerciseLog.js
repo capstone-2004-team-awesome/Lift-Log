@@ -12,17 +12,10 @@ import {
   TableCell
 } from '@material-ui/core'
 
-// function createData(exercise, reps, weight) {
-//   return {exercise, reps, weight}
-// }
-
-// const rows = [createData('Squat', 10, 20), createData('Bicep Curl', 20, 10)]
-
 const ExerciseLog = props => {
   // all sets
   const [log, setLog] = useState([])
   const {completedExercise, currentSet} = props
-  console.log(completedExercise)
 
   useEffect(
     () => {
@@ -30,8 +23,6 @@ const ExerciseLog = props => {
     },
     [completedExercise]
   )
-
-  console.log('RUNNING LOG IN EXERCISE LOG', log)
 
   return (
     <Grid container spacing={4}>

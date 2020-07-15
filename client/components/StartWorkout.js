@@ -18,22 +18,28 @@ const StartWorkout = props => {
   })
 
   const [completedExercise, setCompletedExercise] = useState({})
-
-  let setLogger = {}
   const [webcam, setWebcam] = useState(null)
   const [model, setModel] = useState(null)
-  const size = 600
+  let setLogger = {}
 
-  // More API functions here:
+  let ctx, labelContainer, maxPredictions
+  let lastPrediction = {
+    'Bicep Curl': false,
+    Squat: false
+  }
+  let predictionTracker = {
+    'Bicep Curl': false,
+    Squat: false
+  }
+
+  // Teachable Machine API Functions:
   // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/pose
 
   useEffect(() => {
     async function loadModel() {
-      console.log('LOADING MODEL')
-
       // load the model and metadata
-      // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
       // Note: the pose library adds a tmPose object to your window (window.tmPose)
+      // the link to our Teachable Machine model
       const URL = 'https://teachablemachine.withgoogle.com/models/ByPivKL7e/'
       const modelURL = URL + 'model.json'
       const metadataURL = URL + 'metadata.json'
@@ -45,48 +51,23 @@ const StartWorkout = props => {
 
   useEffect(() => {
     const defineWebcam = () => {
-      console.log('DEFINING WEBCAM')
-
-      const flip = true // whether to flip the webcam
       // setup a webcam
-      setWebcam(new tmPose.Webcam(size, size, flip)) // width, height, flip
+      setWebcam(new tmPose.Webcam(300, 300, true)) // width, height, flip
     }
     defineWebcam()
   }, [])
 
-  // useEffect(
-  //   () => {
-  //     return async () => {
-  //       console.log('STOP WEBCAM')
-  //       if (webcam) await webcam.stop() // stop webcam when component unmounts
-  //     }
-  //   },
-  //   [webcam]
-  // )
-
-  // the link to Teachable Machine model
-  let ctx, labelContainer, maxPredictions
-  let lastPrediction = {
-    'Bicep Curl': false,
-    Squat: false
-  }
-  let predictionTracker = {
-    'Bicep Curl': false,
-    Squat: false
-  }
-
   async function init() {
     maxPredictions = model.getTotalClasses()
-
     // Convenience function to setup a webcam
-    await webcam.setup() // request access to the webcam
-    await webcam.play()
+    await webcam.setup() // request access to the webcam from user
+    webcam.play()
     window.requestAnimationFrame(loop)
 
     // append/get elements to the DOM
     const canvas = document.getElementById('canvas')
-    canvas.width = size
-    canvas.height = size
+    // canvas.width = size
+    canvas.height = canvas.width
     ctx = canvas.getContext('2d')
     labelContainer = document.getElementById('label-container')
     for (let i = 0; i < maxPredictions; i++) {
@@ -143,14 +124,12 @@ const StartWorkout = props => {
               updatedAt: setInfo.updatedAt,
               setId: setInfo.id
             }
-            console.log('AFTER CREATING NEW SET => ', setLogger)
           } else if (exercise === setLogger.exerciseName) {
             // INCREMENT REPS IF SAME EXERCISE IS REPEATED
             const {data} = await axios.put(
               `/api/exercise/update/${setLogger.exerciseId}/${props.userId}`
             )
             setLogger = {...setLogger, reps: data.reps}
-            console.log('AFTER INCREMENTING => ', setLogger)
           } else {
             // MARK PREVIOUS SET AS COMPLETE AND CREATE NEW SET IF NEW EXERCISE IS BEING DONE
             await axios.put(`/api/exercise/complete/${props.userId}`)
@@ -168,11 +147,6 @@ const StartWorkout = props => {
               setId: setInfo.id
             }
           }
-
-          //data: {weight: null, reps: 41, createdAt: "2020-07-06T16:18:59.059Z", updatedAt: "2020-07-06T16:42:03.394Z", userId: 1, exerciseId: 1}
-          // compare set.time to Date.now()
-          // if 30 seconds has passed, this is a new set.
-          // reset state
           setCurrentSet({
             exerciseName: exercise,
             exerciseId: setLogger.exerciseId,
@@ -190,7 +164,6 @@ const StartWorkout = props => {
     lastPrediction = {...predictionTracker}
   }
 
-  // TODO: if process.env.NODE_ENV !== 'production' don't run drawPose()
   function drawPose(pose) {
     if (webcam.canvas) {
       ctx.drawImage(webcam.canvas, 0, 0)
@@ -203,10 +176,6 @@ const StartWorkout = props => {
     }
   }
 
-  const pause = async () => {
-    await webcam.pause()
-  }
-
   const stop = async () => {
     // STOP CAMERA AND MARK THE LAST SET DONE AS COMPLETE
     await axios.put(`/api/exercise/complete/${props.userId}`)
@@ -215,17 +184,13 @@ const StartWorkout = props => {
     props.history.push('/summary')
   }
 
-  const play = async () => {
-    await webcam.play()
-  }
-
   return (
     <div>
       <Grid container spacing={4}>
-        <Grid item sm={6}>
-          <Camera init={init} pause={pause} stop={stop} play={play} />
+        <Grid item xs={12} sm={12} md={6} lg={6}>
+          <Camera init={init} stop={stop} model={model} webcam={webcam} />
         </Grid>
-        <Grid item sm={6}>
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <ExerciseLog
             currentSet={currentSet}
             completedExercise={completedExercise}

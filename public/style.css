@@ -3,6 +3,16 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  max-width: 100vw;
+}
+
+canvas {
+  width: 100%;
+}
+
+hr {
+  border: 5px solid #6369d1;
+  border-radius: 5px;
 }
 
 a {
@@ -18,7 +28,7 @@ nav a {
   margin: 1em;
 }
 
-form div {
+#user-profile div {
   margin: 1em;
   display: inline-block;
 }
