@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function UserProfile() {
+export default function Signup() {
   const [user, setUser] = useState({
     id: '',
     firstName: '',
@@ -30,6 +30,7 @@ export default function UserProfile() {
     goal: '',
     password: ''
   })
+
   const [goalHasError, setGoalError] = useState(false)
   const [fNameHasError, setNameError] = useState(false)
   const [weightHasError, setWeightError] = useState(false)
@@ -59,20 +60,20 @@ export default function UserProfile() {
         setWeightError(false)
       }
     }
-    if (event.target.id === 'email') {
-      if (
-        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(event.target.value)
-      ) {
-        setEmailError(false)
-      } else {
-        setEmailError(true)
-      }
-    }
+    // if (event.target.id === 'email') {
+    //   if (
+    //     /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(event.target.value)
+    //   ) {
+    //     setEmailError(false)
+    //   } else {
+    //     setEmailError(true)
+    //   }
+    // }
     setUser({...user, [event.target.id]: event.target.value})
   }
 
   const onSubmit = async user => {
-    const {data} = await axios.put(`/auth/${user.id}`, user)
+    const {data} = await axios.post('/auth/signup', user)
     setUser(data)
   }
 
@@ -92,7 +93,7 @@ export default function UserProfile() {
       noValidate
       autoComplete="off"
     >
-      {<h3>PROFILE</h3>}
+      {<h3>SIGN UP</h3>}
       <Grid container spacing={1} alignContent="center">
         <Grid item sm={6} med={6} lg={6}>
           <FormControl error={fNameHasError}>

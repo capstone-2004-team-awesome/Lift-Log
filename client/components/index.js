@@ -5,6 +5,7 @@
  */
 export {default as Navbar} from './Navbar'
 export {default as UserProfile} from './UserProfile'
-export {Login, Signup} from './AuthForm'
+export {Login} from './AuthForm'
+export {default as Signup} from './Signup'
 export {default as Camera} from './Camera'
 export {default as StartWorkout} from './StartWorkout'
