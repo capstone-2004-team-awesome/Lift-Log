@@ -1,5 +1,11 @@
 import React, {useState} from 'react'
-import {Button, Card, Grid} from '@material-ui/core'
+import {
+  Button,
+  Card,
+  Grid,
+  CircularProgress,
+  Typography
+} from '@material-ui/core'
 import {makeStyles} from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
@@ -16,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 const Camera = props => {
   const classes = useStyles()
-  const {stop, init, model, webcam} = props
+  const {stop, init, model, webcam, isLoading} = props
   const [hasWebcamStarted, setHasWebcamStarted] = useState(false)
   const [isWebcamPaused, setIsWebcamPaused] = useState(false)
 
@@ -91,7 +97,23 @@ const Camera = props => {
           )}
         </Grid>
       ) : null}
-
+      {isLoading ? (
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignContent="center"
+          alignItems="center"
+          style={{paddingTop: '3rem'}}
+        >
+          <Grid item>
+            <CircularProgress />
+          </Grid>
+          <Grid item>
+            <Typography variant="caption">Camera Loading</Typography>
+          </Grid>
+        </Grid>
+      ) : null}
       <div style={{paddingTop: '1rem'}}>
         <canvas id="canvas" />
       </div>

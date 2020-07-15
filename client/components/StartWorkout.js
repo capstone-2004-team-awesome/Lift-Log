@@ -20,6 +20,7 @@ const StartWorkout = props => {
   const [completedExercise, setCompletedExercise] = useState({})
   const [webcam, setWebcam] = useState(null)
   const [model, setModel] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
   let setLogger = {}
 
   let ctx, labelContainer, maxPredictions
@@ -80,10 +81,11 @@ const StartWorkout = props => {
   async function init() {
     maxPredictions = model.getTotalClasses()
     // Convenience function to setup a webcam
+    setIsLoading(true)
     await webcam.setup() // request access to the webcam from user
     webcam.play()
     window.requestAnimationFrame(loop)
-
+    setIsLoading(false)
     // append/get elements to the DOM
     const canvas = document.getElementById('canvas')
     canvas.height = canvas.width
@@ -195,7 +197,13 @@ const StartWorkout = props => {
     <div>
       <Grid container spacing={4}>
         <Grid item xs={12} sm={12} md={6} lg={6}>
-          <Camera init={init} stop={stop} model={model} webcam={webcam} />
+          <Camera
+            init={init}
+            stop={stop}
+            model={model}
+            webcam={webcam}
+            isLoading={isLoading}
+          />
         </Grid>
         <Grid item xs={12} sm={12} md={6} lg={6}>
           <ExerciseLog
