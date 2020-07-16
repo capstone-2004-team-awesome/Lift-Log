@@ -35,15 +35,14 @@ class Routes extends Component {
           <Switch>
             {/* Routes placed here are only available after logging in */}
             <Route path="/profile" component={UserProfile} />
-            <Route path="/home" component={UserHome} />
             <Route path="/start" component={StartWorkout} />
             <Route path="/summary" component={WorkoutSummary} />
+            <Route component={UserHome} />
           </Switch>
         )}
         {/* Displays our Login component as a fallback */}
 
         <Route component={LandingPage} />
-
       </Switch>
     )
   }
