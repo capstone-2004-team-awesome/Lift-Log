@@ -6,6 +6,7 @@ import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
 import TextField from '@material-ui/core/TextField'
 import axios from 'axios'
+import {Redirect} from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -23,17 +24,20 @@ export default function UserProfile() {
     id: '',
     firstName: '',
     lastName: '',
-    height: '',
+    feet: '',
+    inches: '',
     weight: '',
     sex: '',
     email: '',
     goal: '',
     password: ''
   })
+
   const [goalHasError, setGoalError] = useState(false)
   const [fNameHasError, setNameError] = useState(false)
   const [weightHasError, setWeightError] = useState(false)
   const [emailHasError, setEmailError] = useState(false)
+  const [submitted, setSubmitted] = useState()
   const classes = useStyles()
 
   const handleChange = event => {
@@ -72,8 +76,8 @@ export default function UserProfile() {
   }
 
   const onSubmit = async user => {
+    setSubmitted(true)
     const {data} = await axios.put(`/auth/${user.id}`, user)
-    setUser(data)
   }
 
   useEffect(() => {
@@ -84,8 +88,9 @@ export default function UserProfile() {
 
     fetchData()
   }, [])
-
-  return (
+  return submitted ? (
+    <Redirect to={{pathname: '/home'}} />
+  ) : (
     <form
       id="user-profile"
       onSubmit={() => onSubmit(user)}
@@ -133,8 +138,21 @@ export default function UserProfile() {
         </Grid>
         <Grid item xs={6} md={6} lg={6}>
           <FormControl>
-            <InputLabel htmlFor="component-simple">Height(ft.in)</InputLabel>
-            <Input id="height" value={user.height} onChange={handleChange} />
+            {/* <InputLabel htmlFor="component-simple">Height(ft.in)</InputLabel>
+            <Input id="height" value={user.height} onChange={handleChange} /> */}
+            <InputLabel htmlFor="height">Height</InputLabel>
+            <Input id="height.feet" value={user.feet} onChange={handleChange} />
+            <FormHelperText id="filled-helperText" variant="filled">
+              feet
+            </FormHelperText>
+            <Input
+              id="height.inches"
+              value={user.inches}
+              onChange={handleChange}
+            />
+            <FormHelperText id="filled-helperText" variant="filled">
+              inches
+            </FormHelperText>
           </FormControl>
         </Grid>
         <Grid item xs={6} md={6} lg={6}>

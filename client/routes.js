@@ -38,12 +38,12 @@ class Routes extends Component {
             <Route path="/home" component={UserHome} />
             <Route path="/start" component={StartWorkout} />
             <Route path="/summary" component={WorkoutSummary} />
+            <Route path="/startWorkout" component={StartWorkout} />
           </Switch>
         )}
         {/* Displays our Login component as a fallback */}
 
         <Route component={LandingPage} />
-
       </Switch>
     )
   }

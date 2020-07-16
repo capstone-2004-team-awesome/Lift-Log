@@ -6,8 +6,6 @@ import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
 import TextField from '@material-ui/core/TextField'
 import axios from 'axios'
-import {Redirect} from 'react-router-dom'
-import history from '../history'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -37,7 +35,6 @@ export default function Signup() {
   const [fNameHasError, setNameError] = useState(false)
   const [weightHasError, setWeightError] = useState(false)
   const [emailHasError, setEmailError] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
   const classes = useStyles()
 
   const handleChange = event => {
@@ -76,10 +73,8 @@ export default function Signup() {
   }
 
   const onSubmit = async user => {
-    setSubmitted(true)
     const {data} = await axios.post('/auth/signup', user)
-    // setUser(data)
-    // history.push('/home')
+    setUser(data)
   }
 
   useEffect(() => {
@@ -91,9 +86,7 @@ export default function Signup() {
     fetchData()
   }, [])
 
-  return submitted ? (
-    <Redirect to={{pathname: '/home'}} />
-  ) : (
+  return (
     <form
       onSubmit={() => onSubmit(user)}
       className={classes.root}
