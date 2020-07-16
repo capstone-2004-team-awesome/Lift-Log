@@ -95,7 +95,7 @@ export default function UserProfile() {
     >
       {<h3>PROFILE</h3>}
       <Grid container spacing={1} alignContent="center">
-        <Grid item sm={6} med={6} lg={6}>
+        <Grid item xs={6} md={6} lg={6}>
           <FormControl error={fNameHasError}>
             <InputLabel htmlFor="component-simple">First Name</InputLabel>
             <Input
@@ -110,7 +110,7 @@ export default function UserProfile() {
             ) : null}
           </FormControl>
         </Grid>
-        <Grid item xs={6} med={6} lg={6}>
+        <Grid item xs={6} md={6} lg={6}>
           <FormControl error={weightHasError}>
             <InputLabel htmlFor="component-simple">Weight(lb)</InputLabel>
             <Input id="weight" value={user.weight} onChange={handleChange} />
@@ -121,7 +121,7 @@ export default function UserProfile() {
             ) : null}
           </FormControl>
         </Grid>
-        <Grid item xs={6} med={6} lg={6}>
+        <Grid item xs={6} md={6} lg={6}>
           <FormControl>
             <InputLabel htmlFor="component-simple">Last Name</InputLabel>
             <Input
@@ -131,13 +131,13 @@ export default function UserProfile() {
             />
           </FormControl>
         </Grid>
-        <Grid item xs={6} med={6} lg={6}>
+        <Grid item xs={6} md={6} lg={6}>
           <FormControl>
             <InputLabel htmlFor="component-simple">Height(ft.in)</InputLabel>
             <Input id="height" value={user.height} onChange={handleChange} />
           </FormControl>
         </Grid>
-        <Grid item xs={6} med={6} lg={6}>
+        <Grid item xs={6} md={6} lg={6}>
           <FormControl error={emailHasError}>
             <InputLabel htmlFor="component-simple">E-mail</InputLabel>
             <Input id="email" value={user.email} onChange={handleChange} />
@@ -148,7 +148,7 @@ export default function UserProfile() {
             ) : null}
           </FormControl>
         </Grid>
-        <Grid item xs={6} med={6} lg={6}>
+        <Grid item xs={6} md={6} lg={6}>
           <FormControl className={classes.formControl}>
             <InputLabel htmlFor="sex">Sex</InputLabel>
             <Select native value={user.sex} onChange={handleChange} id="sex">
@@ -159,7 +159,7 @@ export default function UserProfile() {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={6} med={6} lg={6}>
+        <Grid item xs={6} md={6} lg={6}>
           <TextField
             id="password"
             label="Password"
