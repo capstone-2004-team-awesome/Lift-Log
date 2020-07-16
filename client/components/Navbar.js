@@ -69,7 +69,7 @@ const useStyles = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     }),
-    [theme.breakpoints.up('xs')]: {
+    [theme.breakpoints.up('sm')]: {
       marginLeft: -drawerWidth
     },
     [theme.breakpoints.down('xs')]: {
