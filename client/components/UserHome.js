@@ -4,8 +4,11 @@ import {connect} from 'react-redux'
 import Calendar from 'react-calendar'
 import {Redirect} from 'react-router-dom'
 import ProgressBar from './ProgressBar'
+import {default as UpdateGoalDialog} from './UpdateGoalDialog'
 import axios from 'axios'
 import moment from 'moment'
+
+import {Typography} from '@material-ui/core'
 
 /**
  //* COMPONENT
@@ -96,20 +99,53 @@ export const UserHome = props => {
     <Redirect to={{pathname: '/summary', state: {selectedDate}}} />
   ) : (
     <div>
-      <h2>Welcome, {firstName}!</h2>
+      <Typography variant="h2" component="h3" gutterBottom>
+        Welcome, {firstName}!
+      </Typography>
+
       <Calendar
         calendarType="US"
         onChange={handleChange}
         tileClassName={tileClassName}
       />
-      <h5>
-        You've logged {progressBarData.value} workouts this week, that's
-        awesome!
-      </h5>
       <br />
-      <h3>Your Progress: </h3>
+
+      <div>
+        {progressBarData.value ? (
+          <Typography variant="h6" gutterBottom>
+            You've logged {progressBarData.value} workouts this week, that's
+            awesome!
+          </Typography>
+        ) : (
+          <Typography variant="h6" gutterBottom>
+            Uh oh, you haven't logged any workouts this week, better get
+            lifting!
+          </Typography>
+        )}
+      </div>
+      <br />
+      <Typography variant="h3" component="h4" gutterBottom>
+        Your Progress
+      </Typography>
+
       <div style={{width: `${40}%`}}>
-        <ProgressBar data={progressBarData} />
+        {props.goal ? (
+          <ProgressBar data={progressBarData} />
+        ) : (
+          <div>
+            <Typography variant="body1" gutterBottom>
+              Want to see how you're doing each week?
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              Set a goal to track your progress!
+            </Typography>
+
+            <UpdateGoalDialog
+              userId={props.userId}
+              // goal={props.goal}
+            />
+          </div>
+        )}
       </div>
     </div>
   )
