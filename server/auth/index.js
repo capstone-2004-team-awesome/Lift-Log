@@ -20,6 +20,7 @@ router.post('/login', async (req, res, next) => {
 })
 
 router.post('/signup', async (req, res, next) => {
+  console.log('BODY', req.body)
   try {
     const user = await User.create(req.body)
     req.login(user, err => (err ? next(err) : res.json(user)))
@@ -40,6 +41,21 @@ router.post('/logout', (req, res) => {
 
 router.get('/me', (req, res) => {
   res.json(req.user)
+})
+
+router.put('/:id', async (req, res, next) => {
+  try {
+    console.log('UPDATE')
+    const userId = req.params.id
+    const updatedUser = await User.update(req.body, {
+      where: {id: userId},
+      returning: true,
+      plain: true
+    })
+    res.json(updatedUser)
+  } catch (error) {
+    next(error)
+  }
 })
 
 router.use('/google', require('./google'))

@@ -29,7 +29,7 @@ const User = db.define('user', {
     type: Sequelize.INTEGER
   },
   height: {
-    type: Sequelize.INTEGER
+    type: Sequelize.FLOAT
   },
   goal: {
     type: Sequelize.INTEGER
