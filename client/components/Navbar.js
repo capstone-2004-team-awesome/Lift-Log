@@ -43,9 +43,13 @@ const useStyles = makeStyles(theme => ({
   },
   menuButton: {
     marginRight: theme.spacing(2),
+    color: '#fff',
     [theme.breakpoints.up('sm')]: {
       display: 'none'
     }
+  },
+  appBarButton: {
+    color: '#fff'
   },
   title: {
     flexGrow: 1,
@@ -174,6 +178,7 @@ const Navbar = ({handleClick, isLoggedIn}, props) => {
                 component={Link}
                 to="/login"
                 color="primary"
+                className={classes.appBarButton}
                 disableFocusRipple={true}
                 disableElevation={true}
               >
@@ -183,6 +188,7 @@ const Navbar = ({handleClick, isLoggedIn}, props) => {
                 component={Link}
                 to="/signup"
                 color="primary"
+                className={classes.appBarButton}
                 disableFocusRipple={true}
                 disableElevation={true}
               >
