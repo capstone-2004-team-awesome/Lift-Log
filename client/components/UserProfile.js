@@ -1,6 +1,14 @@
+/* eslint-disable complexity */
 import React, {useState, useEffect} from 'react'
 import {makeStyles} from '@material-ui/core/styles'
-import {Button, Select, FormHelperText, Grid, Divider} from '@material-ui/core'
+import {
+  Button,
+  Select,
+  FormHelperText,
+  Grid,
+  Divider,
+  Typography
+} from '@material-ui/core'
 import FormControl from '@material-ui/core/FormControl'
 import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
@@ -75,9 +83,9 @@ export default function UserProfile() {
     setUser({...user, [event.target.id]: event.target.value})
   }
 
-  const onSubmit = async user => {
+  const onSubmit = async () => {
     setSubmitted(true)
-    const {data} = await axios.put(`/auth/${user.id}`, user)
+    await axios.put(`/auth/${user.id}`, user)
   }
 
   useEffect(() => {
@@ -199,10 +207,14 @@ export default function UserProfile() {
           classes={{root: classes.goalColor}}
           align="stretch"
         >
+          <Typography variant="body1">
+            How many times do you aim to work out per week?
+          </Typography>
           <FormControl error={goalHasError}>
             <InputLabel htmlFor="goal">Enter your goal!</InputLabel>
             <Input
               id="goal"
+              type="number"
               value={user.goal}
               aria-describedby="component-error-text"
               label="Times per week"
