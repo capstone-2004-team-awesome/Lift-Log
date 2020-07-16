@@ -31,14 +31,14 @@ const Camera = props => {
     init()
   }
 
-  const play = async () => {
+  const play = () => {
     setIsWebcamPaused(false)
-    await webcam.play()
+    webcam.play()
   }
 
-  const pause = async () => {
+  const pause = () => {
     setIsWebcamPaused(true)
-    await webcam.pause()
+    webcam.pause()
   }
 
   return (
@@ -111,6 +111,11 @@ const Camera = props => {
           </Grid>
           <Grid item>
             <Typography variant="caption">Camera Loading</Typography>
+          </Grid>
+          <Grid item>
+            <Typography variant="caption">
+              Stand back and get ready to work out!
+            </Typography>
           </Grid>
         </Grid>
       ) : null}

@@ -122,27 +122,28 @@ const WorkoutSummary = props => {
               <Typography variant="h2">Workout Summary</Typography>
               <Typography variant="h4">{date}</Typography>
               <hr />
-              <TableContainer>
-                <Typography variant="body1">
-                  If exercise information was not logged correctly, use input
-                  fields to modify.
-                </Typography>
-                <Typography variant="body1">
-                  You can also add an exercise with the button below.
-                </Typography>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Exercise</TableCell>
-                      <TableCell align="right"># Of Reps</TableCell>
-                      <TableCell align="right">Weight (lbs)</TableCell>
-                      <TableCell align="right" />
-                    </TableRow>
-                  </TableHead>
 
-                  <TableBody>
-                    {summary.length ? (
-                      summary.map(set => {
+              {summary.length ? (
+                <TableContainer>
+                  <Typography variant="body1">
+                    If exercise information was not logged correctly, use input
+                    fields to modify.
+                  </Typography>
+                  <Typography variant="body1">
+                    You can also add an exercise with the button below.
+                  </Typography>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Exercise</TableCell>
+                        <TableCell align="right"># Of Reps</TableCell>
+                        <TableCell align="right">Weight (lbs)</TableCell>
+                        <TableCell align="right" />
+                      </TableRow>
+                    </TableHead>
+
+                    <TableBody>
+                      {summary.map(set => {
                         return (
                           <TableRow key={set.id}>
                             <TableCell>{set.exercise.name}</TableCell>
@@ -193,17 +194,13 @@ const WorkoutSummary = props => {
                             </TableCell>
                           </TableRow>
                         )
-                      })
-                    ) : (
-                      <TableRow>
-                        <TableCell>
-                          <Typography variant="h5">{noWorkoutMsg}</Typography>
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              ) : (
+                <Typography variant="h5">{noWorkoutMsg}</Typography>
+              )}
             </CardContent>
           </Card>
         </Grid>

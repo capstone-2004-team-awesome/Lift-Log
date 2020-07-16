@@ -24,6 +24,9 @@ const StartWorkout = props => {
   let setLogger = {}
 
   let ctx, labelContainer, maxPredictions
+  let globalId
+  // const [stopped, setStopped] = useState(false)
+  let stopped = false
   let prevPrediction = {
     'Bicep Curl': false,
     Squat: false
@@ -78,13 +81,21 @@ const StartWorkout = props => {
     setCompletedExercise(setLogger)
   }
 
+  async function loop() {
+    if (!stopped) {
+      webcam.update() // update the webcam frame
+      await predict()
+      globalId = window.requestAnimationFrame(loop)
+    }
+  }
+
   async function init() {
     maxPredictions = model.getTotalClasses()
     // Convenience function to setup a webcam
     setIsLoading(true)
     await webcam.setup() // request access to the webcam from user
     webcam.play()
-    window.requestAnimationFrame(loop)
+    globalId = window.requestAnimationFrame(loop)
     setIsLoading(false)
     // append/get elements to the DOM
     const canvas = document.getElementById('canvas')
@@ -95,12 +106,6 @@ const StartWorkout = props => {
       // and class labels
       labelContainer.appendChild(document.createElement('div'))
     }
-  }
-
-  async function loop() {
-    webcam.update() // update the webcam frame
-    await predict()
-    window.requestAnimationFrame(loop)
   }
 
   async function predict() {
@@ -187,8 +192,12 @@ const StartWorkout = props => {
 
   const stop = async () => {
     // STOP CAMERA AND MARK THE LAST SET DONE AS COMPLETE
+    stopped = true
+    cancelAnimationFrame(globalId)
+    // setStopped(true)
+
     await axios.put(`/api/exercise/complete/${props.userId}`)
-    await webcam.stop()
+    webcam.stop()
     // redirect to workout summary page
     props.history.push('/summary')
   }
