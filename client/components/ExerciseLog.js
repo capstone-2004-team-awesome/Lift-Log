@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {
   Card,
   CardContent,
@@ -12,17 +12,17 @@ import {
   TableCell
 } from '@material-ui/core'
 
-// function createData(exercise, reps, weight) {
-//   return {exercise, reps, weight}
-// }
-
-// const rows = [createData('Squat', 10, 20), createData('Bicep Curl', 20, 10)]
-
 const ExerciseLog = props => {
-  const {exerciseName, exerciseId, reps, weight, time} = props.currentSet
-
   // all sets
-  // const [log, setLog] = useState([])
+  const [log, setLog] = useState([])
+  const {completedExercise, currentSet} = props
+
+  useEffect(
+    () => {
+      setLog(exercises => [...exercises, completedExercise])
+    },
+    [completedExercise]
+  )
 
   return (
     <Grid container spacing={4}>
@@ -30,8 +30,40 @@ const ExerciseLog = props => {
         <Card>
           <CardContent>
             <Typography variant="h5">
-              Current Exercise: {exerciseName}
+              Current Exercise: {currentSet.exerciseName}
             </Typography>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant="h6">Exercise</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6"># Of Reps</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">Weight (lbs)</Typography>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      <Typography variant="h6">
+                        {currentSet.exerciseName}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">{currentSet.reps}</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">{currentSet.weight}</Typography>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
           </CardContent>
         </Card>
       </Grid>
@@ -43,26 +75,35 @@ const ExerciseLog = props => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Exercise</TableCell>
-                    <TableCell align="right"># Of Reps</TableCell>
-                    <TableCell align="right">Weight (lbs)</TableCell>
+                    <TableCell>
+                      <Typography variant="h6">Exercise</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6"># Of Reps</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">Weight (lbs)</Typography>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <TableRow>
-                    <TableCell>{exerciseName}</TableCell>
-                    <TableCell align="right">{reps}</TableCell>
-                    <TableCell align="right">{weight}</TableCell>
-                  </TableRow>
-                  {/* {rows.map(row => {
+                  {log.map(elem => {
                     return (
-                      <TableRow key={row.exercise}>
-                        <TableCell>{row.exercise}</TableCell>
-                        <TableCell align="right">{row.reps}</TableCell>
-                        <TableCell align="right">{row.weight}</TableCell>
+                      <TableRow key={elem.setId}>
+                        <TableCell>
+                          <Typography variant="h6">
+                            {elem.exerciseName}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="right">
+                          <Typography variant="h6">{elem.reps}</Typography>
+                        </TableCell>
+                        <TableCell align="right">
+                          <Typography variant="h6">{elem.weight}</Typography>
+                        </TableCell>
                       </TableRow>
                     )
-                  })} */}
+                  })}
                 </TableBody>
               </Table>
             </TableContainer>

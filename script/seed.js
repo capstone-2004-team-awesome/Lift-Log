@@ -1,4 +1,5 @@
 'use strict'
+var faker = require('faker')
 
 const db = require('../server/db')
 const {User, Exercise, Set} = require('../server/db/models')
@@ -7,27 +8,99 @@ async function seed() {
   await db.sync({force: true})
   console.log('db synced!')
 
-  const users = await Promise.all([
-    User.create({firstName: 'Cody', email: 'cody@email.com', password: '123'}),
+  const [user1, user2, user3] = await Promise.all([
     User.create({
       firstName: 'Cody',
+      email: 'cody@email.com',
+      password: '123',
+      sex: 'male',
+      weight: 25,
+      height: 16
+    }),
+    User.create({
+      firstName: 'Murphy',
       email: 'murphy@email.com',
-      password: '123'
+      password: '123',
+      sex: 'female',
+      weight: 135,
+      height: 66
+    }),
+    User.create({
+      firstName: 'Bright',
+      lastName: 'Future',
+      email: 'bright_future@email.com',
+      password: 'bright',
+      sex: 'other',
+      weight: 35,
+      height: 38
     })
   ])
 
-  const bicepCurls = await Exercise.create({name: 'Bicep Curl - Up'})
-  await Exercise.create({name: 'Squat'})
+  let userSeed = []
+  let sexOptions = ['female', 'male', 'other']
+  for (let i = 0; i < 100; i++) {
+    userSeed.push({
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName(),
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+      sex: sexOptions[Math.floor(Math.random() * sexOptions.length)],
+      weight: Math.floor(Math.random() * 301) + 80,
+      height: Math.floor(Math.random() * 97) + 36,
+      goal: Math.floor(Math.random() * 8)
+    })
+  }
+  await Promise.all(
+    userSeed.map(user => {
+      return User.create(user)
+    })
+  )
 
-  await Set.create({weight: 20, reps: 5})
+  const exercises = await Promise.all([
+    Exercise.create({name: 'Bicep Curl'}),
+    Exercise.create({name: 'Squat'}),
+    Exercise.create({name: 'Glute Bridge'})
+  ])
 
-  const user = await User.findByPk(1)
-  user.addSet(1)
+  let setSeed = []
+  for (let i = 0; i < 300; i++) {
+    setSeed.push({
+      weight: Math.floor(Math.random() * 201),
+      reps: Math.floor(Math.random() * 20) + 1,
+      completed: true,
+      date: faker.date.between(new Date('2020-06-01'), new Date())
+    })
+  }
 
-  await bicepCurls.addSet(1) //bicep curl
+  const sets = await Promise.all(
+    setSeed.map(set => {
+      return Set.create(set)
+    })
+  )
 
-  console.log(`seeded ${users.length} users`)
-  console.log(`seeded successfully`)
+  await Promise.all(
+    sets.map((set, idx) => {
+      if (idx < 100) {
+        return user1.addSet(set)
+      } else if (idx >= 100 && idx < 200) {
+        return user2.addSet(set)
+      } else {
+        return user3.addSet(set)
+      }
+    })
+  )
+
+  await Promise.all(
+    sets.map(set => {
+      let index = Math.floor(Math.random() * exercises.length)
+      return exercises[index].addSet(set)
+    })
+  )
+
+  console.log(`seeded successfully!`)
+  console.log(`seeded ${userSeed.length + 3} users successfully!`)
+  console.log(`seeded ${setSeed.length} sets successfully!`)
+  console.log(`seeded ${exercises.length} exercises successfully!`)
 }
 
 // We've separated the `seed` function from the `runSeed` function.

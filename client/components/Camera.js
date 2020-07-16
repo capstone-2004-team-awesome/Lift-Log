@@ -1,28 +1,123 @@
-import React from 'react'
+import React, {useState} from 'react'
+import {
+  Button,
+  Card,
+  Grid,
+  CircularProgress,
+  Typography
+} from '@material-ui/core'
+import {makeStyles} from '@material-ui/core/styles'
 
-import {Button, Card} from '@material-ui/core'
+const useStyles = makeStyles(theme => ({
+  button: {
+    [theme.breakpoints.up('sm')]: {
+      width: '2rem'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '1rem'
+    },
+    padding: '3px 8px'
+  }
+}))
 
 const Camera = props => {
-  const {pause, stop, play, init} = props
+  const classes = useStyles()
+  const {stop, init, model, webcam, isLoading} = props
+  const [hasWebcamStarted, setHasWebcamStarted] = useState(false)
+  const [isWebcamPaused, setIsWebcamPaused] = useState(false)
+
+  const start = () => {
+    setHasWebcamStarted(true)
+    init()
+  }
+
+  const play = async () => {
+    setIsWebcamPaused(false)
+    await webcam.play()
+  }
+
+  const pause = async () => {
+    setIsWebcamPaused(true)
+    await webcam.pause()
+  }
 
   return (
     <Card style={{width: '100%'}}>
-      <Button type="button" onClick={() => init()}>
-        Start
-      </Button>
-      <Button type="button" onClick={() => play()}>
-        Play
-      </Button>
-      <Button type="button" onClick={() => pause()}>
-        Pause
-      </Button>
-      <Button type="button" onClick={() => stop()}>
-        Stop
-      </Button>
-      <div>
-        <canvas id="canvas" style={{width: '600px', height: '600px'}} />
+      {model ? (
+        <Grid
+          container
+          item
+          spacing={1}
+          justify="center"
+          style={{paddingTop: '1rem'}}
+        >
+          {!hasWebcamStarted ? (
+            <Grid item>
+              <Button
+                type="button"
+                onClick={() => start()}
+                className={classes.button}
+              >
+                Start
+              </Button>
+            </Grid>
+          ) : (
+            <React.Fragment>
+              {!isWebcamPaused ? (
+                <Grid item>
+                  <Button
+                    type="button"
+                    onClick={() => pause()}
+                    className={classes.button}
+                  >
+                    Pause
+                  </Button>
+                </Grid>
+              ) : (
+                <Grid item>
+                  <Button
+                    type="button"
+                    onClick={() => play()}
+                    className={classes.button}
+                  >
+                    Play
+                  </Button>
+                </Grid>
+              )}
+              <Grid item>
+                <Button
+                  type="button"
+                  onClick={() => stop()}
+                  className={classes.button}
+                >
+                  Stop
+                </Button>
+              </Grid>
+            </React.Fragment>
+          )}
+        </Grid>
+      ) : null}
+      {isLoading ? (
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignContent="center"
+          alignItems="center"
+          style={{paddingTop: '3rem'}}
+        >
+          <Grid item>
+            <CircularProgress />
+          </Grid>
+          <Grid item>
+            <Typography variant="caption">Camera Loading</Typography>
+          </Grid>
+        </Grid>
+      ) : null}
+      <div style={{paddingTop: '1rem'}}>
+        <canvas id="canvas" />
       </div>
-      <div id="label-container" />
+      <div id="label-container" style={{paddingTop: '1rem'}} />
     </Card>
   )
 }

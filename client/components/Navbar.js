@@ -32,6 +32,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 // import PersonAddIcon from '@material-ui/icons/PersonAdd'
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled'
+import HomeIcon from '@material-ui/icons/Home'
 //#endregion
 
 const drawerWidth = 240
@@ -76,9 +77,6 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen
     }),
     marginLeft: 0
-  },
-  removeShadow: {
-    boxShadow: '0px 0px'
   }
 }))
 
@@ -101,7 +99,12 @@ const Navbar = ({handleClick, isLoggedIn}, props) => {
         <ListItem>
           <Typography variant="overline">WORKOUTS</Typography>
         </ListItem>
-
+        <ListItem button component={Link} to="/home">
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="Home" />
+        </ListItem>
         <ListItem button component={Link} to="/start">
           <ListItemIcon>
             <PlayCircleFilledIcon />
@@ -165,14 +168,18 @@ const Navbar = ({handleClick, isLoggedIn}, props) => {
               <Button
                 component={Link}
                 to="/login"
-                className={classes.removeShadow}
+                color="primary"
+                disableFocusRipple={true}
+                disableElevation={true}
               >
                 Login
               </Button>
               <Button
                 component={Link}
                 to="/signup"
-                className={classes.removeShadow}
+                color="primary"
+                disableFocusRipple={true}
+                disableElevation={true}
               >
                 Signup
               </Button>
