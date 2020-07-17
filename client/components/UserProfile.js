@@ -1,11 +1,20 @@
 import React, {useState, useEffect} from 'react'
 import {makeStyles} from '@material-ui/core/styles'
-import {Button, Select, FormHelperText, Grid, Divider} from '@material-ui/core'
+import {
+  Button,
+  Select,
+  FormHelperText,
+  Grid,
+  Divider,
+  Typography
+} from '@material-ui/core'
 import FormControl from '@material-ui/core/FormControl'
 import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
 import TextField from '@material-ui/core/TextField'
 import axios from 'axios'
+
+import themeObj, {thirdColor, fourthColor, grayColor} from '../theme'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -14,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   dividerColor: {
-    backgroundColor: '#00B5AD'
+    backgroundColor: grayColor[3]
   }
 }))
 
@@ -93,8 +102,13 @@ export default function UserProfile() {
       noValidate
       autoComplete="off"
     >
-      {<h3>PROFILE</h3>}
       <Grid container spacing={1} alignContent="center">
+        <Grid item xs={12}>
+          <Typography variant="h2" component="h3" gutterBottom>
+            Profile
+          </Typography>
+        </Grid>
+
         <Grid item xs={6} md={6} lg={6}>
           <FormControl error={fNameHasError}>
             <InputLabel htmlFor="component-simple">First Name</InputLabel>
@@ -170,7 +184,9 @@ export default function UserProfile() {
           />
         </Grid>
       </Grid>
+
       <Divider classes={{root: classes.dividerColor}} />
+
       <Grid container spacing={1}>
         <Grid
           item
@@ -205,7 +221,6 @@ export default function UserProfile() {
         <Grid item xs={12} md={12} lg={12}>
           <Button
             variant="contained"
-            color="primary"
             type="submit"
             disabled={
               goalHasError || fNameHasError || weightHasError || emailHasError
