@@ -12,7 +12,8 @@ import {
   TableCell,
   TextField,
   IconButton,
-  Snackbar
+  Snackbar,
+  Divider
 } from '@material-ui/core'
 import axios from 'axios'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
@@ -121,7 +122,7 @@ const WorkoutSummary = props => {
             <CardContent>
               <Typography variant="h2">Workout Summary</Typography>
               <Typography variant="h4">{date}</Typography>
-              <hr />
+              <Divider />
 
               {summary.length ? (
                 <TableContainer>

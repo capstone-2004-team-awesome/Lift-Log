@@ -152,20 +152,18 @@ export const UserHome = props => {
           </Typography>
         </Grid>
 
-        <Grid item xs={11}>
-          <div>
-            {progressBarData.value ? (
-              <Typography variant="h6" gutterBottom>
-                You've logged {progressBarData.value} workouts this week, that's
-                awesome!
-              </Typography>
-            ) : (
-              <Typography variant="h6" gutterBottom>
-                Uh oh, you haven't logged any workouts this week, better get
-                lifting!
-              </Typography>
-            )}
-          </div>
+        <Grid item xs={12} alignContent="center">
+          {workoutsThisWeek ? (
+            <Typography variant="h6" gutterBottom>
+              You've logged {workoutsThisWeek} workouts this week, that's
+              awesome!
+            </Typography>
+          ) : (
+            <Typography variant="h6" gutterBottom>
+              Uh oh, you haven't logged any workouts this week, better get
+              lifting!
+            </Typography>
+          )}
         </Grid>
 
         <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
@@ -177,22 +175,6 @@ export const UserHome = props => {
             />
           </Paper>
         </Grid>
-        {/*
-        <Grid item xs={12}>
-          <div>
-            {progressBarData.value ? (
-              <Typography variant="h6" gutterBottom>
-                You've logged {progressBarData.value} workouts this week, that's
-                awesome!
-              </Typography>
-            ) : (
-              <Typography variant="h6" gutterBottom>
-                Uh oh, you haven't logged any workouts this week, better get
-                lifting!
-              </Typography>
-            )}
-          </div>
-        </Grid> */}
 
         <Grid item xs={10} sm={7} md={5} lg={3} xl={2}>
           <Paper className={classes.paper}>
@@ -200,7 +182,7 @@ export const UserHome = props => {
               Your Progress
             </Typography>
 
-            {props.goal ? (
+            {userGoal ? (
               <ProgressBar
                 data={progressBarData}
                 total={userGoal}
