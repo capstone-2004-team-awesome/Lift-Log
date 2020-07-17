@@ -5,14 +5,15 @@ import React, {Component} from 'react'
  */
 class ProgressBar extends Component {
   calculatePercent = () => {
-    const {percent, total, value} = this.props.data
+    const {percent} = this.props.data
+    const {total, value} = this.props
     if (percent) return percent
     if (total && value) return value / total * 100
   }
 
   computeValueText = percent => {
-    const {progress, total, value} = this.props.data
-
+    const {progress} = this.props.data
+    const {total, value} = this.props
     if (progress === 'value') return value
     if (progress === 'ratio') return `${value}/${total}`
     return `${percent}%`

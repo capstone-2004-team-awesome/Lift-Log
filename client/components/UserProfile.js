@@ -93,11 +93,15 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchData = async () => {
       const result = await axios.get('/auth/me')
-      setUser(result.data)
+      const {height} = result.data
+      const feet = Math.floor(height / 12)
+      const inches = Math.round((height / 12 - feet) * 12)
+      setUser({...result.data, feet, inches})
     }
 
     fetchData()
   }, [])
+
   return submitted ? (
     <Redirect to={{pathname: '/home'}} />
   ) : (
@@ -153,15 +157,25 @@ export default function UserProfile() {
         </Grid>
         <Grid item xs={6} md={6} lg={6}>
           <FormControl>
-            {/* <InputLabel htmlFor="component-simple">Height(ft.in)</InputLabel>
-            <Input id="height" value={user.height} onChange={handleChange} /> */}
             <InputLabel htmlFor="height">Height</InputLabel>
-            <Input id="height.feet" value={user.feet} onChange={handleChange} />
+            <Input
+              id="feet"
+              min="0"
+              max="10"
+              type="number"
+              value={user.feet}
+              onChange={handleChange}
+            />
             <FormHelperText id="filled-helperText" variant="filled">
               feet
             </FormHelperText>
+          </FormControl>
+          <FormControl>
             <Input
-              id="height.inches"
+              id="inches"
+              min="0"
+              max="12"
+              type="number"
               value={user.inches}
               onChange={handleChange}
             />
@@ -217,22 +231,24 @@ export default function UserProfile() {
           align="stretch"
         >
           <Typography variant="body1">
-            How many times do you aim to work out per week?
+            How many days do you aim to work out per week?
           </Typography>
           <FormControl error={goalHasError}>
             <InputLabel htmlFor="goal">Enter your goal!</InputLabel>
             <Input
               id="goal"
               type="number"
+              min="0"
+              max="7"
               value={user.goal}
               aria-describedby="component-error-text"
-              label="Times per week"
+              label="Days per week"
               onChange={handleChange}
               fullWidth={true}
               variant="filled"
             />
             <FormHelperText id="filled-helperText" variant="filled">
-              Times per week
+              Days per week
             </FormHelperText>
             {goalHasError ? (
               <FormHelperText id="component-error-text">

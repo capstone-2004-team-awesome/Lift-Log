@@ -33,6 +33,15 @@ export const UserHome = props => {
   const [selectedDate, setSelectedDate] = useState(null)
   const [workoutCalendar, setWorkoutCalendar] = useState([])
   const [workoutsThisWeek, setWorkoutsThisWeek] = useState(0)
+  const [userGoal, setUserGoal] = useState(0)
+  // const [progressBarData, setProgressBarData] = useState({
+  //   total: 0, // goal
+  //   value: 0, // workouts this week
+  //   progress: 'ratio', // ratio, percent
+  //   labelContent: 'Workouts Per Week',
+  //   size: 'medium', // tiny, small, medium, large, big
+  //   color: 'teal', // red, orange, yellow, olive, green, teal, blue, violet, purple, pink, brown, grey, black
+  // })
 
   // *** Handle user selection of a calendar date to view workout summary
   const handleChange = selection => {
@@ -79,15 +88,40 @@ export const UserHome = props => {
         return workoutCount
       }
 
+      // const fetchGoal = async () => {
+      //   const {data} = await axios.get('/auth/me')
+      //   return data.goal
+      // }
+
+      // const workoutsThisWeek = workoutsPerWeek(workoutCalendar, thisWeek)
       setWorkoutsThisWeek(workoutsPerWeek(workoutCalendar, thisWeek))
+      // setProgressBarData({
+      //   ...progressBarData,
+      //   value: workoutsPerWeek(workoutCalendar, thisWeek),
+      // })
     },
     [workoutCalendar]
   )
 
+  useEffect(() => {
+    const fetchGoal = async () => {
+      const {data} = await axios.get('/auth/me')
+      setUserGoal(data.goal)
+      // setProgressBarData({
+      //   ...progressBarData,
+      //   total: data.goal,
+      // })
+    }
+    fetchGoal()
+  }, [])
+
+  console.log(progressBarData)
+
   // *** Progress Bar: DATA & STYLING
   const progressBarData = {
-    total: props.goal,
-    value: workoutsThisWeek,
+    // total: props.goal,
+    // total: userGoal,
+    // value: workoutsThisWeek,
     progress: 'ratio', // ratio, percent
     labelContent: 'Workouts Per Week',
     size: 'medium', // tiny, small, medium, large, big
@@ -106,7 +140,7 @@ export const UserHome = props => {
       return null
     }
   }
-  
+
   return selectedDate ? (
     <Redirect to={{pathname: '/summary', state: {selectedDate}}} />
   ) : (
@@ -143,7 +177,7 @@ export const UserHome = props => {
             />
           </Paper>
         </Grid>
-        {/* 
+        {/*
         <Grid item xs={12}>
           <div>
             {progressBarData.value ? (
@@ -167,7 +201,11 @@ export const UserHome = props => {
             </Typography>
 
             {props.goal ? (
-              <ProgressBar data={progressBarData} />
+              <ProgressBar
+                data={progressBarData}
+                total={userGoal}
+                value={workoutsThisWeek}
+              />
             ) : (
               <div>
                 <Typography variant="body1" gutterBottom>

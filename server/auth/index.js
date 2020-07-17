@@ -47,7 +47,11 @@ router.put('/:id', async (req, res, next) => {
   try {
     console.log('UPDATE')
     const userId = req.params.id
-    const updatedUser = await User.update(req.body, {
+    const {inches, feet} = req.body
+    console.log(req.body)
+    const height = parseInt(feet) * 12 + parseInt(inches)
+    const userInfo = {...req.body, height}
+    const updatedUser = await User.update(userInfo, {
       where: {id: userId},
       returning: true,
       plain: true
