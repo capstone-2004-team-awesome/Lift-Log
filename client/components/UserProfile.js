@@ -91,7 +91,10 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchData = async () => {
       const result = await axios.get('/auth/me')
-      setUser(result.data)
+      const {height} = result.data
+      const feet = Math.floor(height / 12)
+      const inches = Math.round((height / 12 - feet) * 12)
+      setUser({...result.data, feet, inches})
     }
 
     fetchData()
@@ -149,12 +152,22 @@ export default function UserProfile() {
             {/* <InputLabel htmlFor="component-simple">Height(ft.in)</InputLabel>
             <Input id="height" value={user.height} onChange={handleChange} /> */}
             <InputLabel htmlFor="height">Height</InputLabel>
-            <Input id="height.feet" value={user.feet} onChange={handleChange} />
+            <Input
+              id="feet"
+              min="0"
+              max="10"
+              type="number"
+              value={user.feet}
+              onChange={handleChange}
+            />
             <FormHelperText id="filled-helperText" variant="filled">
               feet
             </FormHelperText>
             <Input
-              id="height.inches"
+              id="inches"
+              min="0"
+              max="12"
+              type="number"
               value={user.inches}
               onChange={handleChange}
             />
