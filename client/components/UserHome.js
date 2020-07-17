@@ -8,15 +8,29 @@ import {default as UpdateGoalDialog} from './UpdateGoalDialog'
 import axios from 'axios'
 import moment from 'moment'
 
-import {Typography} from '@material-ui/core'
+import {makeStyles} from '@material-ui/core/styles'
+import {Typography, Paper, Grid} from '@material-ui/core'
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    flexGrow: 1
+  },
+  paper: {
+    padding: theme.spacing(2),
+    textAlign: 'center'
+    // color: theme.palette.text.secondary,
+  }
+}))
 
 /**
  //* COMPONENT
  */
 export const UserHome = props => {
+  const classes = useStyles()
+
+  // *** States
   const {firstName} = props
   const [selectedDate, setSelectedDate] = useState(null)
-
   const [workoutCalendar, setWorkoutCalendar] = useState([])
   const [workoutsThisWeek, setWorkoutsThisWeek] = useState(0)
 
@@ -93,60 +107,82 @@ export const UserHome = props => {
     }
   }
 
-  console.log(selectedDate)
-
   return selectedDate ? (
     <Redirect to={{pathname: '/summary', state: {selectedDate}}} />
   ) : (
-    <div>
-      <Typography variant="h2" component="h3" gutterBottom>
-        Welcome, {firstName}!
-      </Typography>
-
-      <Calendar
-        calendarType="US"
-        onChange={handleChange}
-        tileClassName={tileClassName}
-      />
-      <br />
-
-      <div>
-        {progressBarData.value ? (
-          <Typography variant="h6" gutterBottom>
-            You've logged {progressBarData.value} workouts this week, that's
-            awesome!
+    <div className={classes.root}>
+      <Grid container justify="center" spacing={3}>
+        <Grid item xs={12}>
+          <Typography variant="h2" component="h3" gutterBottom>
+            Welcome, {firstName}!
           </Typography>
-        ) : (
-          <Typography variant="h6" gutterBottom>
-            Uh oh, you haven't logged any workouts this week, better get
-            lifting!
-          </Typography>
-        )}
-      </div>
-      <br />
-      <Typography variant="h3" component="h4" gutterBottom>
-        Your Progress
-      </Typography>
+        </Grid>
 
-      <div style={{width: `${40}%`}}>
-        {props.goal ? (
-          <ProgressBar data={progressBarData} />
-        ) : (
+        <Grid item xs={11}>
           <div>
-            <Typography variant="body1" gutterBottom>
-              Want to see how you're doing each week?
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              Set a goal to track your progress!
+            {progressBarData.value ? (
+              <Typography variant="h6" gutterBottom>
+                You've logged {progressBarData.value} workouts this week, that's
+                awesome!
+              </Typography>
+            ) : (
+              <Typography variant="h6" gutterBottom>
+                Uh oh, you haven't logged any workouts this week, better get
+                lifting!
+              </Typography>
+            )}
+          </div>
+        </Grid>
+
+        <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
+          <Paper className={classes.paper}>
+            <Calendar
+              calendarType="US"
+              onChange={handleChange}
+              tileClassName={tileClassName}
+            />
+          </Paper>
+        </Grid>
+        {/* 
+        <Grid item xs={12}>
+          <div>
+            {progressBarData.value ? (
+              <Typography variant="h6" gutterBottom>
+                You've logged {progressBarData.value} workouts this week, that's
+                awesome!
+              </Typography>
+            ) : (
+              <Typography variant="h6" gutterBottom>
+                Uh oh, you haven't logged any workouts this week, better get
+                lifting!
+              </Typography>
+            )}
+          </div>
+        </Grid> */}
+
+        <Grid item xs={10} sm={7} md={5} lg={3} xl={2}>
+          <Paper className={classes.paper}>
+            <Typography variant="h4" gutterBottom>
+              Your Progress
             </Typography>
 
-            <UpdateGoalDialog
-              userId={props.userId}
-              // goal={props.goal}
-            />
-          </div>
-        )}
-      </div>
+            {props.goal ? (
+              <ProgressBar data={progressBarData} />
+            ) : (
+              <div>
+                <Typography variant="body1" gutterBottom>
+                  Want to see how you're doing each week?
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                  Set a goal to track your progress!
+                </Typography>
+
+                <UpdateGoalDialog userId={props.userId} />
+              </div>
+            )}
+          </Paper>
+        </Grid>
+      </Grid>
     </div>
   )
 }
