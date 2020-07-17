@@ -59,7 +59,9 @@ async function seed() {
   const exercises = await Promise.all([
     Exercise.create({name: 'Bicep Curl'}),
     Exercise.create({name: 'Squat'}),
-    Exercise.create({name: 'Glute Bridge'})
+    Exercise.create({name: 'Glute Bridge'}),
+    Exercise.create({name: 'Deadlift'}),
+    Exercise.create({name: 'Donkey Kick'})
   ])
 
   let setSeed = []
