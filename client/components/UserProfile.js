@@ -149,8 +149,6 @@ export default function UserProfile() {
         </Grid>
         <Grid item xs={6} md={6} lg={6}>
           <FormControl>
-            {/* <InputLabel htmlFor="component-simple">Height(ft.in)</InputLabel>
-            <Input id="height" value={user.height} onChange={handleChange} /> */}
             <InputLabel htmlFor="height">Height</InputLabel>
             <Input
               id="feet"
