@@ -37,7 +37,6 @@ class Routes extends Component {
             <Route path="/profile" component={UserProfile} />
             <Route path="/start" component={StartWorkout} />
             <Route path="/summary" component={WorkoutSummary} />
-            <Route path="/startWorkout" component={StartWorkout} />
             <Route component={UserHome} />
           </Switch>
         )}
