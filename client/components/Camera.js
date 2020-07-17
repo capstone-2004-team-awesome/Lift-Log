@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 const Camera = props => {
   const classes = useStyles()
-  const {stop, init, model, webcam, isLoading} = props
+  const {stop, init, model, webcam, isLoading, webcamErrorMsg} = props
   const [hasWebcamStarted, setHasWebcamStarted] = useState(false)
   const [isWebcamPaused, setIsWebcamPaused] = useState(false)
 
@@ -98,26 +98,46 @@ const Camera = props => {
         </Grid>
       ) : null}
       {isLoading ? (
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignContent="center"
-          alignItems="center"
-          style={{paddingTop: '3rem'}}
-        >
-          <Grid item>
-            <CircularProgress />
+        webcamErrorMsg ? (
+          <Grid
+            container
+            direction="column"
+            justify="center"
+            alignContent="center"
+            alignItems="center"
+          >
+            <Grid item>
+              <Typography
+                variant="caption"
+                style={{color: 'red', margin: '0 3rem', paddingTop: '3rem'}}
+                display="block"
+              >
+                {webcamErrorMsg}
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item>
-            <Typography variant="caption">Camera Loading</Typography>
+        ) : (
+          <Grid
+            container
+            direction="column"
+            justify="center"
+            alignContent="center"
+            alignItems="center"
+            style={{paddingTop: '3rem'}}
+          >
+            <Grid item>
+              <CircularProgress />
+            </Grid>
+            <Grid item>
+              <Typography variant="caption">Camera Loading</Typography>
+            </Grid>
+            <Grid item>
+              <Typography variant="caption">
+                Stand back and get ready to work out!
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item>
-            <Typography variant="caption">
-              Stand back and get ready to work out!
-            </Typography>
-          </Grid>
-        </Grid>
+        )
       ) : null}
       <div style={{paddingTop: '1rem'}}>
         <canvas id="canvas" />

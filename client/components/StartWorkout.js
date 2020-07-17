@@ -21,11 +21,11 @@ const StartWorkout = props => {
   const [webcam, setWebcam] = useState(null)
   const [model, setModel] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [webcamErrorMsg, setWebcamErrorMsg] = useState('')
   let setLogger = {}
 
   let ctx, labelContainer, maxPredictions
   let globalId
-  // const [stopped, setStopped] = useState(false)
   let stopped = false
   let prevPrediction = {
     'Bicep Curl': false,
@@ -93,7 +93,14 @@ const StartWorkout = props => {
     maxPredictions = model.getTotalClasses()
     // Convenience function to setup a webcam
     setIsLoading(true)
-    await webcam.setup() // request access to the webcam from user
+    try {
+      await webcam.setup() // request access to the webcam from user
+    } catch (error) {
+      setWebcamErrorMsg(
+        'There was an error opening your webcam. Make sure permissions are enabled.'
+      )
+      console.log('There was an error accessing webcam: ', error)
+    }
     webcam.play()
     globalId = window.requestAnimationFrame(loop)
     setIsLoading(false)
@@ -212,6 +219,7 @@ const StartWorkout = props => {
             model={model}
             webcam={webcam}
             isLoading={isLoading}
+            webcamErrorMsg={webcamErrorMsg}
           />
         </Grid>
         <Grid item xs={12} sm={12} md={6} lg={6}>
