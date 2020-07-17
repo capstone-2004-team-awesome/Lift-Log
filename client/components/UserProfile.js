@@ -99,6 +99,7 @@ export default function UserProfile() {
 
     fetchData()
   }, [])
+
   return submitted ? (
     <Redirect to={{pathname: '/home'}} />
   ) : (
@@ -161,6 +162,8 @@ export default function UserProfile() {
             <FormHelperText id="filled-helperText" variant="filled">
               feet
             </FormHelperText>
+          </FormControl>
+          <FormControl>
             <Input
               id="inches"
               min="0"
