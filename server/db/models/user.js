@@ -32,7 +32,9 @@ const User = db.define('user', {
     type: Sequelize.FLOAT
   },
   goal: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
+    min: 0,
+    max: 7
   },
   salt: {
     type: Sequelize.STRING,

@@ -66,7 +66,7 @@ const DialogActions = withStyles(theme => ({
 
 export default function UpdateGoalDialog(props) {
   const [open, setOpen] = useState(false)
-  const [userGoal, setUserGoal] = useState({userId: props.userId, goal: ''})
+  const [userGoal, setUserGoal] = useState({goal: ''})
   const [goalHasError, setGoalError] = useState(false)
 
   const handleClickOpen = () => {
@@ -85,8 +85,8 @@ export default function UpdateGoalDialog(props) {
     }
     setUserGoal({...userGoal, [event.target.id]: event.target.value})
   }
-  const onSubmit = async user => {
-    const {data} = await axios.put(`/auth/${user.id}`, user)
+  const onSubmit = async userGoal => {
+    const {data} = await axios.put(`/auth/${props.userId}`, userGoal)
     console.log('Incoming user data from dialog: ', data)
     setUserGoal(data)
   }
@@ -106,7 +106,7 @@ export default function UpdateGoalDialog(props) {
         </DialogTitle>
         <DialogContent dividers>
           <Typography gutterBottom>
-            How many times per week would you like to workout?
+            How many days per week would you like to workout?
           </Typography>
           <Typography variant="body2" gutterBottom>
             If you are new to working out, it is best to start small. Set a goal
@@ -128,13 +128,13 @@ export default function UpdateGoalDialog(props) {
                   id="goal"
                   value={userGoal.goal}
                   aria-describedby="component-error-text"
-                  label="Times per week"
+                  label="Days per week"
                   onChange={handleChange}
                   fullWidth={true}
                   variant="filled"
                 />
                 <FormHelperText id="filled-helperText" variant="filled">
-                  Times per week
+                  Days per week
                 </FormHelperText>
                 {goalHasError ? (
                   <FormHelperText id="component-error-text">

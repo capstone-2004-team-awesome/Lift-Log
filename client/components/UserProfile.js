@@ -208,22 +208,24 @@ export default function UserProfile() {
           align="stretch"
         >
           <Typography variant="body1">
-            How many times do you aim to work out per week?
+            How many days do you aim to work out per week?
           </Typography>
           <FormControl error={goalHasError}>
             <InputLabel htmlFor="goal">Enter your goal!</InputLabel>
             <Input
               id="goal"
               type="number"
+              min="0"
+              max="7"
               value={user.goal}
               aria-describedby="component-error-text"
-              label="Times per week"
+              label="Days per week"
               onChange={handleChange}
               fullWidth={true}
               variant="filled"
             />
             <FormHelperText id="filled-helperText" variant="filled">
-              Times per week
+              Days per week
             </FormHelperText>
             {goalHasError ? (
               <FormHelperText id="component-error-text">
