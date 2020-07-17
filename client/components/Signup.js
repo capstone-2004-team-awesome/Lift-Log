@@ -1,11 +1,20 @@
 import React, {useState, useEffect} from 'react'
 import {makeStyles} from '@material-ui/core/styles'
-import {Button, Select, FormHelperText, Grid, Divider} from '@material-ui/core'
+import {
+  Button,
+  Select,
+  FormHelperText,
+  Grid,
+  Divider,
+  Typography
+} from '@material-ui/core'
 import FormControl from '@material-ui/core/FormControl'
 import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
 import TextField from '@material-ui/core/TextField'
 import axios from 'axios'
+import {signup} from '../store'
+import {connect} from 'react-redux'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -18,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function Signup() {
+function Signup(props) {
   const [user, setUser] = useState({
     id: '',
     firstName: '',
@@ -52,7 +61,6 @@ export default function Signup() {
         setNameError(false)
       }
     }
-
     if (event.target.id === 'weight') {
       if (isNaN(event.target.value)) {
         setWeightError(true)
@@ -60,40 +68,35 @@ export default function Signup() {
         setWeightError(false)
       }
     }
-    // if (event.target.id === 'email') {
-    //   if (
-    //     /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(event.target.value)
-    //   ) {
-    //     setEmailError(false)
-    //   } else {
-    //     setEmailError(true)
-    //   }
-    // }
+    if (event.target.id === 'email') {
+      if (
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(event.target.value)
+      ) {
+        setEmailError(false)
+      } else {
+        setEmailError(true)
+      }
+    }
     setUser({...user, [event.target.id]: event.target.value})
-  }
-
-  const onSubmit = async user => {
-    const {data} = await axios.post('/auth/signup', user)
-    setUser(data)
   }
 
   useEffect(() => {
     const fetchData = async () => {
       const result = await axios.get('/auth/me')
+      console.log(result.data)
       setUser(result.data)
     }
-
     fetchData()
   }, [])
 
   return (
     <form
-      onSubmit={() => onSubmit(user)}
+      onSubmit={evt => props.handleSubmit(evt, user)}
       className={classes.root}
       noValidate
       autoComplete="off"
     >
-      {<h3>SIGN UP</h3>}
+      <h3>SIGN UP</h3>
       <Grid container spacing={1} alignContent="center">
         <Grid item sm={6} med={6} lg={6}>
           <FormControl error={fNameHasError}>
@@ -179,12 +182,15 @@ export default function Signup() {
           lg={12}
           align="justify"
           classes={{root: classes.goalColor}}
-          align="stretch"
         >
+          <Typography variant="body1">
+            How many times do you aim to work out per week?
+          </Typography>
           <FormControl error={goalHasError}>
             <InputLabel htmlFor="goal">Enter your goal!</InputLabel>
             <Input
               id="goal"
+              type="number"
               value={user.goal}
               aria-describedby="component-error-text"
               label="Times per week"
@@ -218,3 +224,14 @@ export default function Signup() {
     </form>
   )
 }
+
+const mapDispatch = dispatch => {
+  return {
+    handleSubmit(evt, user) {
+      evt.preventDefault()
+      dispatch(signup(user))
+    }
+  }
+}
+
+export default connect(null, mapDispatch)(Signup)

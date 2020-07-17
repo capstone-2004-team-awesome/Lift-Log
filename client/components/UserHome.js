@@ -106,7 +106,7 @@ export const UserHome = props => {
       return null
     }
   }
-
+  
   return selectedDate ? (
     <Redirect to={{pathname: '/summary', state: {selectedDate}}} />
   ) : (

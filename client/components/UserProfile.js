@@ -1,11 +1,20 @@
+/* eslint-disable complexity */
 import React, {useState, useEffect} from 'react'
 import {makeStyles} from '@material-ui/core/styles'
-import {Button, Select, FormHelperText, Grid, Divider} from '@material-ui/core'
+import {
+  Button,
+  Select,
+  FormHelperText,
+  Grid,
+  Divider,
+  Typography
+} from '@material-ui/core'
 import FormControl from '@material-ui/core/FormControl'
 import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
 import TextField from '@material-ui/core/TextField'
 import axios from 'axios'
+import {Redirect} from 'react-router-dom'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -23,17 +32,20 @@ export default function UserProfile() {
     id: '',
     firstName: '',
     lastName: '',
-    height: '',
+    feet: '',
+    inches: '',
     weight: '',
     sex: '',
     email: '',
     goal: '',
     password: ''
   })
+
   const [goalHasError, setGoalError] = useState(false)
   const [fNameHasError, setNameError] = useState(false)
   const [weightHasError, setWeightError] = useState(false)
   const [emailHasError, setEmailError] = useState(false)
+  const [submitted, setSubmitted] = useState()
   const classes = useStyles()
 
   const handleChange = event => {
@@ -71,9 +83,9 @@ export default function UserProfile() {
     setUser({...user, [event.target.id]: event.target.value})
   }
 
-  const onSubmit = async user => {
-    const {data} = await axios.put(`/auth/${user.id}`, user)
-    setUser(data)
+  const onSubmit = async () => {
+    setSubmitted(true)
+    await axios.put(`/auth/${user.id}`, user)
   }
 
   useEffect(() => {
@@ -84,8 +96,9 @@ export default function UserProfile() {
 
     fetchData()
   }, [])
-
-  return (
+  return submitted ? (
+    <Redirect to={{pathname: '/home'}} />
+  ) : (
     <form
       id="user-profile"
       onSubmit={() => onSubmit(user)}
@@ -133,8 +146,21 @@ export default function UserProfile() {
         </Grid>
         <Grid item xs={6} md={6} lg={6}>
           <FormControl>
-            <InputLabel htmlFor="component-simple">Height(ft.in)</InputLabel>
-            <Input id="height" value={user.height} onChange={handleChange} />
+            {/* <InputLabel htmlFor="component-simple">Height(ft.in)</InputLabel>
+            <Input id="height" value={user.height} onChange={handleChange} /> */}
+            <InputLabel htmlFor="height">Height</InputLabel>
+            <Input id="height.feet" value={user.feet} onChange={handleChange} />
+            <FormHelperText id="filled-helperText" variant="filled">
+              feet
+            </FormHelperText>
+            <Input
+              id="height.inches"
+              value={user.inches}
+              onChange={handleChange}
+            />
+            <FormHelperText id="filled-helperText" variant="filled">
+              inches
+            </FormHelperText>
           </FormControl>
         </Grid>
         <Grid item xs={6} md={6} lg={6}>
@@ -181,10 +207,14 @@ export default function UserProfile() {
           classes={{root: classes.goalColor}}
           align="stretch"
         >
+          <Typography variant="body1">
+            How many times do you aim to work out per week?
+          </Typography>
           <FormControl error={goalHasError}>
             <InputLabel htmlFor="goal">Enter your goal!</InputLabel>
             <Input
               id="goal"
+              type="number"
               value={user.goal}
               aria-describedby="component-error-text"
               label="Times per week"

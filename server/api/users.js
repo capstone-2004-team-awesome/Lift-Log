@@ -15,18 +15,3 @@ router.get('/', async (req, res, next) => {
     next(err)
   }
 })
-
-// router.put('/:id', async (req, res, next) => {
-//   try {
-//     console.log('UPDATE')
-//     const userId = req.params.id
-//     const updatedUser = await User.update(req.body, {
-//       where: {id: userId},
-//       returning: true,
-//       plain: true
-//     })
-//     res.json(updatedUser)
-//   } catch (error) {
-//     next(error)
-//   }
-// })
