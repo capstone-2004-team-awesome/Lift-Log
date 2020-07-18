@@ -59,7 +59,7 @@ const AddExercise = props => {
               type="number"
               id="reps"
               name="reps"
-              label="# of Reps"
+              label="Reps (#)"
               size="small"
               value={reps}
               onChange={handleFormChange}
