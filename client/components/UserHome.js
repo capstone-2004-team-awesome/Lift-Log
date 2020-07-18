@@ -95,7 +95,7 @@ export const UserHome = props => {
   // *** Progress Bar: DATA & STYLING
   const progressBarData = {
     progress: 'ratio', // ratio, percent
-    labelContent: 'Workouts Per Week',
+    labelContent: 'Workouts This Week',
     size: 'medium', // tiny, small, medium, large, big
     color: 'teal' // red, orange, yellow, olive, green, teal, blue, violet, purple, pink, brown, grey, black
   }
