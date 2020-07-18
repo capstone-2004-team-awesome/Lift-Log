@@ -1,7 +1,6 @@
 import React from 'react'
 import clsx from 'clsx'
 import {
-  Grid,
   TextField,
   Button,
   Select,
@@ -42,12 +41,6 @@ const AddExercise = props => {
   const classes = useStyles()
   const {newSet, handleFormChange, handleFormSubmit} = props
   const {exerciseName, reps, weight} = newSet
-  // const {handleFormSubmit} = props
-  // const [newSet, setNewSet] = useState({
-  //   exerciseName: '',
-  //   reps: '',
-  //   weight: ''
-  // })
 
   return (
     <form
@@ -55,11 +48,7 @@ const AddExercise = props => {
       style={{paddingTop: '1rem'}}
       className={classes.root}
     >
-      {/* <Grid container spacing={3}> */}
-      {/* <Grid item xs={12} sm={12} md={5} lg={3}> */}
-      {/* <Grid item xs={12} md={10}> */}
       <FormControl
-        // className={classes.formControl}
         className={clsx(classes.exerciseDropdown, classes.margin)}
         variant="outlined"
         size="small"
@@ -79,12 +68,7 @@ const AddExercise = props => {
           <MenuItem value="Glute Bridge">Glute Bridge</MenuItem>
         </Select>
       </FormControl>
-      {/* </Grid>
-        <Grid item xs={12} sm={12} md={2} lg={3}> */}
-      <FormControl
-        // className={classes.formControl}
-        className={clsx(classes.repsEntry, classes.margin)}
-      >
+      <FormControl className={clsx(classes.repsEntry, classes.margin)}>
         <TextField
           required
           key={reps}
@@ -98,10 +82,7 @@ const AddExercise = props => {
           onChange={handleFormChange}
         />
       </FormControl>
-      {/* </Grid>
-        <Grid item xs={12} sm={12} md={2} lg={3}> */}
       <FormControl
-        // className={classes.formControl}
         className={clsx(classes.weightEntry, classes.margin, classes.textField)}
       >
         <TextField
@@ -111,7 +92,6 @@ const AddExercise = props => {
           id="weight"
           name="weight"
           label="Weight"
-          // helperText="lbs"
           InputLabelProps={{shrink: true}}
           InputProps={{
             endAdornment: <InputAdornment position="end">lbs</InputAdornment>
@@ -121,15 +101,9 @@ const AddExercise = props => {
           onChange={handleFormChange}
         />
       </FormControl>
-      {/* </Grid> */}
-      {/* <Grid item xs={12} sm={12} md={2} lg={3}> */}
-      {/* <Grid item xs={12} sm={12} md={2} lg={1}> */}
       <Button type="submit" variant="contained" className={classes.margin}>
         Submit
       </Button>
-      {/* </Grid> */}
-      {/* </Grid> */}
-      {/* </div> */}
     </form>
   )
 }

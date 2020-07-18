@@ -23,7 +23,7 @@ import {makeStyles} from '@material-ui/core/styles'
 
 const useStyles = makeStyles(() => ({
   root: {
-    width: '5rem' //4rem is min with mini-arrow-incrementers
+    width: '5rem'
   },
   WorkoutSummaryTable: {
     paddingTop: '1rem'
