@@ -8,7 +8,12 @@ class ProgressBar extends Component {
     const {percent} = this.props.data
     const {total, value} = this.props
     if (percent) return percent
-    if (total && value) return value / total * 100
+    if (total && value) {
+      let percentage = value / total * 100
+      if (percentage <= 0) return 0
+      else if (percentage >= 100) return 100
+      else return percentage
+    }
   }
 
   computeValueText = percent => {
