@@ -18,7 +18,6 @@ const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(2),
     textAlign: 'center'
-    // color: theme.palette.text.secondary,
   }
 }))
 
@@ -34,14 +33,6 @@ export const UserHome = props => {
   const [workoutCalendar, setWorkoutCalendar] = useState([])
   const [workoutsThisWeek, setWorkoutsThisWeek] = useState(0)
   const [userGoal, setUserGoal] = useState(0)
-  // const [progressBarData, setProgressBarData] = useState({
-  //   total: 0, // goal
-  //   value: 0, // workouts this week
-  //   progress: 'ratio', // ratio, percent
-  //   labelContent: 'Workouts Per Week',
-  //   size: 'medium', // tiny, small, medium, large, big
-  //   color: 'teal', // red, orange, yellow, olive, green, teal, blue, violet, purple, pink, brown, grey, black
-  // })
 
   // *** Handle user selection of a calendar date to view workout summary
   const handleChange = selection => {
@@ -87,43 +78,24 @@ export const UserHome = props => {
         }
         return workoutCount
       }
-
-      // const fetchGoal = async () => {
-      //   const {data} = await axios.get('/auth/me')
-      //   return data.goal
-      // }
-
-      // const workoutsThisWeek = workoutsPerWeek(workoutCalendar, thisWeek)
       setWorkoutsThisWeek(workoutsPerWeek(workoutCalendar, thisWeek))
-      // setProgressBarData({
-      //   ...progressBarData,
-      //   value: workoutsPerWeek(workoutCalendar, thisWeek),
-      // })
     },
     [workoutCalendar]
   )
 
+  // *** Fetch user goal data for ProgressBar
   useEffect(() => {
     const fetchGoal = async () => {
       const {data} = await axios.get('/auth/me')
       setUserGoal(data.goal)
-      // setProgressBarData({
-      //   ...progressBarData,
-      //   total: data.goal,
-      // })
     }
     fetchGoal()
   }, [])
 
-  console.log(progressBarData)
-
   // *** Progress Bar: DATA & STYLING
   const progressBarData = {
-    // total: props.goal,
-    // total: userGoal,
-    // value: workoutsThisWeek,
     progress: 'ratio', // ratio, percent
-    labelContent: 'Workouts Per Week',
+    labelContent: 'Workouts This Week',
     size: 'medium', // tiny, small, medium, large, big
     color: 'teal' // red, orange, yellow, olive, green, teal, blue, violet, purple, pink, brown, grey, black
   }
@@ -146,24 +118,25 @@ export const UserHome = props => {
   ) : (
     <div className={classes.root}>
       <Grid container justify="center" spacing={3}>
-        <Grid item xs={12}>
-          <Typography variant="h2" component="h3" gutterBottom>
-            Welcome, {firstName}!
-          </Typography>
+        <Grid item xs={12} sm={10} md={8} lg={10}>
+          <Typography variant="h2">Welcome, {firstName}!</Typography>
         </Grid>
 
-        <Grid item xs={12}>
-          {workoutsThisWeek ? (
-            <Typography variant="h6" gutterBottom>
-              You've logged {workoutsThisWeek} workouts this week, that's
-              awesome!
-            </Typography>
-          ) : (
-            <Typography variant="h6" gutterBottom>
-              Uh oh, you haven't logged any workouts this week, better get
-              lifting!
-            </Typography>
-          )}
+
+        <Grid item xs={12} sm={10} md={8} lg={10} alignContent="center">
+          <Paper className={classes.paper}>
+            {workoutsThisWeek ? (
+              <Typography variant="body1" gutterBottom>
+                You've logged {workoutsThisWeek} workouts this week, that's
+                awesome!
+              </Typography>
+            ) : (
+              <Typography variant="body1" gutterBottom>
+                Uh oh, you haven't logged any workouts this week, better get
+                lifting!
+              </Typography>
+            )}
+          </Paper>
         </Grid>
 
         <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
@@ -176,9 +149,9 @@ export const UserHome = props => {
           </Paper>
         </Grid>
 
-        <Grid item xs={10} sm={7} md={5} lg={3} xl={2}>
+        <Grid item xs={10} sm={8} md={6} lg={4} xl={3}>
           <Paper className={classes.paper}>
-            <Typography variant="h4" gutterBottom>
+            <Typography variant="h5" gutterBottom>
               Your Progress
             </Typography>
 

@@ -19,7 +19,7 @@ const themeObj = {
       default: '#eee'
     }
     // typography: {
-    //   fontFamily: ""
+    //   fontFamily: "Montserrat, 'Segoe UI', Tahoma, sans-serif",
     // }
   },
   zIndex: {
