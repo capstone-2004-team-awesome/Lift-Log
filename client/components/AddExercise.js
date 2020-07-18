@@ -39,6 +39,7 @@ const AddExercise = props => {
               required
               id="exerciseName"
               name="exerciseName"
+              key="exerciseName"
               value={exerciseName}
               onChange={handleFormChange}
             >
@@ -55,7 +56,7 @@ const AddExercise = props => {
           <FormControl className={classes.formControl}>
             <TextField
               required
-              key={reps}
+              key="reps"
               type="number"
               inputProps={{min: 1}}
               id="reps"
@@ -71,7 +72,7 @@ const AddExercise = props => {
           <FormControl className={classes.formControl}>
             <TextField
               required
-              key={weight}
+              key="weight"
               type="number"
               inputProps={{min: 0}}
               id="weight"

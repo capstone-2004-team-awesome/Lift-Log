@@ -152,7 +152,7 @@ export const UserHome = props => {
           </Typography>
         </Grid>
 
-        <Grid item xs={12} alignContent="center">
+        <Grid item xs={12}>
           {workoutsThisWeek ? (
             <Typography variant="h6" gutterBottom>
               You've logged {workoutsThisWeek} workouts this week, that's
