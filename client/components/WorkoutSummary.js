@@ -23,7 +23,7 @@ import {makeStyles} from '@material-ui/core/styles'
 
 const useStyles = makeStyles(() => ({
   root: {
-    width: '5rem'
+    width: '5rem' //4rem is min with mini-arrow-incrementers
   },
   WorkoutSummaryTable: {
     paddingTop: '1rem'
@@ -95,8 +95,8 @@ const WorkoutSummary = props => {
     setOpen(false)
   }
 
-  const handleFormSubmit = async e => {
-    e.preventDefault()
+  const handleFormSubmit = async (event, set) => {
+    event.preventDefault()
     try {
       await axios.post(`/api/set`, {...newSet, date})
     } catch (error) {
@@ -119,8 +119,8 @@ const WorkoutSummary = props => {
 
   return (
     <div>
-      <Grid container spacing={4}>
-        <Grid item xs={12}>
+      <Grid container justify="center" spacing={3}>
+        <Grid item xs={12} md={8}>
           <Card>
             <CardContent>
               <Typography variant="h2">Workout Summary</Typography>
@@ -211,10 +211,11 @@ const WorkoutSummary = props => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} md={8}>
           <Card>
             <CardContent>
-              <Typography variant="h6">
+              <Typography variant="h6">Add Exercise</Typography>
+              <Typography variant="subtitle1">
                 Worked out without the camera? Add an exercise to your log
                 manually.
               </Typography>
