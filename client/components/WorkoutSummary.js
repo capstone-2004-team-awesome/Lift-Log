@@ -24,6 +24,9 @@ import {makeStyles} from '@material-ui/core/styles'
 const useStyles = makeStyles(() => ({
   root: {
     width: '5rem'
+  },
+  WorkoutSummaryTable: {
+    paddingTop: '1rem'
   }
 }))
 
@@ -122,10 +125,10 @@ const WorkoutSummary = props => {
             <CardContent>
               <Typography variant="h2">Workout Summary</Typography>
               <Typography variant="h4">{date}</Typography>
-              <Divider />
+              <Divider component="h2" />
 
               {summary.length ? (
-                <TableContainer>
+                <div className={classes.WorkoutSummaryTable}>
                   <Typography variant="body1">
                     If exercise information was not logged correctly, use input
                     fields to modify.
@@ -133,72 +136,75 @@ const WorkoutSummary = props => {
                   <Typography variant="body1">
                     You can also add an exercise with the button below.
                   </Typography>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Exercise</TableCell>
-                        <TableCell align="right"># Of Reps</TableCell>
-                        <TableCell align="right">Weight (lbs)</TableCell>
-                        <TableCell align="right" />
-                      </TableRow>
-                    </TableHead>
 
-                    <TableBody>
-                      {summary.map(set => {
-                        return (
-                          <TableRow key={set.id}>
-                            <TableCell>{set.exercise.name}</TableCell>
-                            <TableCell align="right">
-                              <TextField
-                                type="number"
-                                name="reps"
-                                size="small"
-                                value={set.reps}
-                                onChange={() => handleChange(event, set.id)}
-                                className={classes.root}
-                              />
-                            </TableCell>
-                            <TableCell align="right">
-                              <TextField
-                                type="number"
-                                name="weight"
-                                size="small"
-                                value={set.weight}
-                                onChange={() => handleChange(event, set.id)}
-                                className={classes.root}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <IconButton
-                                aria-label="delete"
-                                onClick={() => handleDelete(set.id)}
-                              >
-                                <DeleteForeverIcon />
-                              </IconButton>
-                              <Snackbar
-                                anchorOrigin={{
-                                  vertical: 'top',
-                                  horizontal: 'right'
-                                }}
-                                open={open}
-                                autoHideDuration={2000}
-                                onClose={handleClose}
-                              >
-                                <MuiAlert
-                                  onClose={handleClose}
-                                  severity="success"
-                                  variant="filled"
+                  <TableContainer className={classes.WorkoutSummaryTable}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Exercise</TableCell>
+                          <TableCell align="right">Reps (#)</TableCell>
+                          <TableCell align="right">Weight (lbs)</TableCell>
+                          <TableCell align="right" />
+                        </TableRow>
+                      </TableHead>
+
+                      <TableBody>
+                        {summary.map(set => {
+                          return (
+                            <TableRow key={set.id}>
+                              <TableCell>{set.exercise.name}</TableCell>
+                              <TableCell align="right">
+                                <TextField
+                                  type="number"
+                                  name="reps"
+                                  size="small"
+                                  value={set.reps}
+                                  onChange={() => handleChange(event, set.id)}
+                                  className={classes.root}
+                                />
+                              </TableCell>
+                              <TableCell align="right">
+                                <TextField
+                                  type="number"
+                                  name="weight"
+                                  size="small"
+                                  value={set.weight}
+                                  onChange={() => handleChange(event, set.id)}
+                                  className={classes.root}
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <IconButton
+                                  aria-label="delete"
+                                  onClick={() => handleDelete(set.id)}
                                 >
-                                  {updateMsg}
-                                </MuiAlert>
-                              </Snackbar>
-                            </TableCell>
-                          </TableRow>
-                        )
-                      })}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                                  <DeleteForeverIcon />
+                                </IconButton>
+                                <Snackbar
+                                  anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right'
+                                  }}
+                                  open={open}
+                                  autoHideDuration={2000}
+                                  onClose={handleClose}
+                                >
+                                  <MuiAlert
+                                    onClose={handleClose}
+                                    severity="success"
+                                    variant="filled"
+                                  >
+                                    {updateMsg}
+                                  </MuiAlert>
+                                </Snackbar>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        })}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </div>
               ) : (
                 <Typography variant="h5">{noWorkoutMsg}</Typography>
               )}
