@@ -140,6 +140,7 @@ export default function UserProfile() {
             <Input
               id="weight"
               type="number"
+              inputProps={{min: 0}}
               value={user.weight}
               onChange={handleChange}
             />
