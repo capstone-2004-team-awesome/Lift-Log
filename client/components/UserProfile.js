@@ -137,7 +137,12 @@ export default function UserProfile() {
         <Grid item xs={6} md={6} lg={6}>
           <FormControl error={weightHasError}>
             <InputLabel htmlFor="component-simple">Weight(lb)</InputLabel>
-            <Input id="weight" value={user.weight} onChange={handleChange} />
+            <Input
+              id="weight"
+              type="number"
+              value={user.weight}
+              onChange={handleChange}
+            />
             {weightHasError ? (
               <FormHelperText id="component-error-text">
                 Enter a number
@@ -160,8 +165,7 @@ export default function UserProfile() {
             <InputLabel htmlFor="height">Height</InputLabel>
             <Input
               id="feet"
-              min="0"
-              max="10"
+              inputProps={{min: 0, max: 10}}
               type="number"
               value={user.feet}
               onChange={handleChange}
@@ -173,8 +177,7 @@ export default function UserProfile() {
           <FormControl>
             <Input
               id="inches"
-              min="0"
-              max="12"
+              inputProps={{min: 0, max: 11}}
               type="number"
               value={user.inches}
               onChange={handleChange}
