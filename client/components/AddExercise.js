@@ -61,7 +61,7 @@ const AddExercise = props => {
               inputProps={{min: 1}}
               id="reps"
               name="reps"
-              label="# of Reps"
+              label="Reps (#)"
               size="small"
               value={reps}
               onChange={handleFormChange}

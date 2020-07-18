@@ -21,11 +21,11 @@ import themeObj, {thirdColor, fourthColor, grayColor} from '../theme'
 const useStyles = makeStyles(theme => ({
   root: {
     '& > *': {
-      margin: theme.spacing(6)
+      // margin: theme.spacing(6)
     }
   },
   dividerColor: {
-    backgroundColor: grayColor[3]
+    // backgroundColor: grayColor[3]
   }
 }))
 
