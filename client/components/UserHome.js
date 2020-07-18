@@ -122,7 +122,6 @@ export const UserHome = props => {
           <Typography variant="h2">Welcome, {firstName}!</Typography>
         </Grid>
 
-
         <Grid item xs={12} sm={10} md={8} lg={10} alignContent="center">
           <Paper className={classes.paper}>
             {workoutsThisWeek ? (
@@ -184,7 +183,6 @@ export const UserHome = props => {
  //* CONTAINER
  */
 const mapState = state => {
-  console.log('Mapping State to Props', state)
   return {
     firstName: state.user.firstName,
     userId: state.user.id,
