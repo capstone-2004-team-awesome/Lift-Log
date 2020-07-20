@@ -23,8 +23,7 @@ const useStyles = makeStyles(theme => ({
 
 const AddExercise = props => {
   const classes = useStyles()
-  const {newSet, handleFormChange, handleFormSubmit} = props
-  const {exerciseName, reps, weight} = newSet
+  const {exerciseName, reps, weight, handleFormChange, handleFormSubmit} = props
 
   return (
     <form onSubmit={handleFormSubmit} style={{paddingTop: '1rem'}}>
@@ -37,8 +36,10 @@ const AddExercise = props => {
           >
             <InputLabel>Exercise</InputLabel>
             <Select
+              required
               id="exerciseName"
               name="exerciseName"
+              key="exerciseName"
               value={exerciseName}
               onChange={handleFormChange}
             >
@@ -47,7 +48,7 @@ const AddExercise = props => {
               </MenuItem>
               <MenuItem value="Squat">Squat</MenuItem>
               <MenuItem value="Bicep Curl">Bicep Curl</MenuItem>
-              <MenuItem value="Glute Bridge">Glute Bridge</MenuItem>
+              <MenuItem value="Deadlift">Deadlift</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -55,8 +56,9 @@ const AddExercise = props => {
           <FormControl className={classes.formControl}>
             <TextField
               required
-              key={reps}
+              key="reps"
               type="number"
+              inputProps={{min: 1}}
               id="reps"
               name="reps"
               label="Reps (#)"
@@ -70,8 +72,9 @@ const AddExercise = props => {
           <FormControl className={classes.formControl}>
             <TextField
               required
-              key={weight}
+              key="weight"
               type="number"
+              inputProps={{min: 0}}
               id="weight"
               name="weight"
               label="Weight (lbs)"
