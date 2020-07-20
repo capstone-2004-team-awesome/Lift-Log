@@ -120,8 +120,8 @@ const WorkoutSummary = props => {
 
   return (
     <div>
-      <Grid container spacing={4}>
-        <Grid item xs={12}>
+      <Grid container justify="center" spacing={3}>
+        <Grid item xs={12} md={8}>
           <Card>
             <CardContent>
               <Typography variant="h2">Workout Summary</Typography>
@@ -212,10 +212,11 @@ const WorkoutSummary = props => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} md={8}>
           <Card>
             <CardContent>
-              <Typography variant="h6">
+              <Typography variant="h6">Add Exercise</Typography>
+              <Typography variant="subtitle1">
                 Worked out without the camera? Add an exercise to your log
                 manually.
               </Typography>

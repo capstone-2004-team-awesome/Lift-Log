@@ -1,18 +1,19 @@
 /* eslint-disable complexity */
 import React, {useState, useEffect} from 'react'
 import {makeStyles} from '@material-ui/core/styles'
+import clsx from 'clsx'
 import {
   Button,
   Select,
   FormHelperText,
   Grid,
   Divider,
-  Typography
+  Typography,
+  FormControl,
+  OutlinedInput,
+  InputLabel,
+  TextField
 } from '@material-ui/core'
-import FormControl from '@material-ui/core/FormControl'
-import Input from '@material-ui/core/Input'
-import InputLabel from '@material-ui/core/InputLabel'
-import TextField from '@material-ui/core/TextField'
 import axios from 'axios'
 import {Redirect} from 'react-router-dom'
 
@@ -21,11 +22,22 @@ import themeObj, {thirdColor, fourthColor, grayColor} from '../theme'
 const useStyles = makeStyles(theme => ({
   root: {
     '& > *': {
-      // margin: theme.spacing(6)
+      margin: theme.spacing(1)
+      // marginTop: theme.spacing(2)
     }
   },
   dividerColor: {
     // backgroundColor: grayColor[3]
+  },
+  dividerSpace: {
+    marginBottom: theme.spacing(3)
+  },
+  inputFieldColor: {
+    backgroundColor: '#e8f0fe'
+  },
+  rowContainer: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1)
   }
 }))
 
@@ -119,158 +131,226 @@ export default function UserProfile() {
           </Typography>
         </Grid>
 
-        <Grid item xs={6} md={6} lg={6}>
-          <FormControl error={fNameHasError}>
-            <InputLabel htmlFor="component-simple">First Name</InputLabel>
-            <Input
-              id="firstName"
-              value={user.firstName}
+        {/* ******  First Name & LAST Name  ****** */}
+        <Grid
+          container
+          spacing={3}
+          className={classes.rowContainer}
+          alignContent="center"
+        >
+          <Grid item xs={6} md={5} lg={4}>
+            <FormControl error={fNameHasError} variant="outlined">
+              <InputLabel htmlFor="firstName">First Name</InputLabel>
+              <OutlinedInput
+                id="firstName"
+                // className={classes.inputFieldColor}
+                label="First Name"
+                value={user.firstName}
+                onChange={handleChange}
+              />
+              {fNameHasError ? (
+                <FormHelperText id="component-error-text">
+                  Field cannot be empty
+                </FormHelperText>
+              ) : null}
+            </FormControl>
+          </Grid>
+          <Grid item xs={6} md={5} lg={4}>
+            <FormControl variant="outlined">
+              <InputLabel htmlFor="lastName">Last Name</InputLabel>
+              <OutlinedInput
+                id="lastName"
+                label="Last Name"
+                value={user.lastName}
+                onChange={handleChange}
+              />
+            </FormControl>
+          </Grid>
+        </Grid>
+
+        {/* ******  Height, Weight, Sex  ****** */}
+        <Grid container spacing={3} className={classes.rowContainer}>
+          {/* ******       Height      ****** */}
+          <Grid item container spacing={2} xs={8} sm={4} md={4} lg={3}>
+            {/* <Grid container spacing={1}> */}
+            <Grid item xs={6} md={5} lg={4}>
+              <FormControl variant="outlined">
+                <InputLabel htmlFor="height">Height</InputLabel>
+                <OutlinedInput
+                  id="feet"
+                  label="Height"
+                  inputProps={{min: 0, max: 10}}
+                  type="number"
+                  value={user.feet}
+                  onChange={handleChange}
+                />
+                <FormHelperText id="filled-helperText" variant="filled">
+                  feet
+                </FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6} md={5} lg={4}>
+              <FormControl variant="outlined">
+                <OutlinedInput
+                  id="inches"
+                  inputProps={{min: 0, max: 11}}
+                  type="number"
+                  value={user.inches}
+                  onChange={handleChange}
+         
+                />
+                <FormHelperText id="filled-helperText" variant="filled">
+                  inches
+                </FormHelperText>
+              </FormControl>
+            </Grid>
+            {/* </Grid> */}
+          </Grid>
+
+          {/* ******       Weight      ****** */}
+          <Grid item xs={6} sm={4} md={3} lg={2}>
+            <FormControl error={weightHasError} variant="outlined">
+              <InputLabel htmlFor="weight">Weight(lb)</InputLabel>
+              <OutlinedInput
+                id="weight"
+                label="Weight"
+                value={user.weight}
+                onChange={handleChange}
+                inputProps={{min: 0}}
+              />
+              {weightHasError ? (
+                <FormHelperText id="component-error-text">
+                  Enter a number
+                </FormHelperText>
+              ) : null}
+            </FormControl>
+          </Grid>
+
+          {/* ******       Sex      ****** */}
+          <Grid item xs={6} sm={4} md={3} lg={3}>
+            <FormControl variant="outlined">
+              <InputLabel htmlFor="sex">Sex</InputLabel>
+
+              <Select
+                native
+                value={user.sex}
+                onChange={handleChange}
+                id="sex"
+                label="Sex"
+              >
+                <option aria-label="None" value="" />
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+                <option value="other">Other</option>
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={3} className={classes.rowContainer}>
+          <Grid item xs={12} sm={10} md={5} lg={4}>
+            <FormControl error={emailHasError} variant="outlined">
+              <InputLabel htmlFor="email">E-mail</InputLabel>
+              <OutlinedInput
+                id="email"
+                label="E-mail"
+                value={user.email}
+                onChange={handleChange}
+              />
+              {emailHasError ? (
+                <FormHelperText id="component-error-text">
+                  Enter a valid e-mail
+                </FormHelperText>
+              ) : null}
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={10} md={5} lg={4}>
+            <TextField
+              id="password"
+              label="Password"
+              type="password"
+              autoComplete="current-password"
+              value={user.password}
               onChange={handleChange}
             />
-            {fNameHasError ? (
-              <FormHelperText id="component-error-text">
-                Field cannot be empty
-              </FormHelperText>
-            ) : null}
-          </FormControl>
-        </Grid>
-        <Grid item xs={6} md={6} lg={6}>
-          <FormControl error={weightHasError}>
-            <InputLabel htmlFor="component-simple">Weight(lb)</InputLabel>
-            <Input
-              id="weight"
-              type="number"
-              inputProps={{min: 0}}
-              value={user.weight}
-              onChange={handleChange}
-            />
-            {weightHasError ? (
-              <FormHelperText id="component-error-text">
-                Enter a number
-              </FormHelperText>
-            ) : null}
-          </FormControl>
-        </Grid>
-        <Grid item xs={6} md={6} lg={6}>
-          <FormControl>
-            <InputLabel htmlFor="component-simple">Last Name</InputLabel>
-            <Input
-              id="lastName"
-              value={user.lastName}
-              onChange={handleChange}
-            />
-          </FormControl>
-        </Grid>
-        <Grid item xs={6} md={6} lg={6}>
-          <FormControl>
-            <InputLabel htmlFor="height">Height</InputLabel>
-            <Input
-              id="feet"
-              inputProps={{min: 0, max: 10}}
-              type="number"
-              value={user.feet}
-              onChange={handleChange}
-            />
-            <FormHelperText id="filled-helperText" variant="filled">
-              feet
-            </FormHelperText>
-          </FormControl>
-          <FormControl>
-            <Input
-              id="inches"
-              inputProps={{min: 0, max: 11}}
-              type="number"
-              value={user.inches}
-              onChange={handleChange}
-            />
-            <FormHelperText id="filled-helperText" variant="filled">
-              inches
-            </FormHelperText>
-          </FormControl>
-        </Grid>
-        <Grid item xs={6} md={6} lg={6}>
-          <FormControl error={emailHasError}>
-            <InputLabel htmlFor="component-simple">E-mail</InputLabel>
-            <Input id="email" value={user.email} onChange={handleChange} />
-            {emailHasError ? (
-              <FormHelperText id="component-error-text">
-                Enter a valid e-mail
-              </FormHelperText>
-            ) : null}
-          </FormControl>
-        </Grid>
-        <Grid item xs={6} md={6} lg={6}>
-          <FormControl className={classes.formControl}>
-            <InputLabel htmlFor="sex">Sex</InputLabel>
-            <Select native value={user.sex} onChange={handleChange} id="sex">
-              <option aria-label="None" value="" />
-              <option value="female">Female</option>
-              <option value="male">Male</option>
-              <option value="other">Other</option>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={6} md={6} lg={6}>
-          <TextField
-            id="password"
-            label="Password"
-            type="password"
-            autoComplete="current-password"
-            value={user.password}
-            onChange={handleChange}
-          />
+          </Grid>
         </Grid>
       </Grid>
 
       <Divider classes={{root: classes.dividerColor}} />
 
-      <Grid container spacing={1}>
+      <Grid
+        container
+        spacing={1}
+        className={classes.rowContainer}
+        alignContent="center"
+      >
         <Grid
           item
           xs={12}
-          md={12}
-          lg={12}
-          align="justify"
-          classes={{root: classes.goalColor}}
-          align="stretch"
+          className={clsx(classes.rowContainer, classes.dividerSpace)}
         >
+          <Typography variant="h4" component="h4">
+            Goals
+          </Typography>
           <Typography variant="body1">
             How many days do you aim to work out per week?
           </Typography>
-          <FormControl error={goalHasError}>
-            <InputLabel htmlFor="goal">Enter your goal!</InputLabel>
-            <Input
-              id="goal"
-              type="number"
-              min="0"
-              max="7"
-              value={user.goal}
-              aria-describedby="component-error-text"
-              label="Days per week"
-              onChange={handleChange}
-              fullWidth={true}
-              variant="filled"
-            />
-            <FormHelperText id="filled-helperText" variant="filled">
-              Days per week
-            </FormHelperText>
-            {goalHasError ? (
-              <FormHelperText id="component-error-text">
-                Enter a number
-              </FormHelperText>
-            ) : null}
-          </FormControl>
         </Grid>
-        <Grid item xs={12} md={12} lg={12}>
-          <Button
-            variant="contained"
-            type="submit"
-            disabled={
-              goalHasError || fNameHasError || weightHasError || emailHasError
-            }
+
+        <Grid
+          container
+          item
+          xs={12}
+          sm={10}
+          md={7}
+          className={clsx(classes.rowContainer)}
+        >
+          <Grid
+            item
+            xs={12}
+            sm={10}
+            md={6}
+            // lg={12}
+            // classes={{root: classes.goalColor}}
+            // className={clsx(classes.rowContainer)}
           >
-            Submit
-          </Button>
+            <FormControl error={goalHasError} variant="outlined">
+              <InputLabel htmlFor="goal">Enter your goal!</InputLabel>
+              <OutlinedInput
+                id="goal"
+                // label="Enter your goal!"
+                type="number"
+                min="0"
+                max="7"
+                value={user.goal}
+                aria-describedby="component-error-text"
+                label="Days per Week"
+                onChange={handleChange}
+                fullWidth={true}
+                // variant="filled"
+              />
+              <FormHelperText id="filled-helperText" variant="filled">
+                Days per week
+              </FormHelperText>
+              {goalHasError ? (
+                <FormHelperText id="component-error-text">
+                  Enter a number
+                </FormHelperText>
+              ) : null}
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={10} md={6} lg={6}>
+            <Button
+              variant="contained"
+              type="submit"
+              disabled={
+                goalHasError || fNameHasError || weightHasError || emailHasError
+              }
+            >
+              Submit
+            </Button>
+          </Grid>
         </Grid>
       </Grid>
     </form>
