@@ -49,12 +49,14 @@ const AuthForm = props => {
                 <Button type="submit">{displayName}</Button>
               </Grid>
             </CardContent>
+            <Divider />
+            <CardContent>
+              {error && error.response && <div> {error.response.data} </div>}
+
+              <a href="/auth/google">{displayName} with Google</a>
+            </CardContent>
           </Card>
         </Grid>
-        <Divider />
-        {error && error.response && <div> {error.response.data} </div>}
-
-        <a href="/auth/google">{displayName} with Google</a>
       </Grid>
     </form>
   )
