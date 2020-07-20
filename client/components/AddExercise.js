@@ -18,11 +18,11 @@ const useStyles = makeStyles(theme => ({
   },
   weightEntry: {
     minWidth: 'calc(3rem + 5vw)',
-    maxWidth: 'calc(3rem + 7vw)'
+    maxWidth: 'calc(3rem + 9.5vw)'
   },
   repsEntry: {
-    minWidth: 'calc(2.3rem + 4.5vw)',
-    maxWidth: 'calc(3rem + 6vw)'
+    minWidth: 'calc(2.3rem + 4vw)',
+    maxWidth: 'calc(3rem + 4.5vw)'
   },
   root: {
     display: 'flex',
