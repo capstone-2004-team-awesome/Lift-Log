@@ -39,8 +39,7 @@ const useStyles = makeStyles(theme => ({
 
 const AddExercise = props => {
   const classes = useStyles()
-  const {newSet, handleFormChange, handleFormSubmit} = props
-  const {exerciseName, reps, weight} = newSet
+  const {exerciseName, reps, weight, handleFormChange, handleFormSubmit} = props
 
   return (
     <form
@@ -55,10 +54,12 @@ const AddExercise = props => {
       >
         <InputLabel>Exercise</InputLabel>
         <Select
-          id="exerciseName"
-          name="exerciseName"
-          value={exerciseName}
-          onChange={handleFormChange}
+required
+              id="exerciseName"
+              name="exerciseName"
+              key="exerciseName"
+              value={exerciseName}
+              onChange={handleFormChange}
         >
           <MenuItem value="">
             <em>Select Exercise</em>
@@ -76,7 +77,7 @@ const AddExercise = props => {
           id="reps"
           name="reps"
           label="Reps"
-          InputLabelProps={{shrink: true}}
+          InputLabelProps={{shrink: true, min: 1}}
           size="small"
           value={reps}
           onChange={handleFormChange}
@@ -87,14 +88,14 @@ const AddExercise = props => {
       >
         <TextField
           required
-          key={weight}
+          key="weight"
           type="number"
           id="weight"
           name="weight"
           label="Weight"
           InputLabelProps={{shrink: true}}
           InputProps={{
-            endAdornment: <InputAdornment position="end">lbs</InputAdornment>
+            endAdornment: <InputAdornment position="end">lbs</InputAdornment>, min: 0
           }}
           size="small"
           value={weight}

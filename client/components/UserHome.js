@@ -183,7 +183,6 @@ export const UserHome = props => {
  //* CONTAINER
  */
 const mapState = state => {
-  console.log('Mapping State to Props', state)
   return {
     firstName: state.user.firstName,
     userId: state.user.id,

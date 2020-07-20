@@ -45,14 +45,10 @@ router.get('/me', (req, res) => {
 
 router.put('/:id', async (req, res, next) => {
   try {
-    console.log('UPDATE')
     const userId = req.params.id
-
     let userInfo
-
     if (req.body.feet) {
       const {inches, feet} = req.body
-      console.log(req.body)
       const height = parseInt(feet) * 12 + parseInt(inches)
       userInfo = {...req.body, height}
     } else {

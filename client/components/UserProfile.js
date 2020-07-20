@@ -179,8 +179,7 @@ export default function UserProfile() {
                 <OutlinedInput
                   id="feet"
                   label="Height"
-                  min="0"
-                  max="10"
+                  inputProps={{min: 0, max: 10}}
                   type="number"
                   value={user.feet}
                   onChange={handleChange}
@@ -194,11 +193,11 @@ export default function UserProfile() {
               <FormControl variant="outlined">
                 <OutlinedInput
                   id="inches"
-                  min="0"
-                  max="12"
+                  inputProps={{min: 0, max: 11}}
                   type="number"
                   value={user.inches}
                   onChange={handleChange}
+         
                 />
                 <FormHelperText id="filled-helperText" variant="filled">
                   inches
@@ -217,6 +216,7 @@ export default function UserProfile() {
                 label="Weight"
                 value={user.weight}
                 onChange={handleChange}
+                inputProps={{min: 0}}
               />
               {weightHasError ? (
                 <FormHelperText id="component-error-text">
