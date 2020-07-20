@@ -66,7 +66,7 @@ const AddExercise = props => {
           </MenuItem>
           <MenuItem value="Squat">Squat</MenuItem>
           <MenuItem value="Bicep Curl">Bicep Curl</MenuItem>
-          <MenuItem value="Glute Bridge">Glute Bridge</MenuItem>
+          <MenuItem value="Glute Bridge">Deadlift</MenuItem>
         </Select>
       </FormControl>
       <FormControl className={clsx(classes.repsEntry, classes.margin)}>
