@@ -54,12 +54,12 @@ const AddExercise = props => {
       >
         <InputLabel>Exercise</InputLabel>
         <Select
-required
-              id="exerciseName"
-              name="exerciseName"
-              key="exerciseName"
-              value={exerciseName}
-              onChange={handleFormChange}
+          required
+          id="exerciseName"
+          name="exerciseName"
+          key="exerciseName"
+          value={exerciseName}
+          onChange={handleFormChange}
         >
           <MenuItem value="">
             <em>Select Exercise</em>
@@ -72,7 +72,7 @@ required
       <FormControl className={clsx(classes.repsEntry, classes.margin)}>
         <TextField
           required
-          key={reps}
+          key="reps"
           type="number"
           id="reps"
           name="reps"
@@ -95,7 +95,8 @@ required
           label="Weight"
           InputLabelProps={{shrink: true}}
           InputProps={{
-            endAdornment: <InputAdornment position="end">lbs</InputAdornment>, min: 0
+            endAdornment: <InputAdornment position="end">lbs</InputAdornment>,
+            min: 0
           }}
           size="small"
           value={weight}
