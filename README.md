@@ -1,7 +1,7 @@
 # Lift Log 💪
 Lift Log is a web application and weightlifting tracker. Weightlifters no longer need to manually keep track of the amount of reps and sets after their workout. Lift Log automatically detects and logs exercises as you are working out.
 
-Once logged in, you can view a calendar highlighting their workout history, as well as your progress toward your weekly workout goal. Hit the 'Start Workout' page and start up the camera to begin working out!
+Once logged in, you can view a calendar highlighting your workout history, as well as your progress toward your weekly workout goal. Hit the 'Start Workout' page and start up the camera to begin working out!
 
 ![user-home](./demo/LL_userHome.png)
 
