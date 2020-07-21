@@ -1,26 +1,19 @@
-# Lift Log
-Lift Log is a web application where you can record yourself working out and see your exercises automatically logged.<br>
-View your workout history (what exercises you did, # of reps, # of sets, weight used) and set a weekly goal for yourself.
+# Lift Log 💪
+Lift Log is a web application and weightlifting tracker. Weightlifters no longer need to manually keep track of the amount of reps and sets after their workout. Lift Log automatically detects and logs exercises as you are working out.
+
+Once logged in, you can view a calendar highlighting their workout history, as well as your progress toward your weekly workout goal. Hit the 'Start Workout' page and start up the camera to begin working out!
+
+![user-home](./demo/LL_userHome.png)
+
+![squat-demo](./demo/squat-demo.gif)
 
 ## Website
 https://lift-log-pro.herokuapp.com/
 
-## MVP
-Users should be able to:
-- log in
-- turn camera on
-- film themselves doing weightlifting exercises
-- see a log of their exercise (# of reps and sets)
-- can manually edit their log afterwards (input weight info, etc)
-- can input additional information in their log as they are exercising (weight info)
+## Install
+npm install<br>
+npm run start-dev<br>
+view on localhost:8080<br>
 
-
-## Stretch Goals
-- How can we track weight? Voice?
-- Users can save their videos to their account or download to their phone.
-- Users can submit their own videos and track their exercises.
-- Compare exercise form with expert's form.
-
-## Technical Challenges
-- https://teachablemachine.withgoogle.com/ 
-- Learning about machine learning
+## Stack
+Lift Log’s responsive UI was built with React and Material UI. On the back end, we used Express to handle HTTP requests and Sequelize ORM for easy access to our PostgreSQL database, which consists of users, exercises, and set details so users can access their workout history. To train Lift Log to recognize exercises, we utilized Teachable Machine by Google, which uses Tensorflow and Posenet under the hood.
