@@ -9,13 +9,8 @@ import {
   Button,
   CardContent,
   Input,
-  Divider,
-  sizing
+  Divider
 } from '@material-ui/core'
-
-/**
- * COMPONENT
- */
 
 const AuthForm = props => {
   const {name, displayName, handleSubmit, error} = props
@@ -84,9 +79,6 @@ const mapDispatch = dispatch => {
 
 export const Login = connect(mapLogin, mapDispatch)(AuthForm)
 
-/**
- * PROP TYPES
- */
 AuthForm.propTypes = {
   name: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,

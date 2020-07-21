@@ -17,17 +17,11 @@ import {
 import axios from 'axios'
 import {Redirect} from 'react-router-dom'
 
-import themeObj, {thirdColor, fourthColor, grayColor} from '../theme'
-
 const useStyles = makeStyles(theme => ({
   root: {
     '& > *': {
       margin: theme.spacing(1)
-      // marginTop: theme.spacing(2)
     }
-  },
-  dividerColor: {
-    // backgroundColor: grayColor[3]
   },
   dividerSpace: {
     marginBottom: theme.spacing(3)
@@ -143,7 +137,6 @@ export default function UserProfile() {
               <InputLabel htmlFor="firstName">First Name</InputLabel>
               <OutlinedInput
                 id="firstName"
-                // className={classes.inputFieldColor}
                 label="First Name"
                 value={user.firstName}
                 onChange={handleChange}
@@ -172,7 +165,6 @@ export default function UserProfile() {
         <Grid container spacing={3} className={classes.rowContainer}>
           {/* ******       Height      ****** */}
           <Grid item container spacing={2} xs={8} sm={4} md={4} lg={3}>
-            {/* <Grid container spacing={1}> */}
             <Grid item xs={6} md={5} lg={4}>
               <FormControl variant="outlined">
                 <InputLabel htmlFor="height">Height</InputLabel>
@@ -197,7 +189,6 @@ export default function UserProfile() {
                   type="number"
                   value={user.inches}
                   onChange={handleChange}
-         
                 />
                 <FormHelperText id="filled-helperText" variant="filled">
                   inches
@@ -230,7 +221,6 @@ export default function UserProfile() {
           <Grid item xs={6} sm={4} md={3} lg={3}>
             <FormControl variant="outlined">
               <InputLabel htmlFor="sex">Sex</InputLabel>
-
               <Select
                 native
                 value={user.sex}
@@ -277,7 +267,7 @@ export default function UserProfile() {
         </Grid>
       </Grid>
 
-      <Divider classes={{root: classes.dividerColor}} />
+      <Divider />
 
       <Grid
         container
@@ -306,20 +296,11 @@ export default function UserProfile() {
           md={7}
           className={clsx(classes.rowContainer)}
         >
-          <Grid
-            item
-            xs={12}
-            sm={10}
-            md={6}
-            // lg={12}
-            // classes={{root: classes.goalColor}}
-            // className={clsx(classes.rowContainer)}
-          >
+          <Grid item xs={12} sm={10} md={6}>
             <FormControl error={goalHasError} variant="outlined">
               <InputLabel htmlFor="goal">Enter your goal!</InputLabel>
               <OutlinedInput
                 id="goal"
-                // label="Enter your goal!"
                 type="number"
                 min="0"
                 max="7"
@@ -328,7 +309,6 @@ export default function UserProfile() {
                 label="Days per Week"
                 onChange={handleChange}
                 fullWidth={true}
-                // variant="filled"
               />
               <FormHelperText id="filled-helperText" variant="filled">
                 Days per week

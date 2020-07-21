@@ -60,7 +60,7 @@ const WorkoutSummary = props => {
           if (!data.length) setNoWorkoutMsg('You did not work out on this day.')
           else setSummary(data)
         } catch (error) {
-          console.log('error fetching sets on front end!', error)
+          console.error('error fetching sets on front end!', error)
         }
       }
       fetchProjects()

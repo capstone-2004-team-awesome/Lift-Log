@@ -39,7 +39,7 @@ export const UserHome = props => {
     try {
       setSelectedDate(selection)
     } catch (error) {
-      console.log('error getting date!')
+      console.error('error getting date: ', error)
     }
   }
 
@@ -52,7 +52,7 @@ export const UserHome = props => {
         const {data} = await axios.get(`/api/workouts/month/${today}`)
         if (data.length) setWorkoutCalendar(data)
       } catch (error) {
-        console.log('error fetching sets on front end!', error)
+        console.error('error fetching sets on front end!', error)
       }
     }
     fetchWorkoutByMonth()
