@@ -13,7 +13,6 @@ import {
 } from '@material-ui/core'
 
 const ExerciseLog = props => {
-  // all sets
   const [log, setLog] = useState([])
   const {completedExercise, currentSet} = props
 

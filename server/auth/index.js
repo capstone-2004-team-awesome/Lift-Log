@@ -20,7 +20,6 @@ router.post('/login', async (req, res, next) => {
 })
 
 router.post('/signup', async (req, res, next) => {
-  console.log('BODY', req.body)
   try {
     const user = await User.create(req.body)
     req.login(user, err => (err ? next(err) : res.json(user)))
@@ -49,7 +48,7 @@ router.put('/:id', async (req, res, next) => {
     let userInfo
     if (req.body.feet) {
       const {inches, feet} = req.body
-      const height = parseInt(feet) * 12 + parseInt(inches)
+      const height = parseInt(feet, 10) * 12 + parseInt(inches, 10)
       userInfo = {...req.body, height}
     } else {
       userInfo = {...req.body}
