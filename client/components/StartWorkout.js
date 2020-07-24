@@ -1,5 +1,5 @@
 /* eslint-disable complexity */
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import Camera from './Camera'
 import {Grid} from '@material-ui/core'
 import ExerciseLog from './ExerciseLog'
@@ -22,7 +22,11 @@ const StartWorkout = props => {
   const [model, setModel] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [webcamErrorMsg, setWebcamErrorMsg] = useState('')
-  let setLogger = {}
+  const latestSet = useRef(currentSet)
+
+  useEffect(() => {
+    latestSet.current = currentSet
+  })
 
   let ctx, labelContainer, maxPredictions
   let prevPrediction = {
@@ -64,19 +68,19 @@ const StartWorkout = props => {
       `/api/exercise/create/${exercise}/${props.userId}`
     )
     const [exerciseInfo, setInfo] = data
-    setLogger = {
+    setCurrentSet({
       exerciseName: exerciseInfo.name,
       exerciseId: exerciseInfo.id,
       reps: setInfo.reps,
       weight: setInfo.weight,
       updatedAt: setInfo.updatedAt,
       setId: setInfo.id
-    }
+    })
   }
 
   const markSetComplete = async () => {
     await axios.put(`/api/exercise/complete/${props.userId}`)
-    setCompletedExercise(setLogger)
+    setCompletedExercise(latestSet.current)
   }
 
   async function loop() {
@@ -139,39 +143,33 @@ const StartWorkout = props => {
           prevPrediction[exercise] === false &&
           currPrediction[exercise] === true
         ) {
-          if (!setLogger.exerciseId) {
+          if (!latestSet.current.exerciseId) {
             await createNewSet(exercise)
-          } else if (exercise === setLogger.exerciseName) {
+          } else if (exercise === latestSet.current.exerciseName) {
             // IF CURRENT DATE IS GREATER THAN PREVIOUS REP BY MORE THAN THE BREAK TIME
             // MARK PREVIOUS SET COMPLETE AND CREATE A NEW SET
             const breakTime = 30000 // 3Os
-            if (Date.now() - new Date(setLogger.updatedAt) >= breakTime) {
+            if (Date.now() - new Date(latestSet.current.time) >= breakTime) {
               await markSetComplete()
               await createNewSet(exercise)
             } else {
               // INCREMENT REPS IF SAME EXERCISE IS REPEATED BEFORE BREAK TIME
               const {data} = await axios.put(
-                `/api/exercise/update/${setLogger.exerciseId}/${props.userId}`
+                `/api/exercise/update/${latestSet.current.exerciseId}/${
+                  props.userId
+                }`
               )
-              setLogger = {
-                ...setLogger,
+              setCurrentSet({
+                ...latestSet.current,
                 reps: data.reps,
-                updatedAt: data.updatedAt
-              }
+                time: data.updatedAt
+              })
             }
           } else {
             // IF NEW EXERCISE IS BEING DONE, MARK PREVIOUS SET AS COMPLETE AND CREATE A NEW SET
             await markSetComplete()
             await createNewSet(exercise)
           }
-          setCurrentSet({
-            exerciseName: exercise,
-            exerciseId: setLogger.exerciseId,
-            reps: setLogger.reps,
-            weight: setLogger.weight,
-            time: setLogger.updatedAt,
-            setId: setLogger.setId
-          })
         }
       }
     }
