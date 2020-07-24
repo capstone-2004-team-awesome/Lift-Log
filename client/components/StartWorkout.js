@@ -29,8 +29,6 @@ const StartWorkout = props => {
   })
 
   let ctx, labelContainer, maxPredictions
-  let globalId
-  let stopped = false
   let prevPrediction = {
     'Bicep Curl': false,
     Squat: false
@@ -86,11 +84,9 @@ const StartWorkout = props => {
   }
 
   async function loop() {
-    if (!stopped) {
-      webcam.update() // update the webcam frame
-      await predict()
-      globalId = window.requestAnimationFrame(loop)
-    }
+    webcam.update() // update the webcam frame
+    await predict()
+    window.requestAnimationFrame(loop)
   }
 
   async function init() {
@@ -103,10 +99,10 @@ const StartWorkout = props => {
       setWebcamErrorMsg(
         'There was an error opening your webcam. Make sure permissions are enabled.'
       )
-      console.log('There was an error accessing webcam: ', error)
+      console.error('There was an error accessing webcam: ', error)
     }
     webcam.play()
-    globalId = window.requestAnimationFrame(loop)
+    window.requestAnimationFrame(loop)
     setIsLoading(false)
     // append/get elements to the DOM
     const canvas = document.getElementById('canvas')
@@ -197,8 +193,6 @@ const StartWorkout = props => {
 
   const stop = async () => {
     // STOP CAMERA AND MARK THE LAST SET DONE AS COMPLETE
-    stopped = true
-    cancelAnimationFrame(globalId)
     await axios.put(`/api/exercise/complete/${props.userId}`)
     webcam.stop()
     // redirect to workout summary page

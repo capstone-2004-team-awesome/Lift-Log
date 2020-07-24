@@ -31,8 +31,6 @@ class ProgressBar extends Component {
 
   renderProgress = percent => {
     const {progress} = this.props.data
-    console.log('Render Progress: ', progress)
-
     if (!progress) return
     return <div className="progress">{this.computeValueText(percent)}</div>
   }
@@ -50,8 +48,6 @@ class ProgressBar extends Component {
       this.props.data.className
     ])
     const percent = this.calculatePercent() || 0
-    console.log('Percent: ', this.calculatePercent())
-
     return (
       <div className={classes} data-percent={Math.floor(percent)}>
         <div className="bar" style={{width: `${percent}%`}}>

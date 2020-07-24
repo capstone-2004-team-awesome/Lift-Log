@@ -3,24 +3,17 @@ import zIndex from '@material-ui/core/styles/zIndex'
 const themeObj = {
   palette: {
     primary: {
-      // light: '',
       main: '#00b5ad', //teal
       dark: '059b93'
-      // contrastText: '#fff',
     },
     secondary: {
       light: '',
       main: '#6369D1', //purple-ish
       dark: ''
-      // contrastText: '#fff',
     },
-    // divider: '#b4b4b44d',
     background: {
       default: '#eee'
     }
-    // typography: {
-    //   fontFamily: "Montserrat, 'Segoe UI', Tahoma, sans-serif",
-    // }
   },
   zIndex: {
     appBar: zIndex.drawer + 1
@@ -37,7 +30,6 @@ const themeObj = {
     MuiButton: {
       contained: {
         color: '#fff',
-        // backgroundColor: '#6369D1', //purple
         backgroundColor: '#9c27b0' //pinkish purple
       }
     }
@@ -49,14 +41,11 @@ export default themeObj
 export const blackColor = '#000'
 export const whiteColor = '#FFF'
 export const thirdColor = {
-  //lime
-  // light: "#4caf50",
   main: '#b5cc18',
   dark: '#99ad13',
   contrastText: '#000'
 }
 export const fourthColor = {
-  //bright purple
   main: '#9c27b0',
   contrastText: '#fff'
 }

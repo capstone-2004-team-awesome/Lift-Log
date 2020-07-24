@@ -2,35 +2,58 @@ import React from 'react'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
 import {login} from '../store'
+import {
+  Grid,
+  Card,
+  Typography,
+  Button,
+  CardContent,
+  Input,
+  Divider
+} from '@material-ui/core'
 
-/**
- * COMPONENT
- */
 const AuthForm = props => {
   const {name, displayName, handleSubmit, error} = props
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} name={name}>
-        <div>
-          <label htmlFor="email">
-            <small>Email</small>
-          </label>
-          <input name="email" type="text" />
-        </div>
-        <div>
-          <label htmlFor="password">
-            <small>Password</small>
-          </label>
-          <input name="password" type="password" />
-        </div>
-        <div>
-          <button type="submit">{displayName}</button>
-        </div>
-        {error && error.response && <div> {error.response.data} </div>}
-      </form>
-      <a href="/auth/google">{displayName} with Google</a>
-    </div>
+    <form onSubmit={handleSubmit} name={name}>
+      <Grid
+        container
+        spacing={1}
+        align="center"
+        alignContent="center"
+        direction="column"
+        justify="space-between"
+      >
+        <Grid item xs={6} md={6} lg={6}>
+          <Card width="60%">
+            <CardContent>
+              <Typography variant="h6">
+                Email
+                <Input name="email" type="text" align="center" />
+              </Typography>
+            </CardContent>
+            <CardContent>
+              <Typography variant="h6">
+                Password
+                <Input name="password" type="password" />
+              </Typography>
+            </CardContent>
+            <CardContent>
+              <Grid item xs={12}>
+                <Button type="submit">{displayName}</Button>
+              </Grid>
+            </CardContent>
+            <Divider />
+            <CardContent>
+              {error && error.response && <div> {error.response.data} </div>}
+
+              <a href="/auth/google">{displayName} with Google</a>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </form>
   )
 }
 
@@ -48,6 +71,7 @@ const mapDispatch = dispatch => {
       evt.preventDefault()
       const email = evt.target.email.value
       const password = evt.target.password.value
+
       dispatch(login(email, password))
     }
   }
@@ -55,9 +79,6 @@ const mapDispatch = dispatch => {
 
 export const Login = connect(mapLogin, mapDispatch)(AuthForm)
 
-/**
- * PROP TYPES
- */
 AuthForm.propTypes = {
   name: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,

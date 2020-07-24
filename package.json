@@ -1,7 +1,7 @@
 {
   "name": "liftlog",
   "version": "2.0.0",
-  "description": "Some boilerplate code to get you started - get shakin'!",
+  "description": "Get liftin'! Log your workouts automatically!",
   "engines": {
     "node": "~12.11.1"
   },

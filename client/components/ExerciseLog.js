@@ -13,7 +13,6 @@ import {
 } from '@material-ui/core'
 
 const ExerciseLog = props => {
-  // all sets
   const [log, setLog] = useState([])
   const {completedExercise, currentSet} = props
 
@@ -112,8 +111,8 @@ const ExerciseLog = props => {
       </Grid>
       <Grid item>
         <Typography variant="body1">
-          When doing squats, please make sure your whole body is in the camera
-          view.
+          When doing squats or deadlifts, please make sure your whole body is in
+          the camera view.
         </Typography>
       </Grid>
     </Grid>

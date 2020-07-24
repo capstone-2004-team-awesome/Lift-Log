@@ -7,14 +7,10 @@ import CloseIcon from '@material-ui/icons/Close'
 import {
   Button,
   Dialog,
-  Select,
   FormControl,
   Input,
   InputLabel,
-  TextField,
   FormHelperText,
-  Grid,
-  Divider,
   IconButton,
   Typography
 } from '@material-ui/core'
@@ -85,9 +81,8 @@ export default function UpdateGoalDialog(props) {
     }
     setUserGoal({...userGoal, [event.target.id]: event.target.value})
   }
-  const onSubmit = async userGoal => {
+  const onSubmit = async () => {
     const {data} = await axios.put(`/auth/${props.userId}`, userGoal)
-    console.log('Incoming user data from dialog: ', data)
     setUserGoal(data)
   }
 
@@ -113,12 +108,9 @@ export default function UpdateGoalDialog(props) {
             that is achievable, not aspirational. Once you are consistently
             achieving your weekly goals, it's time to adjust!
           </Typography>
-          {/* <Typography gutterBottom> */}
           <div>
             <form
               onSubmit={() => onSubmit(userGoal)}
-              // className={classes.root} //from UserProfile.js
-              // className="root"
               noValidate
               autoComplete="off"
             >
@@ -154,7 +146,6 @@ export default function UpdateGoalDialog(props) {
             </form>
             {/* {bottom of dialog box!} */}
           </div>
-          {/* </Typography> */}
         </DialogContent>
         <DialogActions>
           <Button
