@@ -63,10 +63,11 @@ const StartWorkout = props => {
     defineWebcam()
   }, [])
 
-  const createNewSet = async exercise => {
-    const {data} = await axios.post(
-      `/api/exercise/create/${exercise}/${props.userId}`
-    )
+  const createNewSet = async exerciseName => {
+    // const {data} = await axios.post(`/api/set/${exercise}/${props.userId}`)
+    const {data} = await axios.post(`/api/set`, {
+      exerciseName
+    })
     const [exerciseInfo, setInfo] = data
     setCurrentSet({
       exerciseName: exerciseInfo.name,
@@ -78,8 +79,8 @@ const StartWorkout = props => {
     })
   }
 
-  const markSetComplete = async () => {
-    await axios.put(`/api/exercise/complete/${props.userId}`)
+  const markSetComplete = async setId => {
+    await axios.put(`/api/set/${setId}`, {completed: true})
     setCompletedExercise(latestSet.current)
   }
 
@@ -143,21 +144,19 @@ const StartWorkout = props => {
           prevPrediction[exercise] === false &&
           currPrediction[exercise] === true
         ) {
-          if (!latestSet.current.exerciseId) {
+          if (!latestSet.current.setId) {
             await createNewSet(exercise)
           } else if (exercise === latestSet.current.exerciseName) {
             // IF CURRENT DATE IS GREATER THAN PREVIOUS REP BY MORE THAN THE BREAK TIME
             // MARK PREVIOUS SET COMPLETE AND CREATE A NEW SET
             const breakTime = 30000 // 3Os
             if (Date.now() - new Date(latestSet.current.time) >= breakTime) {
-              await markSetComplete()
+              await markSetComplete(latestSet.current.setId)
               await createNewSet(exercise)
             } else {
               // INCREMENT REPS IF SAME EXERCISE IS REPEATED BEFORE BREAK TIME
-              const {data} = await axios.put(
-                `/api/exercise/update/${latestSet.current.exerciseId}/${
-                  props.userId
-                }`
+              const {data} = await axios.patch(
+                `/api/set/${latestSet.current.setId}`
               )
               setCurrentSet({
                 ...latestSet.current,
@@ -167,7 +166,7 @@ const StartWorkout = props => {
             }
           } else {
             // IF NEW EXERCISE IS BEING DONE, MARK PREVIOUS SET AS COMPLETE AND CREATE A NEW SET
-            await markSetComplete()
+            await markSetComplete(latestSet.current.setId)
             await createNewSet(exercise)
           }
         }
@@ -191,9 +190,10 @@ const StartWorkout = props => {
     }
   }
 
-  const stop = async () => {
+  const stop = async setId => {
     // STOP CAMERA AND MARK THE LAST SET DONE AS COMPLETE
-    await axios.put(`/api/exercise/complete/${props.userId}`)
+    // await axios.put(`/api/exercise/complete/${props.userId}`)
+    await markSetComplete(setId)
     webcam.stop()
     // redirect to workout summary page
     props.history.push('/summary')
@@ -210,6 +210,7 @@ const StartWorkout = props => {
             webcam={webcam}
             isLoading={isLoading}
             webcamErrorMsg={webcamErrorMsg}
+            setId={latestSet.current.setId}
           />
         </Grid>
         <Grid item xs={12} sm={12} md={6} lg={6}>

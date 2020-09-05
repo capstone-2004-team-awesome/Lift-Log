@@ -36,6 +36,8 @@ router.get('/:date', async (req, res, next) => {
   }
 })
 
+// update set info
+// /api/set/:setId
 router.put('/:setId', async (req, res, next) => {
   try {
     if (req.user) {
@@ -52,6 +54,28 @@ router.put('/:setId', async (req, res, next) => {
     }
   } catch (error) {
     next(error)
+  }
+})
+
+// increment reps by 1
+// /api/set/:setId
+router.patch('/:setId', async (req, res, next) => {
+  try {
+    if (req.user) {
+      const setId = req.params.setId
+      const set = await Set.findOne({
+        where: {id: setId}
+      })
+      if (!set) res.sendStatus(404)
+      else {
+        await set.update({reps: set.reps + 1})
+        res.status(202).json(set)
+      }
+    } else {
+      res.sendStatus(404)
+    }
+  } catch (err) {
+    next(err)
   }
 })
 
@@ -72,6 +96,11 @@ router.delete('/:setId', async (req, res, next) => {
   }
 })
 
+// TODO: consolidate the two post routes and edit in StartWorkout.js - provide req.body
+
+// creating new set via form submission (user manual input)
+// used in WorkoutSummary.js
+// /api/set
 router.post('/', async (req, res, next) => {
   try {
     if (req.user) {
@@ -99,6 +128,23 @@ router.post('/', async (req, res, next) => {
           completed: true
         })
         res.json(set)
+      } else if (exerciseName) {
+        const exercise = await Exercise.findOne({
+          where: {
+            name: exerciseName
+          }
+        })
+        const user = await User.findByPk(userId)
+
+        let set = await user.createSet()
+
+        await exercise.addSet(set)
+
+        set = await set.update({
+          exerciseName
+        })
+        const updatedSet = [exercise, set]
+        res.json(updatedSet)
       }
     } else {
       res.sendStatus(400)
