@@ -45,6 +45,8 @@ router.get('/me', (req, res) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const userId = req.params.id
+    const user = await User.findOne({where: {id: userId}})
+
     let userInfo
     if (req.body.feet) {
       const {inches, feet} = req.body
@@ -54,11 +56,11 @@ router.put('/:id', async (req, res, next) => {
       userInfo = {...req.body}
     }
 
-    const updatedUser = await User.update(userInfo, {
-      where: {id: userId},
+    const updatedUser = await user.update(userInfo, {
       returning: true,
       plain: true
     })
+
     res.json(updatedUser)
   } catch (error) {
     next(error)
