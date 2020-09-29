@@ -111,7 +111,7 @@ export const UserHome = props => {
     if (newValue) {
       const {data} = await axios.put(`/auth/${props.userId}`, {goal: newValue})
       console.log('Incoming user data from dialog: ', data)
-      setUserGoal(data[1].goal)
+      setUserGoal(data.goal)
     }
   }
 
