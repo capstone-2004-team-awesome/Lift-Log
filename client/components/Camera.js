@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 const Camera = props => {
   const classes = useStyles()
-  const {stop, init, model, webcam, isLoading, webcamErrorMsg} = props
+  const {stop, init, model, webcam, isLoading, webcamErrorMsg, setId} = props
   const [hasWebcamStarted, setHasWebcamStarted] = useState(false)
   const [isWebcamPaused, setIsWebcamPaused] = useState(false)
 
@@ -87,7 +87,7 @@ const Camera = props => {
               <Grid item>
                 <Button
                   type="button"
-                  onClick={() => stop()}
+                  onClick={() => stop(setId)}
                   className={classes.button}
                 >
                   Stop
