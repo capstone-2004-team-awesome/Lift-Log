@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {withStyles} from '@material-ui/core/styles'
 import MuiDialogTitle from '@material-ui/core/DialogTitle'
 import MuiDialogContent from '@material-ui/core/DialogContent'
@@ -61,16 +61,19 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions)
 
 export default function UpdateGoalDialog(props) {
-  const [open, setOpen] = useState(false)
-  const [userGoal, setUserGoal] = useState({goal: ''})
+  const {onClose, onClickOpen, userGoal: userGoalProp, open} = props
+  const [goalValue, setGoalValue] = useState(userGoalProp)
   const [goalHasError, setGoalError] = useState(false)
 
-  const handleClickOpen = () => {
-    setOpen(true)
-  }
-  const handleClose = () => {
-    setOpen(false)
-  }
+  useEffect(
+    () => {
+      if (!open) {
+        setGoalValue(userGoalProp)
+      }
+    },
+    [userGoalProp, open]
+  )
+
   const handleChange = event => {
     if (event.target.id === 'goal') {
       if (isNaN(event.target.value)) {
@@ -79,24 +82,26 @@ export default function UpdateGoalDialog(props) {
         setGoalError(false)
       }
     }
-    setUserGoal({...userGoal, [event.target.id]: event.target.value})
+    setGoalValue(event.target.value)
   }
-  const onSubmit = async () => {
-    const {data} = await axios.put(`/auth/${props.userId}`, userGoal)
-    setUserGoal(data)
+  const handleCancel = () => {
+    onClose()
+  }
+  const handleOkay = () => {
+    onClose(goalValue)
   }
 
   return (
     <div>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+      <Button variant="outlined" color="primary" onClick={onClickOpen}>
         Select Goal
       </Button>
       <Dialog
-        onClose={handleClose}
+        onClose={onClose}
         aria-labelledby="customized-dialog-title"
         open={open}
       >
-        <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+        <DialogTitle id="customized-dialog-title" onClose={onClose}>
           Select a Goal
         </DialogTitle>
         <DialogContent dividers>
@@ -109,16 +114,12 @@ export default function UpdateGoalDialog(props) {
             achieving your weekly goals, it's time to adjust!
           </Typography>
           <div>
-            <form
-              onSubmit={() => onSubmit(userGoal)}
-              noValidate
-              autoComplete="off"
-            >
+            <form noValidate autoComplete="off">
               <FormControl error={goalHasError}>
                 <InputLabel htmlFor="goal">Enter your goal!</InputLabel>
                 <Input
                   id="goal"
-                  value={userGoal.goal}
+                  value={goalValue}
                   aria-describedby="component-error-text"
                   label="Days per week"
                   onChange={handleChange}
@@ -134,15 +135,6 @@ export default function UpdateGoalDialog(props) {
                   </FormHelperText>
                 ) : null}
               </FormControl>
-
-              <Button
-                variant="contained"
-                color="primary"
-                type="submit"
-                disabled={goalHasError}
-              >
-                Submit
-              </Button>
             </form>
             {/* {bottom of dialog box!} */}
           </div>
@@ -150,11 +142,19 @@ export default function UpdateGoalDialog(props) {
         <DialogActions>
           <Button
             autoFocus
-            onClick={handleClose}
+            onClick={handleCancel}
+            color="secondary"
+            disabled={goalHasError}
+          >
+            Cancel
+          </Button>
+          <Button
+            autoFocus
+            onClick={handleOkay}
             color="primary"
             disabled={goalHasError}
           >
-            Save changes
+            Save Changes
           </Button>
         </DialogActions>
       </Dialog>
