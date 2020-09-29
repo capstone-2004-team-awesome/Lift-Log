@@ -33,6 +33,7 @@ export const UserHome = props => {
   const [workoutCalendar, setWorkoutCalendar] = useState([])
   const [workoutsThisWeek, setWorkoutsThisWeek] = useState(0)
   const [userGoal, setUserGoal] = useState(0)
+  const [userGoalDialogOpen, setUserGoalDialogOpen] = useState(false)
 
   // *** Handle user selection of a calendar date to view workout summary
   const handleChange = selection => {
@@ -98,6 +99,20 @@ export const UserHome = props => {
     labelContent: 'Workouts This Week',
     size: 'medium', // tiny, small, medium, large, big
     color: 'teal' // red, orange, yellow, olive, green, teal, blue, violet, purple, pink, brown, grey, black
+  }
+
+  // *** Progress Bar: Select Goal DIALOG
+  const handleClickGoal = () => {
+    setUserGoalDialogOpen(true)
+  }
+  const handleCloseGoal = async newValue => {
+    setUserGoalDialogOpen(false)
+
+    if (newValue) {
+      const {data} = await axios.put(`/auth/${props.userId}`, {goal: newValue})
+      console.log('Incoming user data from dialog: ', data)
+      setUserGoal(data[1].goal)
+    }
   }
 
   // *** append className to calendar tiles for days with workouts logged
@@ -169,7 +184,13 @@ export const UserHome = props => {
                   Set a goal to track your progress!
                 </Typography>
 
-                <UpdateGoalDialog userId={props.userId} />
+                <UpdateGoalDialog
+                  userId={props.userId}
+                  userGoal={userGoal}
+                  onClose={handleCloseGoal}
+                  onClickOpen={handleClickGoal}
+                  open={userGoalDialogOpen}
+                />
               </div>
             )}
           </Paper>
