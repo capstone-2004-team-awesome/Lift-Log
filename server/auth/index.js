@@ -20,7 +20,6 @@ router.post('/login', async (req, res, next) => {
 })
 
 router.post('/signup', async (req, res, next) => {
-  console.log('BODY', req.body)
   try {
     const user = await User.create(req.body)
     req.login(user, err => (err ? next(err) : res.json(user)))
@@ -45,25 +44,23 @@ router.get('/me', (req, res) => {
 
 router.put('/:id', async (req, res, next) => {
   try {
-    console.log('UPDATE')
     const userId = req.params.id
+    const user = await User.findOne({where: {id: userId}})
 
     let userInfo
-
     if (req.body.feet) {
       const {inches, feet} = req.body
-      console.log(req.body)
-      const height = parseInt(feet) * 12 + parseInt(inches)
+      const height = parseInt(feet, 10) * 12 + parseInt(inches, 10)
       userInfo = {...req.body, height}
     } else {
       userInfo = {...req.body}
     }
 
-    const updatedUser = await User.update(userInfo, {
-      where: {id: userId},
+    const updatedUser = await user.update(userInfo, {
       returning: true,
       plain: true
     })
+
     res.json(updatedUser)
   } catch (error) {
     next(error)

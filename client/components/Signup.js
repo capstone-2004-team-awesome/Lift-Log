@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import React, {useState, useEffect} from 'react'
 import {makeStyles} from '@material-ui/core/styles'
 import {
@@ -118,7 +119,13 @@ function Signup(props) {
         <Grid item xs={6} med={6} lg={6}>
           <FormControl error={weightHasError}>
             <InputLabel htmlFor="component-simple">Weight(lb)</InputLabel>
-            <Input id="weight" value={user.weight} onChange={handleChange} />
+            <Input
+              id="weight"
+              type="number"
+              inputProps={{min: 0}}
+              value={user.weight}
+              onChange={handleChange}
+            />
             {weightHasError ? (
               <FormHelperText id="component-error-text">
                 Enter a number
@@ -141,8 +148,7 @@ function Signup(props) {
             <InputLabel htmlFor="height">Height</InputLabel>
             <Input
               id="feet"
-              min="0"
-              max="10"
+              inputProps={{min: 0, max: 10}}
               type="number"
               value={user.feet}
               onChange={handleChange}
@@ -152,8 +158,7 @@ function Signup(props) {
             </FormHelperText>
             <Input
               id="inches"
-              min="0"
-              max="12"
+              inputProps={{min: 0, max: 11}}
               type="number"
               value={user.inches}
               onChange={handleChange}

@@ -1,18 +1,7 @@
 import React from 'react'
 import Typography from '@material-ui/core/Typography'
 
-// const drawerWidth = 240
-
-// const useStyles = makeStyles((theme) => ({
-//   root: {
-//     [theme.breakpoints.down('sm')]: {
-//       marginLeft: +drawerWidth,
-//     },
-//   },
-// }))
-
 const LandingPage = () => {
-  // const classes = useStyles()
   return (
     <div style={{textAlign: 'center'}}>
       <Typography variant="h4" style={{paddingBottom: '1rem'}}>

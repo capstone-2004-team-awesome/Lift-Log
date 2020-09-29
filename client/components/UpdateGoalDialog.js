@@ -7,14 +7,10 @@ import CloseIcon from '@material-ui/icons/Close'
 import {
   Button,
   Dialog,
-  Select,
   FormControl,
   Input,
   InputLabel,
-  TextField,
   FormHelperText,
-  Grid,
-  Divider,
   IconButton,
   Typography
 } from '@material-ui/core'
@@ -117,7 +113,6 @@ export default function UpdateGoalDialog(props) {
             that is achievable, not aspirational. Once you are consistently
             achieving your weekly goals, it's time to adjust!
           </Typography>
-          {/* <Typography gutterBottom> */}
           <div>
             <form noValidate autoComplete="off">
               <FormControl error={goalHasError}>
@@ -143,7 +138,6 @@ export default function UpdateGoalDialog(props) {
             </form>
             {/* {bottom of dialog box!} */}
           </div>
-          {/* </Typography> */}
         </DialogContent>
         <DialogActions>
           <Button

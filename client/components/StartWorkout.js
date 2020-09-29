@@ -1,5 +1,5 @@
 /* eslint-disable complexity */
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import Camera from './Camera'
 import {Grid} from '@material-ui/core'
 import ExerciseLog from './ExerciseLog'
@@ -22,11 +22,13 @@ const StartWorkout = props => {
   const [model, setModel] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [webcamErrorMsg, setWebcamErrorMsg] = useState('')
-  let setLogger = {}
+  const latestSet = useRef(currentSet)
+
+  useEffect(() => {
+    latestSet.current = currentSet
+  })
 
   let ctx, labelContainer, maxPredictions
-  let globalId
-  let stopped = false
   let prevPrediction = {
     'Bicep Curl': false,
     Squat: false
@@ -61,32 +63,31 @@ const StartWorkout = props => {
     defineWebcam()
   }, [])
 
-  const createNewSet = async exercise => {
-    const {data} = await axios.post(
-      `/api/exercise/create/${exercise}/${props.userId}`
-    )
+  const createNewSet = async exerciseName => {
+    // const {data} = await axios.post(`/api/set/${exercise}/${props.userId}`)
+    const {data} = await axios.post(`/api/set`, {
+      exerciseName
+    })
     const [exerciseInfo, setInfo] = data
-    setLogger = {
+    setCurrentSet({
       exerciseName: exerciseInfo.name,
       exerciseId: exerciseInfo.id,
       reps: setInfo.reps,
       weight: setInfo.weight,
       updatedAt: setInfo.updatedAt,
       setId: setInfo.id
-    }
+    })
   }
 
-  const markSetComplete = async () => {
-    await axios.put(`/api/exercise/complete/${props.userId}`)
-    setCompletedExercise(setLogger)
+  const markSetComplete = async setId => {
+    await axios.put(`/api/set/${setId}`, {completed: true})
+    setCompletedExercise(latestSet.current)
   }
 
   async function loop() {
-    if (!stopped) {
-      webcam.update() // update the webcam frame
-      await predict()
-      globalId = window.requestAnimationFrame(loop)
-    }
+    webcam.update() // update the webcam frame
+    await predict()
+    window.requestAnimationFrame(loop)
   }
 
   async function init() {
@@ -99,10 +100,10 @@ const StartWorkout = props => {
       setWebcamErrorMsg(
         'There was an error opening your webcam. Make sure permissions are enabled.'
       )
-      console.log('There was an error accessing webcam: ', error)
+      console.error('There was an error accessing webcam: ', error)
     }
     webcam.play()
-    globalId = window.requestAnimationFrame(loop)
+    window.requestAnimationFrame(loop)
     setIsLoading(false)
     // append/get elements to the DOM
     const canvas = document.getElementById('canvas')
@@ -143,39 +144,31 @@ const StartWorkout = props => {
           prevPrediction[exercise] === false &&
           currPrediction[exercise] === true
         ) {
-          if (!setLogger.exerciseId) {
+          if (!latestSet.current.setId) {
             await createNewSet(exercise)
-          } else if (exercise === setLogger.exerciseName) {
+          } else if (exercise === latestSet.current.exerciseName) {
             // IF CURRENT DATE IS GREATER THAN PREVIOUS REP BY MORE THAN THE BREAK TIME
             // MARK PREVIOUS SET COMPLETE AND CREATE A NEW SET
             const breakTime = 30000 // 3Os
-            if (Date.now() - new Date(setLogger.updatedAt) >= breakTime) {
-              await markSetComplete()
+            if (Date.now() - new Date(latestSet.current.time) >= breakTime) {
+              await markSetComplete(latestSet.current.setId)
               await createNewSet(exercise)
             } else {
               // INCREMENT REPS IF SAME EXERCISE IS REPEATED BEFORE BREAK TIME
-              const {data} = await axios.put(
-                `/api/exercise/update/${setLogger.exerciseId}/${props.userId}`
+              const {data} = await axios.patch(
+                `/api/set/${latestSet.current.setId}`
               )
-              setLogger = {
-                ...setLogger,
+              setCurrentSet({
+                ...latestSet.current,
                 reps: data.reps,
-                updatedAt: data.updatedAt
-              }
+                time: data.updatedAt
+              })
             }
           } else {
             // IF NEW EXERCISE IS BEING DONE, MARK PREVIOUS SET AS COMPLETE AND CREATE A NEW SET
-            await markSetComplete()
+            await markSetComplete(latestSet.current.setId)
             await createNewSet(exercise)
           }
-          setCurrentSet({
-            exerciseName: exercise,
-            exerciseId: setLogger.exerciseId,
-            reps: setLogger.reps,
-            weight: setLogger.weight,
-            time: setLogger.updatedAt,
-            setId: setLogger.setId
-          })
         }
       }
     }
@@ -197,13 +190,10 @@ const StartWorkout = props => {
     }
   }
 
-  const stop = async () => {
+  const stop = async setId => {
     // STOP CAMERA AND MARK THE LAST SET DONE AS COMPLETE
-    stopped = true
-    cancelAnimationFrame(globalId)
-    // setStopped(true)
-
-    await axios.put(`/api/exercise/complete/${props.userId}`)
+    // await axios.put(`/api/exercise/complete/${props.userId}`)
+    await markSetComplete(setId)
     webcam.stop()
     // redirect to workout summary page
     props.history.push('/summary')
@@ -220,6 +210,7 @@ const StartWorkout = props => {
             webcam={webcam}
             isLoading={isLoading}
             webcamErrorMsg={webcamErrorMsg}
+            setId={latestSet.current.setId}
           />
         </Grid>
         <Grid item xs={12} sm={12} md={6} lg={6}>

@@ -60,7 +60,7 @@ const WorkoutSummary = props => {
           if (!data.length) setNoWorkoutMsg('You did not work out on this day.')
           else setSummary(data)
         } catch (error) {
-          console.log('error fetching sets on front end!', error)
+          console.error('error fetching sets on front end!', error)
         }
       }
       fetchProjects()
@@ -68,6 +68,7 @@ const WorkoutSummary = props => {
     [date, newSet]
   )
 
+  // Handling updates to logged exercises
   const handleChange = async (event, setId) => {
     const updatedSets = summary.map(set => {
       if (setId === set.id) {
@@ -95,12 +96,13 @@ const WorkoutSummary = props => {
     setOpen(false)
   }
 
-  const handleFormSubmit = async (event, set) => {
+  // Form for adding a new exercise to the work out summary
+  const handleFormSubmit = async event => {
     event.preventDefault()
     try {
       await axios.post(`/api/set`, {...newSet, date})
     } catch (error) {
-      console.log('Error adding new set:', error)
+      console.error('Error adding new set:', error)
     }
     setNewSet({
       exerciseName: '',
@@ -109,12 +111,11 @@ const WorkoutSummary = props => {
     })
   }
 
-  const handleFormChange = e => {
+  const handleFormChange = event => {
     setNewSet({
       ...newSet,
-      [e.target.name]: e.target.value
+      [event.target.name]: event.target.value
     })
-    console.log('NEW SET', newSet)
   }
 
   return (
@@ -220,7 +221,7 @@ const WorkoutSummary = props => {
                 manually.
               </Typography>
               <AddExercise
-                newSet={newSet}
+                {...newSet}
                 handleFormSubmit={handleFormSubmit}
                 handleFormChange={handleFormChange}
               />

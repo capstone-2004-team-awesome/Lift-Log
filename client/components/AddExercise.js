@@ -18,11 +18,11 @@ const useStyles = makeStyles(theme => ({
   },
   weightEntry: {
     minWidth: 'calc(3rem + 5vw)',
-    maxWidth: 'calc(3rem + 7vw)'
+    maxWidth: 'calc(3rem + 9.5vw)'
   },
   repsEntry: {
-    minWidth: 'calc(2.3rem + 4.5vw)',
-    maxWidth: 'calc(3rem + 6vw)'
+    minWidth: 'calc(2.3rem + 4vw)',
+    maxWidth: 'calc(3rem + 4.5vw)'
   },
   root: {
     display: 'flex',
@@ -39,8 +39,7 @@ const useStyles = makeStyles(theme => ({
 
 const AddExercise = props => {
   const classes = useStyles()
-  const {newSet, handleFormChange, handleFormSubmit} = props
-  const {exerciseName, reps, weight} = newSet
+  const {exerciseName, reps, weight, handleFormChange, handleFormSubmit} = props
 
   return (
     <form
@@ -55,8 +54,10 @@ const AddExercise = props => {
       >
         <InputLabel>Exercise</InputLabel>
         <Select
+          required
           id="exerciseName"
           name="exerciseName"
+          key="exerciseName"
           value={exerciseName}
           onChange={handleFormChange}
         >
@@ -65,18 +66,18 @@ const AddExercise = props => {
           </MenuItem>
           <MenuItem value="Squat">Squat</MenuItem>
           <MenuItem value="Bicep Curl">Bicep Curl</MenuItem>
-          <MenuItem value="Glute Bridge">Glute Bridge</MenuItem>
+          <MenuItem value="Glute Bridge">Deadlift</MenuItem>
         </Select>
       </FormControl>
       <FormControl className={clsx(classes.repsEntry, classes.margin)}>
         <TextField
           required
-          key={reps}
+          key="reps"
           type="number"
           id="reps"
           name="reps"
           label="Reps"
-          InputLabelProps={{shrink: true}}
+          InputLabelProps={{shrink: true, min: 1}}
           size="small"
           value={reps}
           onChange={handleFormChange}
@@ -87,14 +88,15 @@ const AddExercise = props => {
       >
         <TextField
           required
-          key={weight}
+          key="weight"
           type="number"
           id="weight"
           name="weight"
           label="Weight"
           InputLabelProps={{shrink: true}}
           InputProps={{
-            endAdornment: <InputAdornment position="end">lbs</InputAdornment>
+            endAdornment: <InputAdornment position="end">lbs</InputAdornment>,
+            min: 0
           }}
           size="small"
           value={weight}

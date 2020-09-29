@@ -30,7 +30,6 @@ router.get('/month/:date', async (req, res, next) => {
       const userId = req.user.id
 
       const thisMonth = extractYearMonth(req.params.date)
-      console.log(moment(req.params.date).format(moment.HTML5_FMT.MONTH))
       const nextMonth = `${yearNum(req.params.date)}-${monthNum(
         req.params.date
       ) + 2}` // month is from 0 - 11
