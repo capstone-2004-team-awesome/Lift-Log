@@ -90,7 +90,6 @@ const StartWorkout = props => {
       exerciseName
     })
     const [exerciseInfo, setInfo] = data
-    console.log(data)
     setCurrentSet({
       exerciseName: exerciseInfo.name,
       exerciseId: exerciseInfo.id,
@@ -152,7 +151,6 @@ const StartWorkout = props => {
     // *** prediction object example:
     // prediction = [{className: "Neutral - Standing", probability: 1.1368564933439103e-15},
     //              {className: "Bicep Curl - Up ", probability: 1}]
-    console.log(prediction)
     for (let i = 0; i < maxPredictions; i++) {
       const classPrediction =
         prediction[i].className + ': ' + prediction[i].probability.toFixed(2)
