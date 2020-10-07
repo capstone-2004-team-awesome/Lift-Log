@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useContext} from 'react'
 import {
   Card,
   CardContent,
@@ -20,6 +20,7 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import MuiAlert from '@material-ui/lab/Alert'
 import AddExercise from './AddExercise'
 import {makeStyles} from '@material-ui/core/styles'
+import WorkoutContext from '../context/WorkoutContext'
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -33,6 +34,8 @@ const useStyles = makeStyles(() => ({
 const WorkoutSummary = props => {
   const classes = useStyles()
 
+  const {workoutStatus, setWorkoutStatus} = useContext(WorkoutContext)
+
   const [summary, setSummary] = useState([])
   const [updateMsg, setUpdateMsg] = useState('')
   const [open, setOpen] = useState(false)
@@ -42,6 +45,10 @@ const WorkoutSummary = props => {
     reps: '',
     weight: ''
   })
+
+  useEffect(() => {
+    setWorkoutStatus({paused: false, stopped: false})
+  }, [])
 
   // checking to see if there is a state in props.location
   // this is how the UserHome component passes in date from the calendar selection

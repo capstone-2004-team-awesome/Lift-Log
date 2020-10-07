@@ -96,8 +96,6 @@ router.delete('/:setId', async (req, res, next) => {
   }
 })
 
-// TODO: consolidate the two post routes and edit in StartWorkout.js - provide req.body
-
 // creating new set via form submission (user manual input)
 // used in WorkoutSummary.js
 // /api/set

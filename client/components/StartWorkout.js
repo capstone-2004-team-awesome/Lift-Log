@@ -1,11 +1,12 @@
 /* eslint-disable complexity */
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect, useRef, useContext} from 'react'
 import Camera from './Camera'
 import {Grid} from '@material-ui/core'
 import ExerciseLog from './ExerciseLog'
 import * as tmPose from '@teachablemachine/pose'
 import axios from 'axios'
 import {connect} from 'react-redux'
+import WorkoutContext from '../context/WorkoutContext'
 
 const StartWorkout = props => {
   const [currentSet, setCurrentSet] = useState({
@@ -22,11 +23,32 @@ const StartWorkout = props => {
   const [model, setModel] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [webcamErrorMsg, setWebcamErrorMsg] = useState('')
+  const [isWebcamPaused, setIsWebcamPaused] = useState(false)
+
   const latestSet = useRef(currentSet)
+
+  const {workoutStatus, setWorkoutStatus} = useContext(WorkoutContext)
+  const workoutStatusRef = useRef(workoutStatus)
+
+  useEffect(
+    () => {
+      workoutStatusRef.current = workoutStatus
+    },
+    [workoutStatus]
+  )
 
   useEffect(() => {
     latestSet.current = currentSet
   })
+
+  useEffect(
+    () => {
+      if (workoutStatusRef.current.stopped) {
+        props.history.push('/summary')
+      }
+    },
+    [workoutStatus]
+  )
 
   let ctx, labelContainer, maxPredictions
   let prevPrediction = {
@@ -64,11 +86,11 @@ const StartWorkout = props => {
   }, [])
 
   const createNewSet = async exerciseName => {
-    // const {data} = await axios.post(`/api/set/${exercise}/${props.userId}`)
     const {data} = await axios.post(`/api/set`, {
       exerciseName
     })
     const [exerciseInfo, setInfo] = data
+    console.log(data)
     setCurrentSet({
       exerciseName: exerciseInfo.name,
       exerciseId: exerciseInfo.id,
@@ -86,8 +108,13 @@ const StartWorkout = props => {
 
   async function loop() {
     webcam.update() // update the webcam frame
-    await predict()
-    window.requestAnimationFrame(loop)
+    if (
+      workoutStatusRef.current.paused === false &&
+      workoutStatusRef.current.stopped === false
+    ) {
+      await predict()
+      window.requestAnimationFrame(loop)
+    }
   }
 
   async function init() {
@@ -125,7 +152,7 @@ const StartWorkout = props => {
     // *** prediction object example:
     // prediction = [{className: "Neutral - Standing", probability: 1.1368564933439103e-15},
     //              {className: "Bicep Curl - Up ", probability: 1}]
-
+    console.log(prediction)
     for (let i = 0; i < maxPredictions; i++) {
       const classPrediction =
         prediction[i].className + ': ' + prediction[i].probability.toFixed(2)
@@ -193,10 +220,21 @@ const StartWorkout = props => {
   const stop = async setId => {
     // STOP CAMERA AND MARK THE LAST SET DONE AS COMPLETE
     // await axios.put(`/api/exercise/complete/${props.userId}`)
-    await markSetComplete(setId)
+    if (setId) await markSetComplete(setId)
     webcam.stop()
-    // redirect to workout summary page
-    props.history.push('/summary')
+    setWorkoutStatus({
+      paused: false,
+      stopped: true
+    })
+  }
+
+  const pause = () => {
+    setIsWebcamPaused(true)
+    webcam.pause()
+    setWorkoutStatus({
+      paused: true,
+      stopped: false
+    })
   }
 
   return (
@@ -211,6 +249,9 @@ const StartWorkout = props => {
             isLoading={isLoading}
             webcamErrorMsg={webcamErrorMsg}
             setId={latestSet.current.setId}
+            setIsWebcamPaused={setIsWebcamPaused}
+            isWebcamPaused={isWebcamPaused}
+            pause={pause}
           />
         </Grid>
         <Grid item xs={12} sm={12} md={6} lg={6}>

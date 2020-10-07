@@ -22,9 +22,19 @@ const useStyles = makeStyles(theme => ({
 
 const Camera = props => {
   const classes = useStyles()
-  const {stop, init, model, webcam, isLoading, webcamErrorMsg, setId} = props
+  const {
+    stop,
+    init,
+    model,
+    webcam,
+    isLoading,
+    webcamErrorMsg,
+    setId,
+    setIsWebcamPaused,
+    isWebcamPaused,
+    pause
+  } = props
   const [hasWebcamStarted, setHasWebcamStarted] = useState(false)
-  const [isWebcamPaused, setIsWebcamPaused] = useState(false)
 
   const start = () => {
     setHasWebcamStarted(true)
@@ -34,11 +44,6 @@ const Camera = props => {
   const play = () => {
     setIsWebcamPaused(false)
     webcam.play()
-  }
-
-  const pause = () => {
-    setIsWebcamPaused(true)
-    webcam.pause()
   }
 
   return (
