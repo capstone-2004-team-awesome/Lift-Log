@@ -159,6 +159,7 @@ export const UserHome = props => {
               calendarType="US"
               onChange={handleChange}
               tileClassName={tileClassName}
+              showNeighboringMonth={false}
             />
           </Paper>
         </Grid>
