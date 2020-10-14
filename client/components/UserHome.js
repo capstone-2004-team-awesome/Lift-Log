@@ -132,12 +132,12 @@ export const UserHome = props => {
     <Redirect to={{pathname: '/summary', state: {selectedDate}}} />
   ) : (
     <div className={classes.root}>
-      <Grid container justify="center" spacing={3}>
+      <Grid container justify="center" spacing={3} alignContent="center">
         <Grid item xs={12} sm={10} md={8} lg={10}>
           <Typography variant="h2">Welcome, {firstName}!</Typography>
         </Grid>
 
-        <Grid item xs={12} sm={10} md={8} lg={10} alignContent="center">
+        <Grid item xs={12} sm={10} md={8} lg={10}>
           <Paper className={classes.paper}>
             {workoutsThisWeek ? (
               <Typography variant="body1" gutterBottom>
