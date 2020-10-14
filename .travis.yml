@@ -13,15 +13,18 @@ notifications:
 install:
   - npm ci # faster, goes only from package-lock
 before_script:
-  - psql -c 'create database "boilermaker-test";' -U postgres # remember to change this name if you change it elsewhere (e.g. package.json)
+  - psql -c 'create database "liftlog-test";' -U postgres # remember to change this name if you change it elsewhere (e.g. package.json)
 script:
   - npm test # test the code
   - npm run build-client # make the bundle
-# before_deploy:
-#   - rm -rf node_modules # omit from the tarball, since we skip cleanup
-# deploy:
-#   skip_cleanup: true # prevents travis from deleting the build
-#   provider: heroku
-#   app: YOUR-HEROKU-APP-NAME-HERE # see README
-#   api_key:
-#     secure: YOUR-***ENCRYPTED***-API-KEY-HERE # see README
+before_deploy: # omit node_modules, since we set skip_cleanup below
+  - rm -rf node_modules
+deploy: # see README for details on these keys
+  # prevents travis from deleting the build
+  skip_cleanup: true
+  provider: heroku
+  # app should be your heroku app name; see README
+  app: lift-log-pro
+  # the secure key indicates an encrypted value; see README
+  api_key:
+    secure: qj6aH4RUj6RGi/4690KyeXghZ0kk/7FGP21/HZTAhsIIuaJ/oCyAtkKbgLn4x0h8if/a6oVHaMLIQYKPFT3mJ9VsYJAFigQTmQOsVjEQczVbDP0f6KRAYOxqBxotZ9pG5ffdOH8pf4XVtUbTirowQk1BFmIYZqW4xZsg33Mv3+QBrWo27n1URBYC1uPrueQ2QPHoTfRjEFgmNkTm3Ko61PntOpJcXZDZ5OimzyFJhSOsNfo49LM63MlOguL+cx2i2rB+5/GCDYL5XQslAE0xQQ51IRUsPd4s23ll7h9xGeTXIiCdeBlnB/cPhCG04uSzZVQVz82Dv1FfvRDYaECTy36Kgrk1+F4D60unK148rU/jRc7zJYDTAbEPH6RzZ6ZffzvP2k7lwmkeobU5x951FzuUL5Xj1Z2XmcVDv/x5b4NJfTWmJRUB9nB2relI+N4RiLSEDe16qr4VXFt+3ETWWWG1lhtIzGVkS9sWEGMjrgDhXUf5jWWo39NX2itTvsbQHyJnpQTGkGXfg1SYvsuybwDDp6i6gYFIS6Ys2qz3fAfaLrcrYIPVAPCJ3uF+eYEMZpBWueskX7fClfwYS/yzd0K5DQc8tfg1HvgvkEmD/E3IkD3DbKOaDF8RadL8Wpu/SCn8LWR+isjnpYUtVU6vlC9yx/lxChSUwwaoW406oCE=
