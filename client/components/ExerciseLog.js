@@ -85,25 +85,31 @@ const ExerciseLog = props => {
                     </TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
-                  {log.map(elem => {
-                    return (
-                      <TableRow key={elem.setId}>
-                        <TableCell>
-                          <Typography variant="h6">
-                            {elem.exerciseName}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="right">
-                          <Typography variant="h6">{elem.reps}</Typography>
-                        </TableCell>
-                        <TableCell align="right">
-                          <Typography variant="h6">{elem.weight}</Typography>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
+                {log.length ? (
+                  <TableBody>
+                    {log.map(elem => {
+                      return (
+                        elem.setId && (
+                          <TableRow key={elem.setId}>
+                            <TableCell>
+                              <Typography variant="h6">
+                                {elem.exerciseName}
+                              </Typography>
+                            </TableCell>
+                            <TableCell align="right">
+                              <Typography variant="h6">{elem.reps}</Typography>
+                            </TableCell>
+                            <TableCell align="right">
+                              <Typography variant="h6">
+                                {elem.weight}
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        )
+                      )
+                    })}
+                  </TableBody>
+                ) : null}
               </Table>
             </TableContainer>
           </CardContent>
