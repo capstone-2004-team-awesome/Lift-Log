@@ -46,7 +46,7 @@
     "@material-ui/lab": "^4.0.0-alpha.58",
     "@teachablemachine/pose": "^0.8.6",
     "@tensorflow/tfjs": "^2.8.6",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "classnames": "^2.2.6",
     "compression": "^1.7.3",
     "connect-session-sequelize": "^6.1.1",
