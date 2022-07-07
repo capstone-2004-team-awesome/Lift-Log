@@ -55,7 +55,7 @@
     "express-session": "^1.17.1",
     "faker": "^4.1.0",
     "history": "^4.10.1",
-    "moment": "^2.29.1",
+    "moment": "^2.29.4",
     "morgan": "^1.10.0",
     "passport": "^0.4.1",
     "passport-google-oauth": "^2.0.0",
